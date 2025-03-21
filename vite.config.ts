@@ -54,6 +54,7 @@ export default defineConfig(({ command, mode }) => {
         '@public': getPath('public'),
         '@common': getPath('src/common'),
         '@modules': getPath('src/modules'),
+        '@pages': getPath('src/pages'),
         '@components': getPath('src/components'),
         '@services': getPath('src/services'),
         '@types': getPath('src/types'),

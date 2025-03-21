@@ -3,9 +3,10 @@ import type { FormProps } from 'antd';
 import { Layout, Row, Col, Form, Input, Button, message } from 'antd';
 import { userLog } from '@/common/electron';
 import request from '@common/request';
-import style from './index.module.less';
 
-import Logo from './logo';
+import Logo from '@components/Logo';
+
+import style from './index.module.less';
 
 const { Header, Content } = Layout;
 
@@ -106,10 +107,7 @@ const UserPage: React.FC<UserPageProps> = (props) => {
   return (
     <Layout className={style.layout}>
       <Header className={style.header}>
-        <div className={style.logo}>
-          <Logo />
-          <span className={style.text}>旺店宝</span>
-        </div>
+        <Logo mode={'light'} />
         <div className={style.sologon}>线下实体店管理利器，快捷收银对账，商品出入库高效盘点，让你的店铺经营更简单</div>
       </Header>
       <Content className={style.content}>

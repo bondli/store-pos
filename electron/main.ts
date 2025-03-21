@@ -6,6 +6,7 @@ import Store from 'electron-store';
 import logger from 'electron-log';
 
 // file position on macOS: ~/Library/Logs/{app name}/main.log
+// db file position on macOs:  ~/Library/Application Support/store-pos/sqlite3/storepos-database.db
 logger.transports.file.fileName = 'main.log';
 logger.transports.file.level = 'info';
 logger.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}]{scope} {text}';
@@ -70,10 +71,12 @@ initIpcRenderer();
 let serverStatus = '';
 const startNodeServer = () => {
   logger.info('server will be start');
+  const dbPath = path.join(app.getPath('userData'), './sqlite3/storepos-database.db');
+  logger.info('server db path: ', dbPath);
   const child = fork(path.join(__dirname,'./server/index'), [], {
     env: {
       ...process.env,
-      DBPATH: path.join(app.getPath('userData'), './sqlite3/storepos-database.db'),
+      DBPATH: dbPath,
     },
   });
 
@@ -110,9 +113,9 @@ const createWindow = () => {
     autoHideMenuBar: true,
     resizable: true,
     width: 1200,
-    height: 720,
-    minWidth: 800,
-    minHeight: 600,
+    height: 800,
+    minWidth: 1000,
+    minHeight: 720,
     webPreferences: {
       webSecurity: false,
       // eslint-disable-next-line no-undef

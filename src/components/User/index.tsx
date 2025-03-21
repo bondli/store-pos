@@ -1,10 +1,10 @@
-import React, { memo, useContext } from 'react';
-import { GithubFilled, DownOutlined, CloudDownloadOutlined, CloudUploadOutlined, CloudSyncOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import React, { memo } from 'react';
+import { GithubFilled, CloudDownloadOutlined, CloudUploadOutlined, CloudSyncOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Avatar, Dropdown, Button, Space, message, Modal } from 'antd';
+import { Avatar, Dropdown, Space, message, Modal } from 'antd';
+
 import ElectronBridge from '@common/electron';
-import { DataContext } from '@/common/context';
-import { HEADER_HEIGHT, SPLIT_LINE } from '@/common/constant';
+
 import style from './index.module.less';
 
 type UserProps = {
@@ -15,7 +15,6 @@ type UserProps = {
 };
 
 const User: React.FC<UserProps> = (props) => {
-  const { getTopicList, getTopicCounts, getNoteList } = useContext(DataContext);
   const [messageApi, msgContextHolder] = message.useMessage();
   const [modalApi, modalContextHolder] = Modal.useModal();
 
@@ -24,20 +23,28 @@ const User: React.FC<UserProps> = (props) => {
 
   const items: MenuProps['items'] = [
     {
-      label: '导出数据',
       key: '1',
+      label: name,
+      disabled: true,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      label: '导出数据',
+      key: '2',
       icon: <CloudDownloadOutlined style={{ fontSize: '16px' }} />,
     }, {
       label: '恢复数据',
-      key: '2',
+      key: '3',
       icon: <CloudUploadOutlined style={{ fontSize: '16px' }} />,
     }, {
       label: '刷新数据',
-      key: '3',
+      key: '4',
       icon: <CloudSyncOutlined style={{ fontSize: '16px' }} />,
     }, {
       label: '退出登录',
-      key: '4',
+      key: '5',
       icon: <UserSwitchOutlined style={{ fontSize: '16px' }} />,
     },
   ];
@@ -45,7 +52,7 @@ const User: React.FC<UserProps> = (props) => {
     const { key } = e;
     ElectronBridge.userLog('Click MainMenu: ', key);
     // 导出数据
-    if (key === '1') {
+    if (key === '2') {
       ElectronBridge.exportData();
       messageApi.open({
         type: 'success',
@@ -53,15 +60,12 @@ const User: React.FC<UserProps> = (props) => {
       });
     }
     // 本地恢复数据
-    else if (key === '2') {
+    else if (key === '3') {
       modalApi.confirm({
         title: '确认恢复数据？',
         content: '请确认已将数据文件命名成：easynote-database.db，并放在Downloads目录下。',
         onOk() {
           ElectronBridge.importData();
-          getTopicCounts();
-          getNoteList();
-          getTopicList();
           messageApi.open({
             type: 'warning',
             content: '本地数据已导入，请检查是否正确',
@@ -70,10 +74,7 @@ const User: React.FC<UserProps> = (props) => {
       });
     }
     // 刷新下数据，首次进入存在一定概率的调研接口失败
-    else if (key === '3') {
-      getTopicCounts();
-      getNoteList();
-      getTopicList();
+    else if (key === '4') {
       messageApi.open({
         type: 'success',
         content: '同步成功',
@@ -81,7 +82,7 @@ const User: React.FC<UserProps> = (props) => {
       return;
     }
     // 退出登录
-    else if (key === '4') {
+    else if (key === '5') {
       ElectronBridge.deleteLoginData();
       window.location.reload();
       return;
@@ -94,25 +95,20 @@ const User: React.FC<UserProps> = (props) => {
   };
 
   return (
-    <div className={style.container} style={{ height: HEADER_HEIGHT, borderBottom: SPLIT_LINE}}>
+    <div className={style.container}>
       <Dropdown menu={menuProps} trigger={['click']}>
-        <Button style={{ width: '90%' }}>
-          <Space className={style.userInfoContainer}>
-            <div className={style.userInfo}>
-              {
-                avatar.length > 2 ? (
-                  <Avatar style={{ backgroundColor: '#18181b', verticalAlign: 'middle' }} size="small">
-                    {avatar}
-                  </Avatar>
-                ) : (
-                  <GithubFilled style={{ fontSize: '22px' }} />
-                )
-              }
-              <span className={style.name}>{name}</span>
-            </div>
-            <DownOutlined />
-          </Space>
-        </Button>
+        <Space className={style.userInfoContainer}>
+          {
+            avatar.length > 2 ? (
+              <Avatar style={{ backgroundColor: '#18181b', verticalAlign: 'middle' }} size="small">
+                {avatar}
+              </Avatar>
+            ) : (
+              <GithubFilled style={{ fontSize: '22px', verticalAlign: 'middle' }} />
+            )
+          }
+          <div className={style.name}>{name}</div>
+        </Space>
       </Dropdown>
       <div>{modalContextHolder}</div>
       <div>{msgContextHolder}</div>

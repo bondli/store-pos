@@ -13,7 +13,7 @@ app.options('*', cors());
 app.use(router);
 
 app.all('*', (req, res, next) => {
-  res.header('X-Powered-By', 'Easy-Note');
+  res.header('X-Powered-By', 'Store-Pos');
   next();
 });
 
@@ -27,10 +27,10 @@ app.all('*', (req, res, next) => {
     await sequelize.sync();
     
     // 启动服务器
-    app.listen(5432, () => {
-      logger.info('Server is running on port 5432');
+    app.listen(9527, () => {
+      logger.info('Server is running on port 9527');
       // eslint-disable-next-line no-undef
-      process.send('Server Ready');
+      // process.send('Server Ready');
     });
   } catch (error) {
     logger.error('Error starting server:', error);

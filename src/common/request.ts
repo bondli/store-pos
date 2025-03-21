@@ -3,7 +3,7 @@ import ElectronBridge from '@common/electron';
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: 'http://localhost:5432/', // api的base_url
+  baseURL: 'http://localhost:9527/', // api的base_url
   timeout: 5000 // 请求超时时间
 });
 
@@ -11,7 +11,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 可以在这里添加请求头部，例如token
-    config.headers['X-From'] = 'Easy-Note-Client';
+    config.headers['X-From'] = 'Store-Pos-Client';
     const loginData = ElectronBridge.getLoginData() || {};
     config.headers['X-User-Id'] = loginData.id || 0;
     return config;

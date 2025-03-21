@@ -1,12 +1,12 @@
 {
   "name": "store-pos",
-  "description": "an easy stor pos system",
+  "description": "an easy store pos system",
   "version": "0.0.1",
   "main": "dist/electron/main.js",
   "scripts": {
     "before:pack": "tsc -p tsconfig.electron.json",
     "dev": "vite",
-    "dev:pack": "chcp 65001 | vite --open=false -m electron",
+    "dev:pack": "npm run build && npm run before:pack && chcp 65001 | vite --open=false -m electron",
     "build": "vite build",
     "pack:win": "npm run build && npm run before:pack && electron-builder --win --ia32",
     "pack:mac": "npm run build && npm run before:pack && electron-builder --mac",
@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.6",
+    "@ant-design/plots": "^1.1.0",
     "antd": "^5.16.4",
     "axios": "^1.6.8",
     "body-parser": "^1.20.2",
@@ -43,6 +44,7 @@
     "lowdb": "^7.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-countup":"6.5.3",
     "react-quill": "^2.0.0",
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7",

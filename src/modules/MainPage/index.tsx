@@ -1,16 +1,23 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Row, Col } from 'antd';
-import { throttle } from 'lodash-es';
+import { Layout, Menu, theme, FloatButton } from 'antd';
+import type { MenuProps } from 'antd';
+
+import { mainMenuItems } from '@/common/constant';
 import { DataContext } from '@/common/context';
-import { SPLIT_LINE, DEFAULT_NOTE } from '@common/constant';
 import request from '@common/request';
+
+import Logo from '@components/Logo';
 import User from '@components/User';
-import Category from '@components/Category';
-import NoteBook from '@/components/Note';
-import TopicList from '@components/TopicList';
-import TopicDetail from '@components/TopicDetail';
+
+import OrderPage from '@pages/Order';
+import SummaryPage from '@pages/Summary';
+import InventoryPage from '@pages/Inventory';
+import MemberPage from '@pages/Member';
+import BuyPage from '@pages/Buy';
 
 import style from './index.module.less';
+
+const { Header, Content } = Layout;
 
 type MainPageProps = {
   userInfo: {
@@ -22,102 +29,79 @@ type MainPageProps = {
 
 const MainPage: React.FC<MainPageProps> = (props) => {
   const { userInfo } = props;
-  const [noteList, setNoteList] = useState([]);
-  const [topicList, setTopicList] = useState([]);
-  const [currentNote, setCurrentNote] = useState(DEFAULT_NOTE);
-  const [selectedTopic, setSelectedTopic] = useState(null);
-  const [topicCounts, setTopicCpunts] = useState({});
+  const [salerList, setSalerList] = useState([]);
+  const [currentPage, setCurrentPage] = useState('summary');
 
-  const [showLeftPanel, setShowLeftPanel] = useState(true);
+  const { token: { colorBgContainer } } = theme.useToken();
 
-  // 获取笔记本列表
-  const getNoteList = () => {
+  const onMenuClick: MenuProps['onClick'] = (e) => {
+    setCurrentPage(e.key);
+  };
+
+  // 获取导购员列表
+  const getSalerList = () => {
     request
-      .get('/note/list')
+      .get('/user/list')
       .then((res) => {
-        setNoteList(res.data);
+        setSalerList(res.data);
       });
   };
 
-  // 获取代办事项列表
-  const getTopicList = () => {
-    request.get(`/topic/getList?noteId=${currentNote.id}`).then((res) => {
-      setTopicList(res.data);
-    }).catch((err) => {
-      setTopicList([]);
-    });
-  };
-
-  // 获取各种笔记本下代办的数量
-  const getTopicCounts = () => {
-    request.get(`/topic/counts`).then((data) => {
-      setTopicCpunts(data);
-    });
-  };
-
-  // 控制显隐
-  const toggleShowLeftPanel = () => {
-    if (window.innerWidth < 1000) {
-      setShowLeftPanel(false);
-    } else {
-      setShowLeftPanel(true);
-    }
-  };
-
   useEffect(() => {
-    getNoteList();
-    getTopicCounts();
-
-    // 监听窗口的变化
-    window.onresize = throttle(() => {
-      toggleShowLeftPanel();
-    }, 500);
-
-    toggleShowLeftPanel();
+    getSalerList();
   }, []);
+
+  const goToBuyPage = () => {
+    setCurrentPage('buy');
+  };
 
   return (
     <DataContext.Provider
       value={{
-        currentNote,
-        setCurrentNote,
-        noteList,
-        setNoteList,
-        getNoteList,
-        topicList,
-        setTopicList,
-        getTopicList,
-        selectedTopic,
-        setSelectedTopic,
-        topicCounts,
-        getTopicCounts,
+        salerList,
       }}
     >
-      <Row className={style.container}>
-        <Col flex="208px" className={style.left} style={{ borderRight: SPLIT_LINE, display: showLeftPanel ? '' : 'none'}}>
+      <Layout className={style.container}>
+        <Header
+        className={style.header}
+          style={{
+            background: colorBgContainer,
+          }}
+        >
+          <Logo mode={'dark'} />
+          <Menu
+            mode={`horizontal`}
+            style={{ flex: 1 }}
+            defaultSelectedKeys={[currentPage]}
+            items={mainMenuItems}
+            onClick={onMenuClick}
+          />
           <User info={userInfo} />
-          <Category />
-          <NoteBook />
-        </Col>
-        <Col flex="auto">
-          <table className={style.right} style={{ width: showLeftPanel ? '' : '100%' }}>
-            <tbody>
-              <tr>
-                <td style={{ width: selectedTopic && selectedTopic.id ? '50%' : '100%', height: '100vh' }}>
-                  <TopicList />
-                </td>
-                {
-                  selectedTopic && selectedTopic.id ? (
-                    <td style={{ width: '50%', height: '100vh', borderLeft: SPLIT_LINE }}>
-                      <TopicDetail />
-                    </td>
-                  ) : null
-                }
-              </tr>
-            </tbody>
-          </table>
-        </Col>
-      </Row>
+        </Header>
+        <Content className={style.content}>
+          {
+            currentPage === 'summary' && <SummaryPage />
+          }
+          {
+            currentPage === 'order' && <OrderPage />
+          }
+          {
+            currentPage === 'inventory' && <InventoryPage />
+          }
+          {
+            currentPage === 'member' && <MemberPage />
+          }
+          {
+            currentPage === 'buy' && <BuyPage />
+          }
+          <FloatButton
+            type="primary"
+            tooltip={`restore the hold's sales`}
+            badge={{ dot: true }}
+            onClick={goToBuyPage}
+          />
+        </Content>
+      </Layout>
     </DataContext.Provider>
   );
 };

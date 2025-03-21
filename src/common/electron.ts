@@ -52,7 +52,7 @@ export const userLog = (msg: any, msgData?: any) => {
   
   let outMsg = typeof msg === 'string' ? msg : JSON.stringify(msg);
   if (msgData) {
-    outMsg += ` ${JSON.stringify(msgData)}`;
+    outMsg += ` ${typeof msgData === 'string' ? msgData : JSON.stringify(msgData)}`;
   }
   ipcRenderer.userLog(outMsg);
 }
