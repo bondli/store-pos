@@ -11,8 +11,8 @@ export const PAY_CHANNEL = {
 };
 
 export const mainMenuItems: MenuProps['items'] = [{
-  key: 'summary',
-  label: 'Summary',
+  key: 'sales',
+  label: 'Sales',
 }, {
   key: 'order',
   label: 'Order Center',
@@ -23,6 +23,6 @@ export const mainMenuItems: MenuProps['items'] = [{
   key: 'member',
   label: 'Member Center',
 }, {
-  key: 'buy',
-  label: 'Sales and Payment',
+  key: 'data',
+  label: 'Data Center',
 }];

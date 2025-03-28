@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import style from './index.module.less';
 
 type ComProps = {
-  title: string;
+  title: string | React.ReactNode;
   content?: React.ReactNode;
   children?: React.ReactNode;
   footer?: React.ReactNode;

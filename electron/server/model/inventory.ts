@@ -41,13 +41,13 @@ const Inventory = sequelize.define('Inventory', {
   },
   costPrice: {
     comment: '成本价',
-    type: DataTypes.INTEGER,
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
     defaultValue: 0,
   },
   originalPrice: {
     comment: '吊牌价',
-    type: DataTypes.INTEGER,
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
     defaultValue: 0,
   },

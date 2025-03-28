@@ -24,8 +24,8 @@ const columns = [
   {
     title: 'actual',
     align: 'right',
-    dataIndex: 'orderActual',
-    key: 'orderActual',
+    dataIndex: 'orderActualAmount',
+    key: 'orderActualAmount',
     valueType: 'money',
     fixed: 'left',
   },

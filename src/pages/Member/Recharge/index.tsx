@@ -1,8 +1,12 @@
 import React, { memo, useState } from 'react';
 import { Button, Drawer } from 'antd';
 
+type ComProps = {
+  callback: () => void;
+};
 
-const Recharge: React.FC = (props) => {
+const Recharge: React.FC<ComProps> = (props) => {
+  const { callback } = props;
   const [showPanel, setShowPanel] = useState(false);
 
   const togglePanel = () => {

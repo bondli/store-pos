@@ -7,40 +7,42 @@ import Detail from './Detail';
 const columns = [
   {
     title: 'user phone',
-    dataIndex: 'userPhone',
-    key: 'userPhone',
+    dataIndex: 'phone',
+    key: 'phone',
     copyable: true,
     fixed: 'left',
   },
   {
+    title: 'user name',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
     title: 'order actual',
     align: 'right',
-    dataIndex: 'userAmount',
-    key: 'userAmount',
+    dataIndex: 'actual',
+    key: 'actual',
     valueType: 'money',
-    fixed: 'left',
   },
   {
     title: 'points',
     align: 'right',
-    dataIndex: 'userPoint',
-    key: 'userPoint',
+    dataIndex: 'point',
+    key: 'point',
     valueType: 'number',
-    fixed: 'left',
   },
   {
     title: 'balance',
     align: 'right',
-    key: 'userBalance',
-    dataIndex: 'userBalance',
-    valueType: 'money',
-    fixed: 'left',
+    key: 'balance',
+    dataIndex: 'balance',
+    valueType: 'number',
   },
   {
-    title: 'brithday',
+    title: 'birthday',
     align: 'center',
-    dataIndex: 'userBirthday',
-    key: 'userBirthday',
+    dataIndex: 'birthday',
+    key: 'birthday',
     valueType: 'date',
     valueTypeProps: {
       format: 'MM/DD'
@@ -61,9 +63,9 @@ const columns = [
     render: (row, record) => {
       return (
         <Space>
-          <Detail userPhone={record.userPhone} />
-          <Editor userPhone={record.userPhone} />
-          <RemoveUser userPhone={record.userPhone} />
+          <Detail userPhone={record.phone} />
+          <Editor userPhone={record.phone} />
+          <RemoveUser userPhone={record.phone} />
         </Space>
       );
     }

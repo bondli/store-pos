@@ -1,10 +1,11 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Drawer, Descriptions } from 'antd';
-import type { DescriptionsProps } from 'antd';
+import { Button, Drawer, Descriptions, message } from 'antd';
 
 import TableRender from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
+import { userLog } from '@/common/electron';
+import request from '@common/request';
 import Box from '@/components/Box';
 
 import skuColumns from './sku';
@@ -14,78 +15,70 @@ type ComProps = {
   sn: string;
 };
 
+const defaultItemInfo = {
+  sn: '',
+  name: '',
+  sku: '',
+  size: '',
+  color: 0,
+  originalPrice: 0,
+  counts: 0,
+};
+
 const Detail: React.FC<ComProps> = (props) => {
   const { sku, sn } = props;
 
   const [showPanel, setShowPanel] = useState(false);
+  const [itemInfo, setItemInfo] = useState(defaultItemInfo);
   
   const togglePanel = () => {
     setShowPanel(!showPanel);
   };
 
-  const items: DescriptionsProps['items'] = [
-    {
-      key: '1',
-      label: 'name',
-      children: '连衣裙',
-    },
-    {
-      key: '2',
-      label: 'style no',
-      children: '1810000000',
-    },
-    {
-      key: '3',
-      label: 'sku',
-      children: '2012/02/02',
-    },
-    {
-      key: '4',
-      label: 'color',
-      children: 'red',
-    },
-    {
-      key: '5',
-      label: 'size',
-      children: '90',
-    },
-    {
-      key: '5',
-      label: 'original',
-      children: '0.00',
-    },
-    {
-      key: '5',
-      label: 'counts',
-      children: '2',
-    },
-  ];
+  // 获取sku信息
+  const getItemDetail = async () => {
+    userLog('request item detail params:', sku);
+    try {
+      const response = await request.get('/inventory/queryDetailBySku', {
+        params: {
+          sku,
+        },
+      });
+      const result = response.data;
+      if (!result.error) {
+        setItemInfo(result);
+      }
+
+    } catch (error) {
+      message.error('查询会员失败');
+    }
+  };
 
   // 通过 款号 获取下属所有 SKU 列表
-  const getSkusByStyleNo = () => {
-    const dataSource = [];
-    for (let i = 0; i < 6; i++) {
-      dataSource.push({
-        orderSn: '20250319001',
-        orderStatus: i % 2 === 0 ? 'uncheck' : 'checked',
-        orderItems: i,
-        orderActual: 100,
-        orderAmount: 100,
-        payType: 'alipay',
-        userPhone: '13800000000',
-        salerName: 'John Doe',
-        createdAt: new Date().getTime(),
+  const getSkusByStyleNo = async () => {
+    userLog('request sku list by sn params:', sn);
+    try {
+      const response = await request.get('/inventory/queryByStyle', {
+        params: {
+          sn,
+        },
       });
+      const result = response.data;
+      return {
+        data: result.data,
+        total: result.count,
+      };
+    } catch (error) {
+      message.error('查询库存失败');
     }
-    return {
-      data: dataSource,
-      total: dataSource.length
-    };
   };
 
   useEffect(() => {
-    // todo:发请求获取数据，该 SKU 的详情，该 SKU 对应的款号下面的更多 SKU 列表
-  }, [sku, sn]);
+    if (showPanel) {
+      getItemDetail();
+      getSkusByStyleNo();
+    }
+  }, [showPanel]);
 
   return (
     <>
@@ -103,9 +96,45 @@ const Detail: React.FC<ComProps> = (props) => {
         destroyOnClose={true}
       >
         <Descriptions
-          title="Item Info"
+          title={`Item Info`}
           bordered
-          items={items}
+          items={
+            [{
+              key: '1',
+              label: 'name',
+              children: itemInfo.name,
+            },
+            {
+              key: '2',
+              label: 'style no',
+              children: itemInfo.sn,
+            },
+            {
+              key: '3',
+              label: 'sku',
+              children: itemInfo.sku,
+            },
+            {
+              key: '4',
+              label: 'color',
+              children: itemInfo.color,
+            },
+            {
+              key: '5',
+              label: 'size',
+              children: itemInfo.size,
+            },
+            {
+              key: '5',
+              label: 'original',
+              children: itemInfo.originalPrice,
+            },
+            {
+              key: '5',
+              label: 'counts',
+              children: itemInfo.counts,
+            }]
+          }
           column={1}
           size='small'
           style={{ marginBottom: '24px' }}

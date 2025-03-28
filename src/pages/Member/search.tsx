@@ -1,3 +1,13 @@
+import { DatePicker } from 'antd';
+import type { GetProps } from 'antd';
+import dayjs from 'dayjs';
+
+type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
+
+const disabledDate: RangePickerProps['disabledDate'] = (current) => {
+  return current && current >= dayjs().endOf('day');
+};
+
 const schema = {
   type: 'object',
   labelWidth: 100,
@@ -6,9 +16,12 @@ const schema = {
       title: 'create time',
       bind: ['startDate', 'endDate'],
       type: 'range',
-      format: 'dateTime'
+      format: 'date',
+      props: {
+        disabledDate,
+      },
     },
-    userPhone: {
+    phone: {
       title: 'user phone',
       type: 'string',
       placeholder: 'input member phone',

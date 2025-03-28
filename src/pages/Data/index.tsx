@@ -1,9 +1,11 @@
 import React, { memo } from 'react';
 import type { StatisticProps } from 'antd';
-import { Card, Col, Row, Statistic, Menu } from 'antd';
+import { Card, Col, Row, Statistic, Menu, DatePicker } from 'antd';
+import type { GetProps } from 'antd';
 import { GithubFilled } from '@ant-design/icons';
 import { Column } from '@ant-design/plots';
 import CountUp from 'react-countup';
+import dayjs from 'dayjs';
 
 import PageTitle from '@/components/PageTitle';
 import MenuItem from '@components/MenuItem';
@@ -13,6 +15,9 @@ import style from './index.module.less';
 const formatter: StatisticProps['formatter'] = (value) => (
   <CountUp end={value as number} separator="," />
 );
+
+type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
+const { RangePicker } = DatePicker;
 
 const columnData = [
   {
@@ -106,16 +111,19 @@ const recentSaleList = [
   },
 ];
 
-const SummaryPage: React.FC = () => {
+const DataPage: React.FC = () => {
+  const disabledDate: RangePickerProps['disabledDate'] = (current) => {
+    return current && current >= dayjs().endOf('day');
+  };
   return (
     <div className={style.container}>
-      <PageTitle text={`Dashboard`} />
+      <PageTitle text={`Dashboard`} extra={<RangePicker disabledDate={disabledDate} />} />
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={6}>
           <Card className={style.card}>
             <Statistic
               title={`Order Amounts(CNY)`}
-              value={1128}
+              value={11280}
               precision={2}
               formatter={formatter}
             />
@@ -126,7 +134,6 @@ const SummaryPage: React.FC = () => {
             <Statistic
               title={`Order Counts`}
               value={9}
-              precision={2}
               formatter={formatter}
             />
           </Card>
@@ -136,7 +143,6 @@ const SummaryPage: React.FC = () => {
             <Statistic
               title={`Inventory Counts`}
               value={89000}
-              precision={2}
               formatter={formatter}
             />
           </Card>
@@ -146,7 +152,6 @@ const SummaryPage: React.FC = () => {
             <Statistic
               title={`Member Counts`}
               value={900}
-              precision={2}
               formatter={formatter}
             />
           </Card>
@@ -175,4 +180,4 @@ const SummaryPage: React.FC = () => {
 
 };
 
-export default memo(SummaryPage);
+export default memo(DataPage);

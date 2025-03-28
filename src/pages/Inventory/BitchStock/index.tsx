@@ -5,7 +5,11 @@ import { InboxOutlined } from '@ant-design/icons';
 
 const { Dragger } = Upload;
 
-const BitchStock: React.FC = (props) => {
+type ComProps = {
+  callback: () => void;
+};
+
+const BitchStock: React.FC<ComProps> = (props) => {
   const [showPanel, setShowPanel] = useState(false);
 
   const togglePanel = () => {

@@ -1,9 +1,10 @@
 import React, { memo, useRef } from 'react';
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
-import { Space } from 'antd';
+import { message, Space } from 'antd';
 
 import { userLog } from '@/common/electron';
+import request from '@common/request';
 import PageTitle from '@/components/PageTitle';
 
 import search from './search';
@@ -13,29 +14,23 @@ import SingleStock from './SingleStock';
 
 import style from './index.module.less';
 
-const dataSource = [];
-for (let i = 0; i < 60; i++) {
-  dataSource.push({
-    userId: 20250319001,
-    userPoint: 1000,
-    userAmount: 100,
-    userPhone: '13800000000',
-    userName: 'John Doe',
-    userBalance: 100,
-    userBirthday: '1990-01-01',
-    createdAt: new Date().getTime(),
-  });
-}
-
 const InventroyPage: React.FC = () => {
   const tableRef = useRef<TableContext>(null);
 
-  const getInventroyList = (t) => {
+  const getInventroyList = async (t) => {
     userLog('request inventroy list params:', t);
-    return {
-      data: dataSource,
-      total: dataSource.length
-    };
+    try {
+      const response = await request.get('/inventory/queryList', {
+        params: t,
+      });
+      const result = response.data;
+      return {
+        data: result.data,
+        total: result.count,
+      };
+    } catch (error) {
+      message.error('查询库存失败');
+    }
   };
 
   const refreshData = () => {
@@ -54,8 +49,8 @@ const InventroyPage: React.FC = () => {
         scroll={{ x: 'max-content' }}
         toolbarRender={ 
           <Space>
-            <BitchStock />
-            <SingleStock />
+            <BitchStock callback={refreshData} />
+            <SingleStock callback={refreshData} />
           </Space>
         }
       />

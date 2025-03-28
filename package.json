@@ -5,9 +5,8 @@
   "main": "dist/electron/main.js",
   "scripts": {
     "before:pack": "tsc -p tsconfig.electron.json",
-    "dev": "vite",
-    "dev:pack": "npm run build && npm run before:pack && chcp 65001 | vite --open=false -m electron",
     "build": "vite build",
+    "dev": "npm run before:pack && vite --open=false -m electron",
     "pack:win": "npm run build && npm run before:pack && electron-builder --win --ia32",
     "pack:mac": "npm run build && npm run before:pack && electron-builder --mac",
     "postinstall": "electron-builder install-app-deps",
@@ -41,7 +40,6 @@
     "form-render": "latest",
     "table-render": "latest",
     "lodash-es": "^4.17.21",
-    "lowdb": "^7.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-countup":"6.5.3",

@@ -1,12 +1,33 @@
+import { DatePicker } from 'antd';
+import type { GetProps } from 'antd';
+import dayjs from 'dayjs';
+
+import { getStore } from '@common/electron';
+
+type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
+
+const disabledDate: RangePickerProps['disabledDate'] = (current) => {
+  return current && current >= dayjs().endOf('day');
+};
+
+const salerList = getStore('salerList') || [];
+const newSalers = [];
+salerList.forEach((item) => {
+  newSalers.push({ value: item.id, label: item.name });
+});
+
 const schema = {
   type: 'object',
   labelWidth: 100,
   properties: {
     createdAt: {
       title: 'create time',
-      bind: ['startDate', 'endDate'],
+      bind: ['start', 'end'],
       type: 'range',
-      format: 'dateTime'
+      format: 'date',
+      props: {
+        disabledDate,
+      },
     },
     userPhone: {
       title: 'user phone',
@@ -34,10 +55,14 @@ const schema = {
       type: 'string',
       placeholder: 'input order sn',
     },
-    salerName: {
+    salerId: {
       title: 'saler name',
       type: 'string',
-      placeholder: 'input saler name',
+      widget: 'select',
+      props: {
+        options: newSalers,
+      },
+      placeholder: 'select saler name',
     },
   }
 };

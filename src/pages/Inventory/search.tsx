@@ -2,6 +2,11 @@ const schema = {
   type: 'object',
   labelWidth: 100,
   properties: {
+    sku: {
+      title: 'sku code',
+      type: 'string',
+      placeholder: 'input sku code',
+    },
     sn: {
       title: 'style no',
       type: 'string',
@@ -11,6 +16,11 @@ const schema = {
       title: 'item name',
       type: 'string',
       placeholder: 'input item name',
+    },
+    brand: {
+      title: 'item brand',
+      type: 'string',
+      placeholder: 'input item brand',
     },
   }
 };

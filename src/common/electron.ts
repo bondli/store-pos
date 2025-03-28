@@ -8,7 +8,7 @@ const win: any = window;
 const isInElectron = navigator.userAgent.toLowerCase().indexOf(' electron/') > -1;
 const ipcRenderer = win.electron?.ipcRenderer || {};
 
-const _setStore = (key, value) => {
+export const setStore = (key, value) => {
   if (!isInElectron) {
     win.localStorage.setItem(key, value);
     return;
@@ -16,14 +16,14 @@ const _setStore = (key, value) => {
   ipcRenderer.setStoreValue(key, value);
 }
 
-const _getStore = (key) => {
+export const getStore = (key) => {
   if (!isInElectron) {
     return win.localStorage.getItem(key);
   }
   return ipcRenderer.getStoreValue(key);
 }
 
-const _deleteStore = (key) => {
+export const deleteStore = (key) => {
   if (!isInElectron) {
     win.localStorage.removeItem(key);
     return;
@@ -31,20 +31,35 @@ const _deleteStore = (key) => {
   ipcRenderer.deleteStore(key);
 }
 
-// 保存登录的用户信息
-export const saveLoginData = (data) => {
-  _setStore('loginData', data);
-}
+// // 保存登录的用户信息
+// export const saveLoginData = (data) => {
+//   _setStore('loginData', data);
+// }
 
-// 获取用户的登录信息
-export const getLoginData = () => {
-  return _getStore('loginData');
-}
+// // 获取用户的登录信息
+// export const getLoginData = () => {
+//   return _getStore('loginData');
+// }
 
-// 删除登录的用户信息
-export const deleteLoginData = () => {
-  _deleteStore('loginData');
-}
+// // 删除登录的用户信息
+// export const deleteLoginData = () => {
+//   _deleteStore('loginData');
+// }
+
+// // 保存导购员列表
+// export const saveSalerList = (data) => {
+//   _setStore('salerList', data);
+// }
+
+// // 获取导购员列表
+// export const getSalerList = () => {
+//   return _getStore('salerList');
+// }
+
+// // 删除导购员列表
+// export const deleteSalerList = () => {
+//   _deleteStore('salerList');
+// }
 
 // 打日志
 export const userLog = (msg: any, msgData?: any) => {
@@ -74,9 +89,9 @@ export const importData = () => {
 }
 
 const ElectronBridge = {
-  saveLoginData,
-  getLoginData,
-  deleteLoginData,
+  setStore,
+  getStore,
+  deleteStore,
   userLog,
   exportData,
   importData,

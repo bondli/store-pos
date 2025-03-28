@@ -1,3 +1,13 @@
+import { DatePicker } from 'antd';
+import type { GetProps } from 'antd';
+import dayjs from 'dayjs';
+
+type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
+
+const disabledDate: RangePickerProps['disabledDate'] = (current) => {
+  return current && current >= dayjs().endOf('day');
+};
+
 export default {
   type: 'object',
   properties: {
@@ -17,10 +27,13 @@ export default {
       widget: 'input'
     },
     birthday: {
-      title: 'user brithday',
-      placeholder: 'input user brithday',
+      title: 'user birthday',
+      placeholder: 'input user birthday',
       type: 'string',
-      widget: 'datePicker'
+      widget: 'datePicker',
+      props: {
+        disabledDate,
+      },
     },
   }
 };

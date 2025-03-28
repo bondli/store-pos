@@ -2,13 +2,16 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { ConfigProvider, notification } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
+
+import { MainProvider } from '@common/context';
+
 import App from './App';
 
 import 'antd/dist/reset.css';
 
 notification.config({
   placement: 'topRight',
-  top: 30,
+  top: 100,
   duration: 3,
   rtl: false,
 });
@@ -38,6 +41,8 @@ root.render(
       },
     }}
   >
-    <App />
+    <MainProvider>
+      <App />
+    </MainProvider>
   </ConfigProvider>,
 );

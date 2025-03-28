@@ -26,7 +26,7 @@ const MemberScore = sequelize.define('MemberScore', {
     defaultValue: 0,
   },
   reason: {
-  comment: '变动的原因',
+    comment: '变动的原因',
     type: DataTypes.STRING,
     allowNull: false,
   },

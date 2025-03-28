@@ -29,8 +29,6 @@ app.all('*', (req, res, next) => {
     // 启动服务器
     app.listen(9527, () => {
       logger.info('Server is running on port 9527');
-      // eslint-disable-next-line no-undef
-      // process.send('Server Ready');
     });
   } catch (error) {
     logger.error('Error starting server:', error);

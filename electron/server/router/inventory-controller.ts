@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 import logger from 'electron-log';
 import { Inventory } from '../model/inventory';
 
@@ -17,16 +18,37 @@ export const queryInventoryTotal = async (req: Request, res: Response) => {
 
 // 按款号展示所有的库存
 export const queryInventoryList = async (req: Request, res: Response) => {
-  const { sn, pageSize, pageNum } = req.query;
+  const { sn, sku, name, brand, pageSize, current } = req.query;
   const limit = Number(pageSize);
-  const offset = (Number(pageNum) - 1) * limit;
+  const offset = (Number(current) - 1) * limit;
+  const where = {};
+
+  if (sn) {
+    where['sn'] = {
+      [Op.substring]: sn,
+    };
+  }
+  if (sku) {
+    where['sku'] = {
+      [Op.substring]: sku,
+    };
+  }
+  if (name) {
+    where['name'] = {
+      [Op.substring]: name,
+    };
+  }
+  if (brand) {
+    where['brand'] = {
+      [Op.substring]: brand,
+    };
+  }
   try {
     const { count, rows } = await Inventory.findAndCountAll({
-      where: { sn },
+      where,
       order: [['createdAt', 'DESC']],
       limit,
       offset,
-      group: ['sn'],
     });
     res.json({
       count: count || 0,
@@ -75,7 +97,7 @@ export const updateInventory = async (req: Request, res: Response) => {
 };
 
 // 根据 SKU 查询库存数量
-export const queryInventoryDetailBySku = async (req: Request, res: Response) => {
+export const queryDetailBySku = async (req: Request, res: Response) => {
   const { sku } = req.query;
   try {
     const result = await Inventory.findOne({
@@ -88,6 +110,28 @@ export const queryInventoryDetailBySku = async (req: Request, res: Response) => 
     }
   } catch (error) {
     logger.error('Error getting Inventory:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// 单个入库
+export const createInventory = async (req: Request, res: Response) => {
+  const { sn, sku, name, brand, color, size, originalPrice, costPrice, counts } = req.body;
+  try {
+    // 先判断该SKU是否已经存在
+    const resultCheckExists = await Inventory.findOne({
+      where: {
+        sku,
+      },
+    });
+    if (resultCheckExists === null) {
+      const result = await Inventory.create({ sn, sku, name, brand, color, size, originalPrice, costPrice, counts });
+      res.status(200).json(result.toJSON());
+    } else {
+      res.json({ error: 'sku had exists' });
+    }
+  } catch (error) {
+    logger.error('Error creating sku:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

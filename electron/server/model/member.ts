@@ -17,26 +17,27 @@ const Member = sequelize.define('Member', {
   actual: {
     comment: '消费金额',
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
+    allowNull: true,
+    defaultValue: 0,
   },
   point: {
     comment: '积分余额',
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     defaultValue: 0,
   },
   balance: {
     comment: '余额',
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
+    allowNull: true,
     defaultValue: 0,
   },
   name: {
     comment: '会员名',
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
-  brithday: {
+  birthday: {
     comment: '生日',
     type: DataTypes.STRING,
     allowNull: true,

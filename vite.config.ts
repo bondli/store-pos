@@ -53,16 +53,13 @@ export default defineConfig(({ command, mode }) => {
         '@': getPath('src'),
         '@public': getPath('public'),
         '@common': getPath('src/common'),
+        '@components': getPath('src/components'),
         '@modules': getPath('src/modules'),
         '@pages': getPath('src/pages'),
-        '@components': getPath('src/components'),
-        '@services': getPath('src/services'),
-        '@types': getPath('src/types'),
       },
     },
     server: {
       cors: true,
-      // 在开发服务器启动时自动在浏览器中打开应用程序
       open: true,
       hmr: true,
       host: true,

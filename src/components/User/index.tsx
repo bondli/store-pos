@@ -1,30 +1,21 @@
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
 import { GithubFilled, CloudDownloadOutlined, CloudUploadOutlined, CloudSyncOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Avatar, Dropdown, Space, message, Modal } from 'antd';
+import { Dropdown, Space, message, Modal } from 'antd';
 
-import ElectronBridge from '@common/electron';
+import ElectronBridge, { deleteStore, userLog } from '@common/electron';
+import { MainContext } from '@common/context';
 
 import style from './index.module.less';
 
-type UserProps = {
-  info: {
-    name: string;
-    avatar: string;
-  };
-};
-
-const User: React.FC<UserProps> = (props) => {
-  const [messageApi, msgContextHolder] = message.useMessage();
+const User: React.FC = () => {
+  const { userInfo, setUserInfo } = useContext(MainContext);
   const [modalApi, modalContextHolder] = Modal.useModal();
-
-  const { info } = props;
-  const { name, avatar } = info;
 
   const items: MenuProps['items'] = [
     {
       key: '1',
-      label: name,
+      label: userInfo?.name,
       disabled: true,
     },
     {
@@ -50,41 +41,35 @@ const User: React.FC<UserProps> = (props) => {
   ];
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     const { key } = e;
-    ElectronBridge.userLog('Click MainMenu: ', key);
+    userLog('Click MainMenu: ', key);
     // 导出数据
     if (key === '2') {
       ElectronBridge.exportData();
-      messageApi.open({
-        type: 'success',
-        content: '数据导出成功，请在下载目录下检查是否存在文件：easynote-database.db',
-      });
+      message.success('数据导出成功，请在下载目录下检查是否存在文件：storepos-database.db');
     }
     // 本地恢复数据
     else if (key === '3') {
       modalApi.confirm({
         title: '确认恢复数据？',
-        content: '请确认已将数据文件命名成：easynote-database.db，并放在Downloads目录下。',
+        content: '请确认已将数据文件命名成：storepos-database.db，并放在Downloads目录下。',
         onOk() {
           ElectronBridge.importData();
-          messageApi.open({
-            type: 'warning',
-            content: '本地数据已导入，请检查是否正确',
-          });
+          message.warning('本地数据已导入，请检查是否正确');
         }
       });
     }
     // 刷新下数据，首次进入存在一定概率的调研接口失败
     else if (key === '4') {
-      messageApi.open({
-        type: 'success',
-        content: '同步成功',
-      });
+      message.success('同步成功');
+      window.location.reload();
       return;
     }
     // 退出登录
     else if (key === '5') {
-      ElectronBridge.deleteLoginData();
-      window.location.reload();
+      deleteStore('loginData');
+      deleteStore('salerList');
+      message.success(`退出系统成功`);
+      setUserInfo(null);
       return;
     }
   };
@@ -98,20 +83,11 @@ const User: React.FC<UserProps> = (props) => {
     <div className={style.container}>
       <Dropdown menu={menuProps} trigger={['click']}>
         <Space className={style.userInfoContainer}>
-          {
-            avatar.length > 2 ? (
-              <Avatar style={{ backgroundColor: '#18181b', verticalAlign: 'middle' }} size="small">
-                {avatar}
-              </Avatar>
-            ) : (
-              <GithubFilled style={{ fontSize: '22px', verticalAlign: 'middle' }} />
-            )
-          }
-          <div className={style.name}>{name}</div>
+          <GithubFilled style={{ fontSize: '22px', verticalAlign: 'middle' }} />
+          <div className={style.name}>{userInfo?.name}</div>
         </Space>
       </Dropdown>
       <div>{modalContextHolder}</div>
-      <div>{msgContextHolder}</div>
     </div>
   );
 };

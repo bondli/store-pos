@@ -20,7 +20,7 @@ const Summary: React.FC = (props) => {
         summary
       </Button>
       <Drawer
-        title="Query Result of Order's Summary"
+        title={`Query Result of Order's Summary`}
         height={410}
         placement={`top`}
         open={showPanel}
@@ -30,7 +30,7 @@ const Summary: React.FC = (props) => {
           <Col span={8}>
             <Card className={style.card}>
               <Statistic
-                title="Order amounts(CNY)"
+                title={`Order amounts(CNY)`}
                 value={1128}
                 precision={2}
               />
@@ -39,30 +39,28 @@ const Summary: React.FC = (props) => {
           <Col span={8}>
             <Card className={style.card}>
               <Statistic
-                title="Order counts"
+                title={`Order counts`}
                 value={9}
-                precision={2}
               />
             </Card>
           </Col>
           <Col span={8}>
             <Card className={style.card}>
               <Statistic
-                title="inventory counts"
+                title={`inventory counts`}
                 value={89000}
-                precision={2}
               />
             </Card>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col span={24}>
-            <Card title="order amount by pay channel" className={style.card}>
+            <Card title={`order amount by pay channel`} className={style.card}>
               <div className={style.cardByPayChannel}>
-                <Statistic title="alipay(CNY)" value={112893} />
-                <Statistic title="weixin(CNY)" value={112893} />
-                <Statistic title="cash(CNY)" value={112893} />
-                <Statistic title="card(CNY)" value={112893} />
+                <Statistic title={`alipay(CNY)`} precision={2} value={6000} />
+                <Statistic title={`weixin(CNY)`} precision={2} value={7500} />
+                <Statistic title={`cash(CNY)`} precision={2} value={800} />
+                <Statistic title={`card(CNY)`} precision={2} value={2121} />
               </div>
             </Card>
           </Col>

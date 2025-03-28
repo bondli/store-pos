@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 import logger from 'electron-log';
 import { Member } from '../model/member';
 import { MemberScore } from '../model/memberScore';
 
 // 新增会员
 export const createMember = async (req: Request, res: Response) => {
-  const { phone, name, brithday } = req.body;
+  const { phone, name, birthday } = req.body;
   try {
     // 先判断该手机号是否已经存在
     const resultCheckExists = await Member.findOne({
@@ -14,7 +15,7 @@ export const createMember = async (req: Request, res: Response) => {
       },
     });
     if (resultCheckExists === null) {
-      const result = await Member.create({ phone, name, brithday });
+      const result = await Member.create({ phone, name, birthday });
       res.status(200).json(result.toJSON());
     } else {
       res.json({ error: 'member had exists' });
@@ -47,12 +48,32 @@ export const getMemberInfo = async (req: Request, res: Response) => {
 
 // 查询所有会员
 export const getMemberList = async (req: Request, res: Response) => {
-  const { orderSn, userPhone, pageSize, pageNum } = req.query;
+  const { startDate, endDate, phone, pageSize, current } = req.query;
   const limit = Number(pageSize);
-  const offset = (Number(pageNum) - 1) * limit;
+  const offset = (Number(current) - 1) * limit;
+  const where = {};
+  // 处理起止时间
+  if (startDate && endDate) {
+    const startTmp = new Date(startDate as string);
+    const endTmp = new Date(endDate as string);
+    const start = new Date(startTmp.getFullYear(), startTmp.getMonth(), startTmp.getDate());
+    const end = new Date(endTmp.getFullYear(), endTmp.getMonth(), endTmp.getDate(), 23, 59, 59, 999);
+    where['createdAt'] = {
+      [Op.gte]: start,
+      [Op.lte]: end,
+    };
+  }
+
+  // 处理phone查询
+  if (phone) {
+    where['phone'] = {
+      [Op.substring]: phone,
+    };
+  }
+
   try {
     const { count, rows } = await Member.findAndCountAll({
-      where: { orderSn, userPhone },
+      where,
       order: [['createdAt', 'DESC']],
       limit,
       offset,
@@ -62,7 +83,7 @@ export const getMemberList = async (req: Request, res: Response) => {
       data: rows || [],
     });
   } catch (error) {
-    logger.error('Error getting Members:', error);
+    logger.error('Error query Member list:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

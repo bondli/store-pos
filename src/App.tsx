@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import ElectronBridge, { userLog } from '@common/electron';
+import React, { useState, useEffect, useContext } from 'react';
+import { userLog, getStore } from '@common/electron';
+
+import { MainContext } from '@common/context';
+
 import UserPage from '@/modules/UserPage';
 import MainPage from '@/modules/MainPage';
 
-type LoginData = {
-  id: number;
-  name: string;
-  avatar: string;
-};
-
 const App: React.FC = () => {
+  const { userInfo, setUserInfo } = useContext(MainContext);
   const [loading, setLoading] = useState(true);
-  const [userInfo, setUserInfo] = useState<any>(null);
 
   useEffect(() => {
     // 判断是否初始化了用户
-    const loginData = ElectronBridge.getLoginData() || {};
+    const loginData = getStore('loginData') || {};
     userLog('app startup:', loginData);
     const { id, name, avatar } = loginData;
     if (id && name && avatar) {
@@ -24,11 +21,6 @@ const App: React.FC = () => {
     setLoading(false);
   }, []);
 
-  const handleLogin = (data: LoginData) => {
-    ElectronBridge.saveLoginData(data);
-    setUserInfo(data);
-  };
-
   // 避免一进来还在获取本地缓存数据的时候显示了登录的问题
   if (loading) {
     return null;
@@ -36,10 +28,10 @@ const App: React.FC = () => {
   }
 
   if (!userInfo || !userInfo.id) {
-    return <UserPage callback={handleLogin} />;
+    return <UserPage />;
   }
 
-  return <MainPage userInfo={userInfo} />;
+  return <MainPage />;
 };
 
 export default App;

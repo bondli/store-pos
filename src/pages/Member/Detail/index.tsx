@@ -1,9 +1,11 @@
-import React, { memo, useState } from 'react';
-import { Button, Drawer, Descriptions } from 'antd';
-import type { DescriptionsProps } from 'antd';
+import React, { memo, useState, useEffect } from 'react';
+import { Button, Drawer, Descriptions, message } from 'antd';
 
-import TableRender, { TableContext } from 'table-render';
+import TableRender from 'table-render';
 import type { ProColumnsType } from 'table-render';
+
+import { userLog } from '@/common/electron';
+import request from '@common/request';
 
 import Box from '@/components/Box';
 
@@ -12,43 +14,49 @@ import orderColumns from './order';
 type ComProps = {
   userPhone: string;
 };
+const defaultMemberInfo = {
+  phone: '',
+  name: '',
+  birthday: '',
+  actual: 0,
+  point: 0,
+  balance: 0,
+};
 
 const Detail: React.FC<ComProps> = (props) => {
   const { userPhone } = props;
 
   const [showPanel, setShowPanel] = useState(false);
+  const [memberInfo, setMemberInfo] = useState(defaultMemberInfo);
   
   const togglePanel = () => {
     setShowPanel(!showPanel);
   };
 
-  const items: DescriptionsProps['items'] = [
-    {
-      key: '1',
-      label: 'Telephone',
-      children: userPhone,
-    },
-    {
-      key: '2',
-      label: 'user name',
-      children: '1810000000',
-    },
-    {
-      key: '3',
-      label: 'brithday',
-      children: '2012/02/02',
-    },
-    {
-      key: '4',
-      label: 'points',
-      children: '1000',
-    },
-    {
-      key: '5',
-      label: 'balance',
-      children: '0.00',
-    },
-  ];
+  // 获取用户信息
+  const getMemberDetail = async () => {
+    userLog('request member detail params:', userPhone);
+    try {
+      const response = await request.get('/member/detail', {
+        params: {
+          phone: userPhone,
+        },
+      });
+      const result = response.data;
+      if (!result.error) {
+        setMemberInfo(result);
+      }
+
+    } catch (error) {
+      message.error('查询会员失败');
+    }
+  };
+
+  useEffect(() => {
+    if (showPanel) {
+      getMemberDetail();
+    }
+  }, [showPanel]);
 
   const getUserOrders = () => {
     const dataSource = [];
@@ -89,7 +97,33 @@ const Detail: React.FC<ComProps> = (props) => {
         <Descriptions
           title={`User Info`}
           bordered
-          items={items}
+          items={
+            [{
+              key: '1',
+              label: 'Telephone',
+              children: userPhone,
+            }, {
+              key: '2',
+              label: 'user name',
+              children: memberInfo.name,
+            }, {
+              key: '3',
+              label: 'birthday',
+              children: memberInfo.birthday,
+            }, {
+              key: '4',
+              label: 'order actual',
+              children: memberInfo.actual,
+            }, {
+              key: '5',
+              label: 'points',
+              children: memberInfo.point,
+            }, {
+              key: '6',
+              label: 'balance',
+              children: memberInfo.balance,
+            }]
+          }
           column={1}
           size='small'
           style={{ marginBottom: '24px' }}

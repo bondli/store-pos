@@ -27,7 +27,13 @@ const Editor: React.FC<ComProps> = (props) => {
   useEffect(() => {
     // 发请求得到该 SKU 下的库存，仅仅只能修改库存
     form.setValues({
+      sku,
+      sn,
       counts: 1,
+      name: '',
+      brand: '',
+      color: '',
+      size: ''
     });
   }, [form, sku, sn]);
 

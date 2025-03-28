@@ -1,14 +1,34 @@
 import React, { memo, useState } from 'react';
-import { Button, Drawer } from 'antd';
+import { Button, Drawer, message } from 'antd';
 import FormRender, { useForm } from 'form-render';
+
+import request from '@common/request';
 
 import schema from './schema';
 
-const NewJoin: React.FC = (props) => {
+type ComProps = {
+  callback: () => void;
+};
+
+const NewJoin: React.FC<ComProps> = (props) => {
+  const { callback } = props;
   const form = useForm();
 
-  const onFinish = (formData) => {
+  const onFinish = async (formData) => {
     console.log('formData:', formData);
+    try {
+      const response = await request.post('/member/create', formData);
+
+      if (response.data?.error) {
+        message.error(response.data?.error || '新增会员失败');
+      } else {
+        message.success('新增会员成功');
+        setShowPanel(false);
+        callback && callback();
+      }
+    } catch (error) {
+      message.error('新增会员失败');
+    }
   };
 
   const [showPanel, setShowPanel] = useState(false);

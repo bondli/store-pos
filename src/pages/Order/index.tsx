@@ -1,7 +1,10 @@
 import React, { memo, useState, useRef } from 'react';
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
-import { Space } from 'antd';
+import { message, Space } from 'antd';
+
+import { userLog } from '@/common/electron';
+import request from '@common/request';
 import PageTitle from '@/components/PageTitle';
 
 import search from './search';
@@ -11,32 +14,25 @@ import CheckBill from './CheckBill';
 
 import style from './index.module.less';
 
-const dataSource = [];
-for (let i = 0; i < 60; i++) {
-  dataSource.push({
-    orderSn: '20250319001',
-    orderStatus: i % 2 === 0 ? 'uncheck' : 'checked',
-    orderItems: i,
-    orderActual: 100,
-    orderAmount: 100,
-    payType: 'alipay',
-    userPhone: '13800000000',
-    salerName: 'John Doe',
-    createdAt: new Date().getTime(),
-  });
-}
-
 const OrderPage: React.FC = () => {
   const tableRef = useRef<TableContext>(null);
   const [dataList, setDataList] = useState([]);
   
-  const getOrderList = (t) => {
-    console.log(t);
-    setDataList(dataSource);
-    return {
-      data: dataSource,
-      total: dataSource.length
-    };
+  const getOrderList = async (t) => {
+    userLog('request inventroy list params:', t);
+    try {
+      const response = await request.get('/order/queryList', {
+        params: t,
+      });
+      const result = response.data;
+      setDataList(result.data);
+      return {
+        data: result.data,
+        total: result.count,
+      };
+    } catch (error) {
+      message.error('查询订单失败');
+    }
   };
 
   const refreshData = () => {
