@@ -1,50 +1,46 @@
 const itemColumns = [
   {
-    title: 'order sn',
-    dataIndex: 'orderSn',
-    key: 'orderSn',
+    title: 'style no',
+    dataIndex: 'sn',
+    key: 'sn',
     fixed: 'left',
   },
   {
-    title: 'order amount',
-    align: 'right',
-    dataIndex: 'orderAmount',
-    key: 'orderAmount',
+    title: 'sku code',
+    dataIndex: 'sku',
+    key: 'sku',
+  },
+  {
+    title: 'color',
+    dataIndex: 'color',
+    key: 'color',
+  },
+  {
+    title: 'size',
+    key: 'size',
+    dataIndex: 'size',
+  },
+  {
+    title: 'original',
+    key: 'originalPrice',
+    dataIndex: 'originalPrice',
     valueType: 'money',
   },
   {
-    title: 'order actual',
-    align: 'right',
-    dataIndex: 'orderActual',
-    key: 'orderActual',
+    title: 'actual',
+    key: 'actualPrice',
+    dataIndex: 'actualPrice',
     valueType: 'money',
   },
   {
-    title: 'order items',
-    align: 'center',
-    key: 'orderItems',
-    dataIndex: 'orderItems',
+    title: 'disCout',
+    dataIndex: 'counts', // todo:待实现
+    key: 'counts1',
   },
   {
-    title: 'pay channel',
-    dataIndex: 'payType',
-    key: 'payType',
-    enum: {
-      alipay: '支付宝',
-      weixin: '微信',
-      cash: '现金',
-      card: '银行卡',
-      other: '其他',
-    },
-  },
-  {
-    title: 'create time',
-    dataIndex: 'createdAt',
-    key: 'createdAt',
-    valueType: 'dateTime',
-    valueTypeProps: {
-      format: 'YYYY/MM/DD HH:mm:ss'
-    }
+    title: 'counts',
+    dataIndex: 'counts',
+    key: 'counts',
   },
 ];
 

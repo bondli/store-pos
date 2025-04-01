@@ -1,28 +1,31 @@
 export default {
   type: 'object',
   properties: {
-    phone: {
-      title: 'user phone',
+    payType: {
+      title: 'Pay Type',
       type: 'string',
       required: true,
-      max: 11,
-      min: 11,
-      placeholder: 'input user phone',
+      placeholder: 'select pay type',
+      widget: 'Select',
+    },
+    orderActualMount: {
+      title: 'Actual Mount',
+      placeholder: 'input actual mount',
+      type: 'string',
       widget: 'input',
-      readonly: true,
-      disabled: true,
     },
-    name: {
-      title: 'user name',
-      placeholder: 'input user name',
+    salerId: {
+      title: 'Saler',
+      placeholder: 'select saler',
       type: 'string',
-      widget: 'input'
+      required: true,
+      widget: 'Select',
     },
-    birthday: {
-      title: 'user brithday',
-      placeholder: 'input user brithday',
+    user: {
+      title: 'User',
+      placeholder: 'input user phone',
       type: 'string',
-      widget: 'datePicker'
+      widget: 'input',
     },
   }
 };

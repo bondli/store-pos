@@ -19,8 +19,35 @@ export const queryOrderTotal = async (req: Request, res: Response) => {
 export const queryOrderCharts = async (req: Request, res: Response) => {
 
 };
-export const queryOrderItemList = async (req: Request, res: Response) => {
 
+// 查询订单中的商品列表
+export const queryOrderItemList = async (req: Request, res: Response) => {
+  const { orderSn } = req.query;
+
+  const where = {};
+
+  // 处理orderSn查询
+  if (orderSn) {
+    where['orderSn'] = {
+      [Op.eq]: orderSn,
+    };
+  }
+
+  try {
+    const { count, rows } = await OrderItems.findAndCountAll({
+      where,
+      order: [['createdAt', 'DESC']],
+      limit: 100, // 每个订单中的商品数量上限是100个（约定）
+      offset: 0,
+    });
+    res.json({
+      count: count || 0,
+      data: rows || [],
+    });
+  } catch (error) {
+    logger.error('Error getting Order items:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 };
   
 // 查询订单列表

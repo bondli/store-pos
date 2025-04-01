@@ -19,6 +19,7 @@ export default {
     brand: {
       title: 'brand',
       type: 'string',
+      required: true,
       widget: 'input',
       readonly: true,
       disabled: true,
@@ -26,6 +27,7 @@ export default {
     color: {
       title: 'color',
       type: 'string',
+      required: true,
       widget: 'input',
       readonly: true,
       disabled: true,
@@ -33,6 +35,7 @@ export default {
     size: {
       title: 'color',
       type: 'string',
+      required: true,
       widget: 'input',
       readonly: true,
       disabled: true,
@@ -40,6 +43,7 @@ export default {
     counts: {
       title: 'counts',
       type: 'number',
+      required: true,
       widget: 'input',
     },
   }

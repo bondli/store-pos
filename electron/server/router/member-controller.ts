@@ -67,7 +67,7 @@ export const getMemberList = async (req: Request, res: Response) => {
   // 处理phone查询
   if (phone) {
     where['phone'] = {
-      [Op.substring]: phone,
+      [Op.eq]: phone,
     };
   }
 
@@ -90,8 +90,7 @@ export const getMemberList = async (req: Request, res: Response) => {
 
 // 更新会员信息
 export const updateMember = async (req: Request, res: Response) => {
-  const { phone } = req.query;
-  const { name, brithday } = req.body;
+  const { phone, name, brithday } = req.body;
   try {
     const resultCheckExists = await Member.findOne({
       where: {

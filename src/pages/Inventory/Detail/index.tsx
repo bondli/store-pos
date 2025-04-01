@@ -50,7 +50,7 @@ const Detail: React.FC<ComProps> = (props) => {
       }
 
     } catch (error) {
-      message.error('查询会员失败');
+      message.error('查询库存失败');
     }
   };
 
@@ -141,7 +141,7 @@ const Detail: React.FC<ComProps> = (props) => {
         />
 
         <Box
-          title={`The Style's SKU List`}
+          title={`The ${sn}'s SKU List`}
           content={
             <TableRender
               request={getSkusByStyleNo as any}

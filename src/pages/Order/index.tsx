@@ -19,7 +19,7 @@ const OrderPage: React.FC = () => {
   const [dataList, setDataList] = useState([]);
   
   const getOrderList = async (t) => {
-    userLog('request inventroy list params:', t);
+    userLog('request order list params:', t);
     try {
       const response = await request.get('/order/queryList', {
         params: t,

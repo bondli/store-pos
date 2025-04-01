@@ -45,6 +45,13 @@ const OrderItems = sequelize.define('OrderItems', {
     allowNull: false,
     defaultValue: 0,
   },
+  // todo:待实现
+  // disCout: {
+  //   comment: '折扣',
+  //   type: DataTypes.DECIMAL(10, 2),
+  //   allowNull: true,
+  //   defaultValue: 100,
+  // },
   actualPrice: {
     comment: '实收价',
     type: DataTypes.DECIMAL(10, 2),

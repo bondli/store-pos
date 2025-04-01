@@ -1,9 +1,13 @@
-import React, { memo, useState } from 'react';
-import { Button, Drawer, Descriptions } from 'antd';
-import type { DescriptionsProps } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Drawer, Descriptions, message } from 'antd';
+import dayjs from 'dayjs';
 
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
+
+import { PAY_CHANNEL } from '@common/constant';
+import { userLog } from '@/common/electron';
+import request from '@common/request';
 
 import Box from '@/components/Box';
 
@@ -13,61 +17,68 @@ type ComProps = {
   orderSn: string;
 };
 
+const defaultOrderInfo = {
+  orderSn: '',
+  createdAt: '',
+  orderAmount: 0,
+  orderActualAmount: 0,
+  orderItems: 0,
+  payType: '',
+  userPhone: '',
+  salerName: '',
+};
+
 const Detail: React.FC<ComProps> = (props) => {
   const { orderSn } = props;
 
   const [showPanel, setShowPanel] = useState(false);
+  const [orderInfo, setOrderInfo] = useState(defaultOrderInfo);
   
   const togglePanel = () => {
     setShowPanel(!showPanel);
   };
 
-  const items: DescriptionsProps['items'] = [
-    {
-      key: '1',
-      label: 'Telephone',
-      children: orderSn,
-    },
-    {
-      key: '2',
-      label: 'user name',
-      children: '1810000000',
-    },
-    {
-      key: '3',
-      label: 'brithday',
-      children: '2012/02/02',
-    },
-    {
-      key: '4',
-      label: 'points',
-      children: '1000',
-    },
-    {
-      key: '5',
-      label: 'balance',
-      children: '0.00',
-    },
-  ];
-
-  const getOrderItems = () => {
-    const dataSource = [];
-    for (let i = 0; i < 6; i++) {
-      dataSource.push({
-        orderSn: '20250319001',
-        orderStatus: i % 2 === 0 ? 'uncheck' : 'checked',
-        orderItems: i,
-        orderActual: 100,
-        orderAmount: 100,
-        payType: 'alipay',
-        salerName: 'John Doe',
-        createdAt: new Date().getTime(),
+  // 获取订单信息
+  const getOrderDetail = async () => {
+    userLog('request order detail params:', orderSn);
+    try {
+      const response = await request.get('/order/queryDetail', {
+        params: {
+          orderSn,
+        },
       });
+      const result = response.data;
+      if (!result.error) {
+        setOrderInfo(result);
+      }
+
+    } catch (error) {
+      message.error('查询订单失败');
     }
-    return {
-      data: dataSource,
-      total: dataSource.length
-    };
+  };
+
+  useEffect(() => {
+    if (showPanel) {
+      getOrderDetail();
+    }
+  }, [showPanel]);
+
+  // 获取订单中商品列表
+  const getOrderItems = async () => {
+    try {
+      const response = await request.get('/order/queryItemList', {
+        params: {
+          orderSn,
+        },
+      });
+      const result = response.data;
+      return {
+        data: result.data,
+        total: result.count,
+      };
+    } catch (error) {
+      message.error('查询订单商品失败');
+    }
   };
 
   return (
@@ -88,7 +99,41 @@ const Detail: React.FC<ComProps> = (props) => {
         <Descriptions
           title={`Order Info`}
           bordered
-          items={items}
+          items={
+            [{
+              key: '1',
+              label: 'Order SN',
+              children: orderInfo.orderSn,
+            }, {
+              key: '2',
+              label: 'Order Time',
+              children: dayjs(orderInfo.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+            }, {
+              key: '3',
+              label: 'Order Amount',
+              children: orderInfo.orderAmount,
+            }, {
+              key: '4',
+              label: 'Order Actual',
+              children: orderInfo.orderActualAmount,
+            }, {
+              key: '5',
+              label: 'Pay type',
+              children: PAY_CHANNEL[orderInfo.payType] || 'unknown',
+            }, {
+              key: '6',
+              label: 'Order items',
+              children: orderInfo.orderItems,
+            }, {
+              key: '7',
+              label: 'User',
+              children: orderInfo.userPhone,
+            }, {
+              key: '8',
+              label: 'Saler',
+              children: orderInfo.salerName,
+            }]
+          }
           column={1}
           size='small'
           style={{ marginBottom: '24px' }}

@@ -58,25 +58,24 @@ const Detail: React.FC<ComProps> = (props) => {
     }
   }, [showPanel]);
 
-  const getUserOrders = () => {
-    const dataSource = [];
-    for (let i = 0; i < 6; i++) {
-      dataSource.push({
-        orderSn: '20250319001',
-        orderStatus: i % 2 === 0 ? 'uncheck' : 'checked',
-        orderItems: i,
-        orderActual: 100,
-        orderAmount: 100,
-        payType: 'alipay',
-        userPhone: '13800000000',
-        salerName: 'John Doe',
-        createdAt: new Date().getTime(),
+  // 查询会员订单
+  const getUserOrders = async (t) => {
+    userLog('request order list by user phone params:', t);
+    try {
+      const response = await request.get('/order/queryList', {
+        params: {
+          ...t,
+          userPhone,
+        },
       });
+      const result = response.data;
+      return {
+        data: result.data,
+        total: result.count,
+      };
+    } catch (error) {
+      message.error('查询会员订单失败');
     }
-    return {
-      data: dataSource,
-      total: dataSource.length
-    };
   };
 
   return (

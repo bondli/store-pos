@@ -1,7 +1,7 @@
 import { Space } from 'antd';
 import { InfoCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 
-import RemoveOrder from './RemoveOrder';
+// import RemoveOrder from './RemoveOrder';
 import Editor from './Editor';
 import Detail from './Detail';
 
@@ -91,7 +91,7 @@ const columns = [
         <Space>
           <Detail orderSn={row.orderSn} />
           <Editor orderSn={row.orderSn} />
-          <RemoveOrder orderSn={row.orderSn} />
+          {/* <RemoveOrder orderSn={row.orderSn} /> */}
         </Space>
       );
     }

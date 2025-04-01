@@ -102,6 +102,9 @@ const WaitSaleList: React.FC = () => {
               description={`${item.color} / ${item.size} / ¥${item.originalPrice}`}
             />
             <div className={style.waitSaleItemContent}>
+              {
+                //todo: 商品可以修改折扣
+              }
               <div>¥{item.salePrice}</div>
               <div className={style.waitSaleCount}>x{item.counts}</div>
             </div>

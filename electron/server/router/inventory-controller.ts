@@ -83,9 +83,12 @@ export const updateInventory = async (req: Request, res: Response) => {
   try {
     const { id } = req.query;
     const { sku, sn, name, color, size, brand, costPrice, originalPrice, counts } = req.body;
-    const result = await Inventory.findByPk(Number(id));
+    const result = await Inventory.findOne({
+      where: { sku },
+    });
     if (result) {
-      await result.update({ sku, sn, name, color, size, brand, costPrice, originalPrice, counts });
+      // await result.update({ sku, sn, name, color, size, brand, costPrice, originalPrice, counts });
+      await result.update({ counts });
       res.json(result.toJSON());
     } else {
       res.json({ error: 'Inventory not found' });

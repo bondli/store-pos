@@ -178,7 +178,7 @@ const BuyPageContainer: React.FC = () => {
                 size='middle' 
                 placeholder='input user phone' 
                 prefix={<UserOutlined />} 
-                allowClear 
+                allowClear
                 onSearch={handleMemberSearch}
               />
             }

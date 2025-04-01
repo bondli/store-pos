@@ -1,6 +1,6 @@
 import { Space } from 'antd';
 
-import RemoveUser from './RemoveUser';
+// import RemoveUser from './RemoveUser';
 import Editor from './Editor';
 import Detail from './Detail';
 
@@ -65,7 +65,7 @@ const columns = [
         <Space>
           <Detail userPhone={record.phone} />
           <Editor userPhone={record.phone} />
-          <RemoveUser userPhone={record.phone} />
+          {/* <RemoveUser userPhone={record.phone} /> */}
         </Space>
       );
     }
