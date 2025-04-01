@@ -10,6 +10,8 @@ import request from '@common/request';
 import Box from '@/components/Box';
 
 import orderColumns from './order';
+import pointColumns from './point';
+import balanceColumns from './balance';
 
 type ComProps = {
   userPhone: string;
@@ -78,6 +80,46 @@ const Detail: React.FC<ComProps> = (props) => {
     }
   };
 
+  // 获取用户积分流水
+  const getPointRecords = async (t) => {
+    userLog('request point list by user phone params:', t);
+    try {
+      const response = await request.get('/member/queryScoreList', {
+        params: {
+          ...t,
+          phone: userPhone,
+        },
+      });
+      const result = response.data;
+      return {
+        data: result.data,
+        total: result.count,
+      };
+    } catch (error) {
+      message.error('查询会员余额失败');
+    }
+  };
+
+  // 获取用户余额流水
+  const getBalanceRecords = async (t) => {
+    userLog('request balance list by user phone params:', t);
+    try {
+      const response = await request.get('/member/queryBalanceList', {
+        params: {
+          ...t,
+          phone: userPhone,
+        },
+      });
+      const result = response.data;
+      return {
+        data: result.data,
+        total: result.count,
+      };
+    } catch (error) {
+      message.error('查询会员积分失败');
+    }
+  };
+
   return (
     <>
       <Button
@@ -141,11 +183,25 @@ const Detail: React.FC<ComProps> = (props) => {
         />
         <Box
           title={`User Point`}
-          content={'asdasdasd'}
+          content={
+            <TableRender
+              request={getPointRecords as any}
+              columns={pointColumns as ProColumnsType}
+              scroll={{ x: 'max-content' }}
+              size='small'
+            />
+          }
         />
         <Box
           title={`User Balance`}
-          content={'asdasdasd'}
+          content={
+            <TableRender
+              request={getBalanceRecords as any}
+              columns={balanceColumns as ProColumnsType}
+              scroll={{ x: 'max-content' }}
+              size='small'
+            />
+          }
         />
       </Drawer>
     </>

@@ -1,4 +1,5 @@
 import { Space } from 'antd';
+import dayjs from 'dayjs';
 
 // import RemoveUser from './RemoveUser';
 import Editor from './Editor';
@@ -16,13 +17,18 @@ const columns = [
     title: 'user name',
     dataIndex: 'name',
     key: 'name',
+    render: (row) => {
+      return row || '--';
+    },
   },
   {
     title: 'order actual',
     align: 'right',
     dataIndex: 'actual',
     key: 'actual',
-    valueType: 'money',
+    render: (row) => {
+      return `¥${row || 0}`;
+    },
   },
   {
     title: 'points',
@@ -43,10 +49,9 @@ const columns = [
     align: 'center',
     dataIndex: 'birthday',
     key: 'birthday',
-    valueType: 'date',
-    valueTypeProps: {
-      format: 'MM/DD'
-    }
+    render: (row) => {
+      return row ? dayjs(row).format('MM/DD') : '--';
+    },
   },
   {
     title: 'create time',

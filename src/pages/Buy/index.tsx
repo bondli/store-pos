@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useState, useRef, useContext } from 'react';
-import { Col, Input, Row, Button, message } from 'antd';
+import { Col, Input, Row, Button, message, Modal } from 'antd';
 import { BarcodeOutlined, UserOutlined } from '@ant-design/icons';
 
 import request from '@common/request';
@@ -128,7 +128,34 @@ const BuyPageContainer: React.FC = () => {
         phone: result.phone,
         point: result.point,
         balance: result.balance,
-        // coupon: result.coupon,
+        coupon: result.coupon,
+      });
+    } else {
+      Modal.confirm({
+        content: `当前手机号[${value}]还不是会员，确认加入吗？`,
+        onOk: async () => {
+          try {
+            const formData = {
+              phone: value,
+              name: value,
+            };
+            const response = await request.post('/member/create', formData);
+      
+            if (response.data?.error) {
+              message.error(response.data?.error || '新增会员失败');
+            } else {
+              message.success('新增会员成功');
+              setBuyer({
+                phone: value,
+                point: 0,
+                balance: 0,
+                coupon: 0,
+              });
+            }
+          } catch (error) {
+            message.error('新增会员失败');
+          }
+        },
       });
     }
   };

@@ -92,13 +92,13 @@ const Editor: React.FC<ComProps> = (props) => {
           form={form}
           schema={schema}
           onFinish={onFinish}
-          // todo:待实现 onReset={() => setShowPanel(false)}
           footer={{
             submit: {
               text: 'confirm',
             },
             reset: {
               text: 'reset',
+              hide: true,
             }
           }}
         />

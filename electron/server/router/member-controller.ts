@@ -1,8 +1,11 @@
 import { Request, Response } from 'express';
+import dayjs from 'dayjs';
 import { Op } from 'sequelize';
 import logger from 'electron-log';
 import { Member } from '../model/member';
+import { Order } from '../model/order';
 import { MemberScore } from '../model/memberScore';
+import { MemberBalance } from '../model/memberBalance';
 
 // 新增会员
 export const createMember = async (req: Request, res: Response) => {
@@ -141,7 +144,7 @@ export const queryMemberScoreList = async (req: Request, res: Response) => {
     });
     if (resultCheckExists) {
       // 从用户积分表取数据
-      const { count, rows } = await Member.findAndCountAll({
+      const { count, rows } = await MemberScore.findAndCountAll({
         where: { phone },
         order: [['createdAt', 'DESC']],
       });
@@ -160,7 +163,7 @@ export const queryMemberScoreList = async (req: Request, res: Response) => {
 
 // 更新用户积分
 export const updateMemberScore = async (req: Request, res: Response) => {
-  const { phone, score, type, reason } = req.body;
+  const { phone, changePoint, type, reason } = req.body;
   try {
     const resultCheckExists = await Member.findOne({
       where: {
@@ -168,7 +171,7 @@ export const updateMemberScore = async (req: Request, res: Response) => {
       },
     });
     if (resultCheckExists) {
-      const justifyScore = (type === 'add') ? Number(score) : -1 * Number(score);
+      const justifyScore = (type === 'manualAdd') ? Number(changePoint) : -1 * Number(changePoint);
       // 更新用户积分
       await resultCheckExists.increment({
         point: justifyScore,
@@ -186,6 +189,113 @@ export const updateMemberScore = async (req: Request, res: Response) => {
     }
   } catch (error) {
     logger.error('Error updating Member Score:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// 会员充值
+export const memberIncomeBalance = async (req: Request, res: Response) => {
+  const { phone, inComeBalance, sendValue, reason } = req.body;
+  try {
+    const resultCheckExists = await Member.findOne({
+      where: {
+        phone,
+      },
+    });
+    if (resultCheckExists) {
+      const justifyBalance = Number(inComeBalance) + Number(sendValue);
+      // 更新用户余额
+      await resultCheckExists.increment({
+        balance: justifyBalance,
+      });
+      // 插入记录到用户余额记录表
+      const balanceRecords: Array<{
+        phone: string;
+        value: number;
+        type: string;
+        reason: string;
+      }> = [];
+      
+      balanceRecords.push({
+        phone,
+        value: inComeBalance,
+        type: `income`,
+        reason: `充值${inComeBalance}`,
+      });
+      if (sendValue) {
+        balanceRecords.push({
+          phone,
+          value: sendValue,
+          type: `send`,
+          reason: reason || `充值${inComeBalance}送${sendValue}`,
+        });
+      }
+      // 批量写入充值流水记录
+      await MemberBalance.bulkCreate(balanceRecords);
+
+      // 写入订单表，方便对账和统计当天的收入
+      const today = dayjs();
+      const todayStr = today.format('YYYYMMDD');
+      const start = today.startOf('day').toDate();
+      const end = today.endOf('day').toDate();
+      const where = {};
+      where['createdAt'] = {
+        [Op.gte]: start,
+        [Op.lte]: end,
+      };
+
+      const todayOrders = await Order.count({
+        where,
+      });
+      const resultOrderCreate = await Order.create({
+        orderSn: `${todayStr}${String(todayOrders+1).padStart(3, '0')}`, // 构造订单编号
+        orderStatus: `uncheck`,
+        orderItems: 0,
+        orderAmount: 0,
+        orderActualAmount: inComeBalance,
+        payType: 'other',
+        userPhone: phone,
+        usePoint: 0,
+        useBalance: 0,
+        useCoupon: 0,
+        salerId: 0,
+        salerName: '',
+      });
+
+      res.json(resultOrderCreate.toJSON());
+    } else {
+      res.json({ error: 'Member not found' });
+    }
+  } catch (error) {
+    logger.error('Error Income Member Balance:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// 根据会员查询用户的余额列表
+export const queryMemberBalanceList = async (req: Request, res: Response) => {
+  const { phone } = req.query;
+  try {
+    const resultCheckExists = await Member.findOne({
+      where: {
+        phone,
+      },
+    });
+    if (resultCheckExists) {
+      // 从用户积分表取数据
+      const { count, rows } = await MemberBalance.findAndCountAll({
+        where: { phone },
+        order: [['createdAt', 'DESC']],
+      });
+      res.json({
+        count: count || 0,
+        data: rows || [],
+      });
+    } else {
+      res.json({ error: 'Member not found' });
+    }
+  } catch (error) {
+    logger.error('Error querying Member Balance List:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

@@ -1,8 +1,8 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from './index';
 
-// 积分流水表
-const MemberScore = sequelize.define('MemberScore', {
+// 余额流水表
+const MemberBalance = sequelize.define('MemberBalance', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -13,8 +13,8 @@ const MemberScore = sequelize.define('MemberScore', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  point: {
-    comment: '变动的积分',
+  value: {
+    comment: '变动的余额',
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
@@ -23,7 +23,7 @@ const MemberScore = sequelize.define('MemberScore', {
     comment: '变动的方式',
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'earn', // 'use'
+    defaultValue: 'use', // `use`, `income`, `send`
   },
   reason: {
     comment: '变动的原因',
@@ -32,7 +32,7 @@ const MemberScore = sequelize.define('MemberScore', {
   },
 }, {
   // 这是其他模型参数
-  tableName: 'MemberScore',
+  tableName: 'MemberBalance',
 });
 
-export { MemberScore };
+export { MemberBalance };

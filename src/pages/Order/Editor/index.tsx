@@ -100,6 +100,7 @@ const Editor: React.FC<ComProps> = (props) => {
             },
             reset: {
               text: 'reset',
+              hide: true,
             }
           }}
         />

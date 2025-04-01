@@ -4,7 +4,7 @@ import {
   createUser,
   updateUser,
   userLogin,
-  getUserList
+  getUserList,
 } from './user-controller';
 
 import {
@@ -21,7 +21,7 @@ import {
   queryOrderBySku,
   updateOrderMember,
   updateOrderSaler,
-  updateOrderActual
+  updateOrderActual,
 } from './order-controller';
 
 import {
@@ -40,7 +40,9 @@ import {
   updateMember,
   deleteMember,
   queryMemberScoreList,
-  updateMemberScore
+  queryMemberBalanceList,
+  updateMemberScore,
+  memberIncomeBalance,
 } from './member-controller';
 
 const router = express.Router();
@@ -76,7 +78,9 @@ router.post('/member/create', createMember); // 会员创建
 router.post('/member/update', updateMember); // 会员更新
 router.get('/member/delete', deleteMember); // 会员删除
 router.get('/member/queryScoreList', queryMemberScoreList); // 会员积分记录
+router.get('/member/queryBalanceList', queryMemberBalanceList); // 会员余额记录
 router.post('/member/updateScore', updateMemberScore); // 会员积分更新
+router.post('/member/incomeBalance', memberIncomeBalance); // 会员充值
 
 // 导购员相关接口
 router.post('/user/register', createUser); // 导购员注册

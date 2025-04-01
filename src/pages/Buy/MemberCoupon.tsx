@@ -25,6 +25,7 @@ const MemberCoupon: React.FC = () => {
         </Col>
         <Col span={8}>
           <Statistic title='Coupons' value={buyer.coupon} />
+          <Button style={{ marginTop: 16 }}>use coupon</Button>
         </Col>
       </Row>
     </Card>
