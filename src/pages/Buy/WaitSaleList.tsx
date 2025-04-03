@@ -12,6 +12,7 @@ const WaitSaleList: React.FC = () => {
   console.log('WaitSaleList Component buyer:', buyer);
   console.log('WaitSaleList Component storeSaler:', storeSaler);
 
+  // 删除商品
   const handleDelete = (sku) => {
     setWaitSales(prev => {
       const { list = [], brief } = prev;
@@ -45,6 +46,7 @@ const WaitSaleList: React.FC = () => {
     });
   };
 
+  // 商品是否已赠出
   const handleGive = (sku) => {
     setWaitSales(prev => {
       const { list = [], brief } = prev;

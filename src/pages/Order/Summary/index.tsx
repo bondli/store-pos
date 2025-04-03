@@ -1,15 +1,45 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Button, Drawer, Col, Row, Statistic, Card } from 'antd';
 
+import { OrderListProps, OrderStatistics, PaymentChannelStats } from '@common/constant';
 import style from './index.module.less';
 
-
-const Summary: React.FC = (props) => {
+const Summary: React.FC<OrderListProps> = (props) => {
+  const { dataList } = props;
   const [showPanel, setShowPanel] = useState(false);
+  const [statistics, setStatistics] = useState<OrderStatistics>({
+    orderActualAmount: 0,
+    orderCount: 0,
+    itemCount: 0,
+    payChannelStats: {
+      alipay: 0,
+      weixin: 0,
+      cash: 0,
+      card: 0,
+      other: 0
+    }
+  });
 
   const togglePanel = () => {
     setShowPanel(!showPanel);
   };
+
+  useEffect(() => {
+    const orderActualAmount = dataList.reduce((acc, curr) => acc + curr.orderActualAmount, 0);
+    const orderCount = dataList.length;
+    const itemCount = dataList.reduce((acc, curr) => acc + curr.orderItems, 0);
+    const payChannelStats = dataList.reduce((acc, curr) => {
+      acc[curr.payType] = (acc[curr.payType] || 0) + curr.orderActualAmount;
+      return acc;
+    }, {} as PaymentChannelStats);
+
+    setStatistics({
+      orderActualAmount,
+      orderCount,
+      itemCount,
+      payChannelStats
+    });
+  }, [dataList, showPanel]);
 
   return (
     <>
@@ -31,7 +61,7 @@ const Summary: React.FC = (props) => {
             <Card className={style.card}>
               <Statistic
                 title={`Order amounts(CNY)`}
-                value={1128}
+                value={statistics.orderActualAmount}
                 precision={2}
               />
             </Card>
@@ -40,15 +70,15 @@ const Summary: React.FC = (props) => {
             <Card className={style.card}>
               <Statistic
                 title={`Order counts`}
-                value={9}
+                value={statistics.orderCount}
               />
             </Card>
           </Col>
           <Col span={8}>
             <Card className={style.card}>
               <Statistic
-                title={`inventory counts`}
-                value={89000}
+                title={`Item counts`}
+                value={statistics.itemCount}
               />
             </Card>
           </Col>
@@ -57,10 +87,11 @@ const Summary: React.FC = (props) => {
           <Col span={24}>
             <Card title={`order amount by pay channel`} className={style.card}>
               <div className={style.cardByPayChannel}>
-                <Statistic title={`alipay(CNY)`} precision={2} value={6000} />
-                <Statistic title={`weixin(CNY)`} precision={2} value={7500} />
-                <Statistic title={`cash(CNY)`} precision={2} value={800} />
-                <Statistic title={`card(CNY)`} precision={2} value={2121} />
+                <Statistic title={`alipay(CNY)`} precision={2} value={statistics.payChannelStats.alipay} />
+                <Statistic title={`weixin(CNY)`} precision={2} value={statistics.payChannelStats.weixin} />
+                <Statistic title={`cash(CNY)`} precision={2} value={statistics.payChannelStats.cash} />
+                <Statistic title={`card(CNY)`} precision={2} value={statistics.payChannelStats.card} />
+                <Statistic title={`other(CNY)`} precision={2} value={statistics.payChannelStats.other} />
               </div>
             </Card>
           </Col>
@@ -68,7 +99,6 @@ const Summary: React.FC = (props) => {
       </Drawer>
     </>
   );
-
 };
 
 export default memo(Summary);

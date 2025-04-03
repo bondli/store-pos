@@ -9,16 +9,9 @@ const itemColumns = [
     title: 'sku code',
     dataIndex: 'sku',
     key: 'sku',
-  },
-  {
-    title: 'color',
-    dataIndex: 'color',
-    key: 'color',
-  },
-  {
-    title: 'size',
-    key: 'size',
-    dataIndex: 'size',
+    render: (text: string, record: any) => {
+      return `${text}[${record.color} / ${record.size}]`;
+    },
   },
   {
     title: 'original',
@@ -33,9 +26,9 @@ const itemColumns = [
     valueType: 'money',
   },
   {
-    title: 'disCout',
-    dataIndex: 'counts', // todo:待实现
-    key: 'counts1',
+    title: 'discount',
+    dataIndex: 'discount',
+    key: 'discount',
   },
   {
     title: 'counts',

@@ -26,3 +26,39 @@ export const mainMenuItems: MenuProps['items'] = [{
   key: 'data',
   label: 'Data Center',
 }];
+
+// 默认折扣率
+export const DEFAULT_DISCOUNT = 0.6;
+
+// 支付渠道类型
+export type PaymentChannel = 'alipay' | 'weixin' | 'cash' | 'card' | 'other';
+
+// 支付渠道统计
+export interface PaymentChannelStats {
+  alipay: number;
+  weixin: number;
+  cash: number;
+  card: number;
+  other: number;
+}
+
+// 订单统计信息
+export interface OrderStatistics {
+  orderActualAmount: number;      // 订单总金额
+  orderCount: number;       // 订单数量
+  itemCount: number;        // 商品数量
+  payChannelStats: PaymentChannelStats;  // 支付渠道统计
+}
+
+// 订单基础信息
+export interface OrderBase {
+  orderActualAmount: number;  // 实际支付金额
+  orderAmount: number;        // 订单金额
+  orderItems: number;         // 订单商品数量
+  payType: PaymentChannel;    // 支付方式
+}
+
+// 订单列表组件属性
+export interface OrderListProps {
+  dataList: OrderBase[];
+} 

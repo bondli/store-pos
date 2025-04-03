@@ -51,7 +51,7 @@ const OrderPage: React.FC = () => {
         scroll={{ x: 'max-content' }}
         toolbarRender={ 
           <Space>
-            <Summary />
+            <Summary dataList={dataList} />
             <CheckBill dataList={dataList} callback={refreshData} />
           </Space>
         }

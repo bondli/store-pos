@@ -25,6 +25,9 @@ const schema = {
       title: 'user phone',
       type: 'string',
       placeholder: 'input member phone',
+      props: {
+        allowClear: true,
+      },
     },
   }
 };

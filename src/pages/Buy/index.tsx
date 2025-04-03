@@ -4,6 +4,7 @@ import { BarcodeOutlined, UserOutlined } from '@ant-design/icons';
 
 import request from '@common/request';
 import { userLog, setStore } from '@/common/electron';
+import { DEFAULT_DISCOUNT } from '@common/constant';
 
 import PageTitle from '@/components/PageTitle';
 import CustomCard from '@/components/CustomCard';
@@ -85,7 +86,8 @@ const BuyPageContainer: React.FC = () => {
               color: result.color,
               size: result.size,
               originalPrice: result.originalPrice,
-              salePrice: Number((result.originalPrice * 0.6).toFixed(2)),
+              discount: DEFAULT_DISCOUNT,
+              salePrice: Number((result.originalPrice * DEFAULT_DISCOUNT).toFixed(2)),
               counts: 1,
               isGived: false,
             });
@@ -93,7 +95,7 @@ const BuyPageContainer: React.FC = () => {
 
           newBrief.totalAmount += result.originalPrice;
           newBrief.counts += 1;
-          newBrief.payAmount += Number((result.originalPrice * 0.6).toFixed(2));
+          newBrief.payAmount += Number((result.originalPrice * DEFAULT_DISCOUNT).toFixed(2));
 
           if (isNewSku) {
             newBrief.skuNum += 1;

@@ -27,6 +27,7 @@ const columns = [
     title: 'sku code',
     dataIndex: 'sku',
     key: 'sku',
+    copyable: true,
   },
   {
     title: 'color',

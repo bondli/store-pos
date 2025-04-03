@@ -22,6 +22,7 @@ import {
   updateOrderMember,
   updateOrderSaler,
   updateOrderActual,
+  checkOrderBill,
 } from './order-controller';
 
 import {
@@ -45,6 +46,12 @@ import {
   memberIncomeBalance,
 } from './member-controller';
 
+import {
+  getCoreData,
+  getOrderCharts,
+  getRecentSaleList,
+} from './data-controller';
+
 const router = express.Router();
 
 // 订单相关接口
@@ -62,7 +69,7 @@ router.get('/order/queryBySku', queryOrderBySku); // 根据SKU查询订单(退�
 router.post('/order/updateMember', updateOrderMember); // 追加会员信息
 router.post('/order/updateSaler', updateOrderSaler); // 修改成单导购员
 router.post('/order/updateActual', updateOrderActual); // 修改订单实收金额
-
+router.post('/order/checkBill', checkOrderBill); // 确认订单
 // 商品相关接口
 router.get('/inventory/queryTotal', queryInventoryTotal); // 库存总量
 router.get('/inventory/queryList', queryInventoryList); // 库存列表
@@ -87,5 +94,10 @@ router.post('/user/register', createUser); // 导购员注册
 router.post('/user/login', userLogin); // 导购员登录
 router.post('/user/update', updateUser); // 导购员更新
 router.get('/user/list', getUserList); // 导购员列表
+
+// 数据相关接口
+router.post('/data/getCoreData', getCoreData); // 获取系统核心的统计数据
+router.get('/data/getOrderCharts', getOrderCharts); // 获取订单图表数据
+router.get('/data/getRecentSaleList', getRecentSaleList); // 获取最近销售数据
 
 export default router;

@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState, useContext } from 'react';
-import { Flex, Radio, Input, Select, Card } from 'antd';
+import { Flex, Radio, Input, Select, Card, Typography } from 'antd';
 
 import { getStore } from '@common/electron';
 
@@ -73,33 +73,42 @@ const Payment: React.FC = () => {
   return (
     <Card title={`Payment`} size='small' className={style.groupCard}>
       <Flex gap={`small`} vertical wrap>
-        <Radio.Group 
-          defaultValue={``} 
-          buttonStyle={`solid`}
-          onChange={handlePayTypeChange}
-        >
-          <Radio.Button value="alipay">支付宝</Radio.Button>
-          <Radio.Button value="weixin">微信</Radio.Button>
-          <Radio.Button value="cash">现金</Radio.Button>
-          <Radio.Button value="card">银行卡</Radio.Button>
-          <Radio.Button value="other">其他</Radio.Button>
-        </Radio.Group>
+        <Flex align="center" gap="small">
+          <Typography.Text style={{ width: '100px' }}>Pay Type</Typography.Text>
+          <Radio.Group 
+            defaultValue={``} 
+            buttonStyle={`solid`}
+            onChange={handlePayTypeChange}
+          >
+            <Radio.Button value="alipay">支付宝</Radio.Button>
+            <Radio.Button value="weixin">微信</Radio.Button>
+            <Radio.Button value="cash">现金</Radio.Button>
+            <Radio.Button value="card">银行卡</Radio.Button>
+            <Radio.Button value="other">其他</Radio.Button>
+          </Radio.Group>
+        </Flex>
 
-        <Input 
-          size='middle' 
-          addonBefore='acutal pay' 
-          placeholder='acutal amount' 
-          onChange={handleChange}
-          value={waitSales?.brief?.actualAmount || ''}
-        />
+        <Flex align="center" gap="small">
+          <Typography.Text style={{ width: '100px' }}>Actual</Typography.Text>
+          <Input 
+            size='middle' 
+            placeholder='acutal amount' 
+            style={{ width: `200px` }}
+            onChange={handleChange}
+            value={waitSales?.brief?.actualAmount || ''}
+          />
+        </Flex>
 
-        <Select
-          defaultValue={``}
-          style={{ width: `100%` }}
-          options={salers}
-          onChange={handleSalerChange}
-          placeholder={`please select saler`}
-        />
+        <Flex align="center" gap="small">
+          <Typography.Text style={{ width: '100px' }}>Saler</Typography.Text>
+          <Select
+            defaultValue={``}
+            style={{ width: `200px` }}
+            options={salers}
+            onChange={handleSalerChange}
+            placeholder={`please select saler`}
+          />
+        </Flex>
       </Flex>
     </Card>
   );

@@ -9,7 +9,7 @@ import schema from './schema';
 
 type ComProps = {
   orderSn: string;
-  callback: () => void;
+  callback?: () => void;
 };
 
 const Editor: React.FC<ComProps> = (props) => {
@@ -17,10 +17,11 @@ const Editor: React.FC<ComProps> = (props) => {
   
   const form = useForm();
 
+  // 提交修改
   const onFinish = async (formData) => {
     console.log('formData:', formData);
     try {
-      const response = await request.post('/order/modify', formData);
+      const response = await request.post(`/order/modify?orderSn=${orderSn}`, formData);
 
       if (response.data?.error) {
         message.error(response.data?.error || '更新订单失败');

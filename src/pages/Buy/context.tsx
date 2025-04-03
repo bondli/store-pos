@@ -9,6 +9,7 @@ type WaitSaleItem = {
   size: string;
   originalPrice: number;
   salePrice: number;
+  discount: number;
   counts: number;
   isGived: boolean;
 };

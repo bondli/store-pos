@@ -1,6 +1,6 @@
-import React, { memo } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import type { StatisticProps } from 'antd';
-import { Card, Col, Row, Statistic, Menu, DatePicker } from 'antd';
+import { Card, Col, Row, Statistic, Menu, DatePicker, Empty } from 'antd';
 import type { GetProps } from 'antd';
 import { GithubFilled } from '@ant-design/icons';
 import { Column } from '@ant-design/plots';
@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 
 import PageTitle from '@/components/PageTitle';
 import MenuItem from '@components/MenuItem';
+import request from '@/common/request';
 
 import style from './index.module.less';
 
@@ -19,111 +20,82 @@ const formatter: StatisticProps['formatter'] = (value) => (
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 const { RangePicker } = DatePicker;
 
-const columnData = [
-  {
-    "month": "2024/04",
-    "amounts": 38167
-  },
-  {
-    "month": "2024/05",
-    "amounts": 28145
-  },
-  {
-    "month": "2024/06",
-    "amounts": 4167
-  },
-  {
-    "month": "2024/07",
-    "amounts": 9167
-  },
-  {
-    "month": "2024/08",
-    "amounts": 8467
-  },
-  {
-    "month": "2024/09",
-    "amounts": 18167
-  },
-  {
-    "month": "2024/10",
-    "amounts": 28167
-  },
-  {
-    "month": "2024/11",
-    "amounts": 38167
-  },
-  {
-    "month": "2024/12",
-    "amounts": 48167
-  }
-];
-
-const recentSaleList = [
-  {
-    label: <MenuItem label={'asdasdasd'} count={1111} formatMoney={true} />,
-    key: 1,
-    icon: <GithubFilled style={{ fontSize: '16px' }} />,
-  },
-  {
-    label: <MenuItem label={'asdasdasd'} count={1111} />,
-    key: 2,
-    icon: <GithubFilled style={{ fontSize: '16px' }} />,
-  },
-  {
-    label: <MenuItem label={'asdasdasd'} count={1111} />,
-    key: 3,
-    icon: <GithubFilled style={{ fontSize: '16px' }} />,
-  },
-  {
-    label: <MenuItem label={'asdasdasd'} count={1111} />,
-    key: 4,
-    icon: <GithubFilled style={{ fontSize: '16px' }} />,
-  },
-  {
-    label: <MenuItem label={'asdasdasd'} count={1111} />,
-    key: 5,
-    icon: <GithubFilled style={{ fontSize: '16px' }} />,
-  },
-  {
-    label: <MenuItem label={'asdasdasd'} count={1111} />,
-    key: 6,
-    icon: <GithubFilled style={{ fontSize: '16px' }} />,
-  },
-  {
-    label: <MenuItem label={'asdasdasd'} count={1111} />,
-    key: 7,
-    icon: <GithubFilled style={{ fontSize: '16px' }} />,
-  },
-  {
-    label: <MenuItem label={'asdasdasd'} count={1111} />,
-    key: 8,
-    icon: <GithubFilled style={{ fontSize: '16px' }} />,
-  },
-  {
-    label: <MenuItem label={'asdasdasd'} count={1111} />,
-    key: 9,
-    icon: <GithubFilled style={{ fontSize: '16px' }} />,
-  },
-  {
-    label: <MenuItem label={'asdasdasd'} count={1111} />,
-    key: 10,
-    icon: <GithubFilled style={{ fontSize: '16px' }} />,
-  },
-];
-
 const DataPage: React.FC = () => {
+  const [dateRange, setDateRange] = useState<RangePickerProps['value']>([dayjs().startOf('day').subtract(30, 'day'), dayjs().endOf('day')]);
+
+  const [columnData, setColumnData] = useState<Array<{month: string; amounts: number}>>([]);
+  const [recentSaleList, setRecentSaleList] = useState<Array<{label: React.ReactNode; key: number; icon: React.ReactNode}>>([]);
+
+  const [statistics, setStatistics] = useState({
+    orderAmount: 0,
+    orderCount: 0,
+    inventoryCount: 0,
+    memberCount: 0
+  });
+
   const disabledDate: RangePickerProps['disabledDate'] = (current) => {
     return current && current >= dayjs().endOf('day');
   };
+
+  // 获取统计数据
+  const fetchStatistics = async () => {
+    try {
+      const response = await request.post('/data/getCoreData', {
+        dateRange,
+      });
+      if (response.data) {
+        setStatistics(response.data);
+      }
+    } catch (error) {
+      console.error('获取统计数据失败:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchStatistics();
+  }, [dateRange]); // 当日期范围改变时重新获取数据
+
+  const fetchChartData = async () => {
+    try {
+      const response = await request.get('/data/getOrderCharts');
+      if (response.data) {
+        setColumnData(response.data);
+      }
+    } catch (error) {
+      console.error('获取图表数据失败:', error);
+    }
+  };
+
+  const fetchRecentSaleList = async () => {
+    try {
+      const response = await request.get('/data/getRecentSaleList');
+      if (response.data) {
+        const list = response.data.map((item: any) => ({
+          label: <MenuItem label={item.userPhone || '--'} count={item.orderActualAmount} formatMoney={true} />,
+          key: item.id,
+          icon: <GithubFilled style={{ fontSize: '16px' }} />,
+        }));
+        setRecentSaleList(list);
+      }
+    } catch (error) {
+      console.error('获取最近销售数据失败:', error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchChartData();
+    fetchRecentSaleList();
+  }, []);
+
   return (
     <div className={style.container}>
-      <PageTitle text={`Dashboard`} extra={<RangePicker disabledDate={disabledDate} />} />
+      <PageTitle text={`Dashboard`} extra={<RangePicker disabledDate={disabledDate} value={dateRange} onChange={setDateRange} />} />
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={6}>
           <Card className={style.card}>
             <Statistic
               title={`Order Amounts(CNY)`}
-              value={11280}
+              value={statistics.orderAmount}
               precision={2}
               formatter={formatter}
             />
@@ -133,7 +105,7 @@ const DataPage: React.FC = () => {
           <Card className={style.card}>
             <Statistic
               title={`Order Counts`}
-              value={9}
+              value={statistics.orderCount}
               formatter={formatter}
             />
           </Card>
@@ -142,7 +114,7 @@ const DataPage: React.FC = () => {
           <Card className={style.card}>
             <Statistic
               title={`Inventory Counts`}
-              value={89000}
+              value={statistics.inventoryCount}
               formatter={formatter}
             />
           </Card>
@@ -151,7 +123,7 @@ const DataPage: React.FC = () => {
           <Card className={style.card}>
             <Statistic
               title={`Member Counts`}
-              value={900}
+              value={statistics.memberCount}
               formatter={formatter}
             />
           </Card>
@@ -160,18 +132,26 @@ const DataPage: React.FC = () => {
       <Row gutter={16}>
         <Col span={16}>
           <Card title={`Overview`} className={style.card}>
-            <Column xField={'month'} yField={'amounts'} data={columnData} />
+            {columnData.length > 0 ? (
+              <Column xField={'month'} yField={'amounts'} data={columnData} />
+            ) : (
+              <Empty description='暂无数据' />
+            )}
           </Card>
         </Col>
         <Col span={8}>
           <Card title={`Recent Sales`} className={style.card}>
-            <Menu
-              defaultSelectedKeys={[]}
-              mode={`inline`}
-              items={recentSaleList}
-              style={{ borderRight: 0 }}
-            >
-            </Menu>
+            {recentSaleList.length > 0 ? (
+              <Menu
+                defaultSelectedKeys={[]}
+                mode={`inline`}
+                items={recentSaleList}
+                style={{ borderRight: 0 }}
+              >
+              </Menu>
+            ) : (
+              <Empty description='暂无数据' />
+            )}
           </Card>
         </Col>
       </Row>

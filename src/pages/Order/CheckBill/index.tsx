@@ -1,8 +1,9 @@
-import React, { memo, useState } from 'react';
-import { Button, Drawer, Space, Table } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Drawer, Space, Table, message } from 'antd';
 import { InfoCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 
 import { PAY_CHANNEL } from '@/common/constant';
+import request from '@/common/request';
 
 type OrderType = {
   orderSn: string;
@@ -11,15 +12,15 @@ type OrderType = {
   userPhone: string;
   orderStatus: string;
 };
-type CheckBillProps = {
+type ComProps = {
   dataList: OrderType[];
   callback: () => void;
 };
 
-const CheckBill: React.FC<CheckBillProps> = (props) => {
-  const { dataList, callback } = props;
+const CheckBill: React.FC<ComProps> = (props) => {
+  const { callback } = props;
   const [showPanel, setShowPanel] = useState(false);
-
+  const [dataList, setDataList] = useState(props.dataList);
   const togglePanel = () => {
     setShowPanel(!showPanel);
   };
@@ -27,6 +28,33 @@ const CheckBill: React.FC<CheckBillProps> = (props) => {
   const closePanel = () => {
     setShowPanel(false);
     callback && callback();
+  };
+
+  useEffect(() => {
+    setDataList(props.dataList);
+  }, [showPanel, props.dataList]);
+
+  // 确认订单
+  const confirmOrder = async (orderSn: string) => {
+    console.log('confirmOrder', orderSn);
+    try {
+      const response = await request.post(`/order/checkBill?orderSn=${orderSn}`);
+      if (response.data.error) {
+        message.error(response.data.error);
+      } else {
+        message.success('确认订单成功');
+        // 对当前的dataList进行处理，更新orderStatus为checked 
+        const newDataList = dataList.map((item) => {
+          if (item.orderSn === orderSn) {
+            item.orderStatus = 'checked';
+          }
+          return item;
+        });
+        setDataList(newDataList);
+      }
+    } catch (error) {
+      console.error('confirmOrder error', error);
+    }
   };
 
   const columns = [
@@ -77,7 +105,15 @@ const CheckBill: React.FC<CheckBillProps> = (props) => {
       render: (row, record) => {
         return (
           <Space>
-            <Button type="link" disabled={row.orderStatus === 'checked'}>confirm</Button>
+            <Button
+              type='link'
+              disabled={row.orderStatus === 'checked'}
+              onClick={() => {
+                confirmOrder(record.orderSn);
+              }}
+            >
+              confirm
+            </Button>
           </Space>
         );
       }

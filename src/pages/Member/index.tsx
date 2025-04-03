@@ -1,5 +1,5 @@
 import React, { memo, useRef } from 'react';
-import { message, Space } from 'antd';
+import { message } from 'antd';
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
@@ -10,7 +10,6 @@ import PageTitle from '@/components/PageTitle';
 import search from './search';
 import columns from './columns';
 import NewJoin from './NewJoin';
-import Recharge from './Recharge';
 
 import style from './index.module.less';
 
@@ -48,10 +47,7 @@ const MemberPage: React.FC = () => {
         title={`Query Results of Members`}
         scroll={{ x: 'max-content' }}
         toolbarRender={ 
-          <Space>
-            <Recharge callback={refreshData} />
-            <NewJoin callback={refreshData} />
-          </Space>
+          <NewJoin callback={refreshData} />
         }
       />
     </div>
