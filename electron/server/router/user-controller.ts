@@ -21,7 +21,8 @@ export const createUser = async (req: Request, res: Response) => {
       });
     }
   } catch (error) {
-    logger.error('Error creating note:', error);
+    logger.error('Error creating note:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -37,7 +38,8 @@ export const getUserInfo = async (req: Request, res: Response) => {
       res.json({ error: 'User not found' });
     }
   } catch (error) {
-    logger.error('Error getting User by ID:', error);
+    logger.error('Error getting User by ID:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -55,7 +57,8 @@ export const updateUser = async (req: Request, res: Response) => {
       res.json({ error: 'user not found' });
     }
   } catch (error) {
-    logger.error('Error updating user:', error);
+    logger.error('Error updating user:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -76,7 +79,8 @@ export const userLogin = async (req: Request, res: Response) => {
       res.json(result.toJSON());
     }
   } catch (error) {
-    logger.error('Error updating user:', error);
+    logger.error('Error updating user:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -92,7 +96,8 @@ export const getUserList = async (req: Request, res: Response) => {
       data: rows || [],
     });
   } catch (error) {
-    logger.error('Error getting user list:', error);
+    logger.error('Error getting user list:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

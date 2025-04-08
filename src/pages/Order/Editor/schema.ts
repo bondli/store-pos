@@ -48,5 +48,11 @@ export default {
       type: 'string',
       widget: 'input',
     },
+    remark: {
+      title: 'Remark',
+      placeholder: 'input remark',
+      type: 'string',
+      widget: 'input',
+    },
   }
 };

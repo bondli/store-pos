@@ -16,7 +16,6 @@ const OrderItems = sequelize.define('OrderItems', {
     comment: 'SKU',
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   name: {
     comment: '商品名称',

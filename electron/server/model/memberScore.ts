@@ -23,7 +23,7 @@ const MemberScore = sequelize.define('MemberScore', {
     comment: '变动的方式',
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'earn', // 'use'
+    defaultValue: 'earn', // 'use' or 'earn' or 'manualAdd' or 'manualReduce'
   },
   reason: {
     comment: '变动的原因',

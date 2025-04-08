@@ -23,8 +23,7 @@ const App: React.FC = () => {
 
   // 避免一进来还在获取本地缓存数据的时候显示了登录的问题
   if (loading) {
-    return null;
-    // return <div style={{ color: '#eee', fontSize: '24px' }}>loading...</div>;
+    return <div style={{ color: '#eee', fontSize: '24px' }}>loading...</div>;
   }
 
   if (!userInfo || !userInfo.id) {

@@ -56,7 +56,8 @@ export const getCoreData = async (req: Request, res: Response) => {
       memberCount: Number(memberCount || 0)
     });
   } catch (error) {
-    logger.error('Error getting core data:', error);
+    logger.error('Error getting core data:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -85,7 +86,7 @@ export const getOrderCharts = async (req: Request, res: Response) => {
 
     res.json(orderCharts);
   } catch (error) {
-    logger.error('Error getting order charts:', error);
+    logger.error('Error getting order charts:');
     console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -110,7 +111,8 @@ export const getRecentSaleList = async (req: Request, res: Response) => {
 
     res.json(recentSaleList);
   } catch (error) {
-    logger.error('Error getting recent sale list:', error);
+    logger.error('Error getting recent sale list:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

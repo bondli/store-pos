@@ -23,6 +23,9 @@ export const mainMenuItems: MenuProps['items'] = [{
   key: 'member',
   label: 'Member Center',
 }, {
+  key: 'marketing',
+  label: 'Marketing Center',
+}, {
   key: 'data',
   label: 'Data Center',
 }];

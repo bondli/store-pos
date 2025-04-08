@@ -128,9 +128,9 @@ const BuyPageContainer: React.FC = () => {
       userLog('member info:', result);
       setBuyer({
         phone: result.phone,
-        point: result.point,
-        balance: result.balance,
-        coupon: result.coupon,
+        point: result.point || 0,
+        balance: result.balance || 0,
+        coupon: result.coupon || 0,
       });
     } else {
       Modal.confirm({
@@ -168,6 +168,18 @@ const BuyPageContainer: React.FC = () => {
       waitSales,
       buyer,
       storeSaler,
+    });
+    setWaitSales({
+      list: [],
+      brief: {
+        skuNum: 0,
+        counts: 0,
+        totalAmount: 0,
+        payAmount: 0,
+        actualAmount: 0,
+        payType: '',
+        remark: '',
+      },
     });
   };
 

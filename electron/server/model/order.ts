@@ -73,6 +73,12 @@ const Order = sequelize.define('Order', {
     allowNull: true,
     defaultValue: '',
   },
+  remark: {
+    comment: '备注',
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: '',
+  },
 }, {
   // 这是其他模型参数
   tableName: 'Order',

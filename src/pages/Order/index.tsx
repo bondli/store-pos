@@ -11,13 +11,14 @@ import search from './search';
 import columns from './columns';
 import Summary from './Summary';
 import CheckBill from './CheckBill';
+import QueryBySKU from './QueryBySKU';
 
 import style from './index.module.less';
 
 const OrderPage: React.FC = () => {
   const tableRef = useRef<TableContext>(null);
   const [dataList, setDataList] = useState([]);
-  
+
   const getOrderList = async (t) => {
     userLog('request order list params:', t);
     try {
@@ -41,7 +42,12 @@ const OrderPage: React.FC = () => {
 
   return (
     <div className={style.container}>
-      <PageTitle text={`Orders`} />
+      <PageTitle
+        text={`Orders`}
+        extra={
+          <QueryBySKU />
+        }
+      />
       <TableRender
         ref={tableRef}
         search={search}

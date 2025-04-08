@@ -6,7 +6,7 @@ import { BuyContext } from './context';
 import style from './index.module.less';
 
 const BillInfo: React.FC = () => {
-  const { waitSales, buyer } = useContext(BuyContext);
+  const { waitSales, storeCoupons, buyer } = useContext(BuyContext);
   const [list, setList] = useState([]);
 
   useEffect(() => {
@@ -16,11 +16,35 @@ const BillInfo: React.FC = () => {
       desc: `订单应收:`,
       amount: waitSales?.brief?.payAmount,
     });
+    // 使用店铺优惠券抵扣
+    if (storeCoupons?.length) {
+      needPay -= storeCoupons?.reduce((acc, curr) => acc + curr.couponValue, 0);
+      tmp.push({
+        desc: `使用店铺优惠券抵扣:`,
+        amount: `-${(storeCoupons?.reduce((acc, curr) => acc + curr.couponValue, 0))}`
+      });
+    }
     if (buyer?.usePoint) {
       needPay -= buyer?.usePoint / 100;
       tmp.push({
         desc: `使用(${buyer?.usePoint})积分抵扣:`,
         amount: `-${(buyer?.usePoint / 100)}`,
+      });
+    }
+    // 使用余额抵扣
+    if (buyer?.useBalance) {
+      needPay -= buyer?.useBalance;
+      tmp.push({
+        desc: `使用(${buyer?.useBalance})余额抵扣:`,
+        amount: `-${(buyer?.useBalance)}`,
+      });
+    }
+    // 使用会员优惠券抵扣
+    if (buyer?.useCoupon) {
+      needPay -= buyer?.useCoupon;
+      tmp.push({
+        desc: `使用会员优惠券抵扣:`,
+        amount: `-${(buyer?.useCoupon)}`,
       });
     }
     tmp.push({
@@ -36,7 +60,7 @@ const BillInfo: React.FC = () => {
     }
 
     setList(tmp);
-  }, [waitSales, buyer]);
+  }, [waitSales, storeCoupons, buyer]);
 
   if (!waitSales?.list?.length) {
     return null;

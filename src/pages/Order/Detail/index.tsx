@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { Button, Drawer, Descriptions, message } from 'antd';
 import dayjs from 'dayjs';
 
-import TableRender, { TableContext } from 'table-render';
+import TableRender from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
 import { PAY_CHANNEL } from '@common/constant';
@@ -12,6 +12,7 @@ import request from '@common/request';
 import Box from '@/components/Box';
 
 import itemColumns from './item';
+import couponColumns from './coupon';
 
 type ComProps = {
   orderSn: string;
@@ -26,6 +27,10 @@ const defaultOrderInfo = {
   payType: '',
   userPhone: '',
   salerName: '',
+  remark: '',
+  useCoupon: '',
+  usePoint: '',
+  useBalance: '',
 };
 
 const Detail: React.FC<ComProps> = (props) => {
@@ -81,6 +86,21 @@ const Detail: React.FC<ComProps> = (props) => {
     }
   };
 
+  // 获取订单中的优惠券列表
+  const getOrderCouponList = async () => {
+    try {
+      const response = await request.get('/order/queryCouponList', {
+        params: {
+          orderSn,
+        },
+      });
+      const result = response.data;
+      return result.data;
+    } catch (error) {
+      message.error('查询订单优惠券失败');
+    }
+  };
+
   return (
     <>
       <Button
@@ -102,7 +122,7 @@ const Detail: React.FC<ComProps> = (props) => {
           items={
             [{
               key: '1',
-              label: 'Order SN',
+              label: 'Order Code',
               children: orderInfo.orderSn,
             }, {
               key: '2',
@@ -132,6 +152,22 @@ const Detail: React.FC<ComProps> = (props) => {
               key: '8',
               label: 'Saler',
               children: orderInfo.salerName,
+            }, {
+              key: '9',
+              label: 'use coupon',
+              children: orderInfo.useCoupon || '--',
+            }, {
+              key: '10',
+              label: 'use point',
+              children: orderInfo.usePoint || '--',
+            }, {
+              key: '11',
+              label: 'use balance',
+              children: orderInfo.useBalance || '--',
+            }, {
+              key: '12',
+              label: 'Remark',
+              children: orderInfo.remark || '--',
             }]
           }
           column={1}
@@ -145,6 +181,17 @@ const Detail: React.FC<ComProps> = (props) => {
             <TableRender
               request={getOrderItems as any}
               columns={itemColumns as ProColumnsType}
+              scroll={{ x: 'max-content' }}
+              size='small'
+            />
+          }
+        />
+        <Box
+          title={`Order Coupons`}
+          content={
+            <TableRender
+              request={getOrderCouponList as any}
+              columns={couponColumns as ProColumnsType}
               scroll={{ x: 'max-content' }}
               size='small'
             />

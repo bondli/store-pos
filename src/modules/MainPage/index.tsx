@@ -1,8 +1,9 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useContext } from 'react';
 import { Layout, Menu, theme } from 'antd';
 import type { MenuProps } from 'antd';
 
 import { mainMenuItems } from '@/common/constant';
+import { MainContext } from '@common/context';
 
 import Logo from '@components/Logo';
 import User from '@components/User';
@@ -12,13 +13,14 @@ import DataPage from '@/pages/Data';
 import InventoryPage from '@pages/Inventory';
 import MemberPage from '@pages/Member';
 import BuyPage from '@pages/Buy';
+import MarketingPage from '@pages/Marketing';
 
 import style from './index.module.less';
 
 const { Header, Content } = Layout;
 
 const MainPage: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState('sales');
+  const { currentPage, setCurrentPage } = useContext(MainContext);
 
   const { token: { colorBgContainer } } = theme.useToken();
 
@@ -59,6 +61,9 @@ const MainPage: React.FC = () => {
         }
         {
           currentPage === 'data' && <DataPage />
+        }
+        {
+          currentPage === 'marketing' && <MarketingPage />
         }
       </Content>
     </Layout>

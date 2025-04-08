@@ -1,7 +1,5 @@
 import { Space } from 'antd';
-import dayjs from 'dayjs';
 
-// import RemoveUser from './RemoveUser';
 import Editor from './Editor';
 import Detail from './Detail';
 
@@ -23,7 +21,7 @@ const columns = [
   },
   {
     title: 'order actual',
-    align: 'right',
+    align: 'center',
     dataIndex: 'actual',
     key: 'actual',
     render: (row) => {
@@ -32,29 +30,28 @@ const columns = [
   },
   {
     title: 'points',
-    align: 'right',
+    align: 'center',
     dataIndex: 'point',
     key: 'point',
     valueType: 'number',
   },
   {
     title: 'balance',
-    align: 'right',
+    align: 'center',
     key: 'balance',
     dataIndex: 'balance',
     valueType: 'number',
   },
   {
-    title: 'birthday',
+    title: 'coupon',
     align: 'center',
-    dataIndex: 'birthday',
-    key: 'birthday',
-    render: (row) => {
-      return row ? dayjs(row).format('MM/DD') : '--';
-    },
+    dataIndex: 'coupon',
+    key: 'coupon',
+    valueType: 'number',
   },
   {
     title: 'create time',
+    align: 'center',
     dataIndex: 'createdAt',
     key: 'createdAt',
     valueType: 'dateTime',
@@ -70,7 +67,6 @@ const columns = [
         <Space>
           <Detail userPhone={record.phone} />
           <Editor userPhone={record.phone} />
-          {/* <RemoveUser userPhone={record.phone} /> */}
         </Space>
       );
     }

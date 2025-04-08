@@ -8,6 +8,8 @@ type UserInfo = {
 type MainContextType = {
   userInfo: UserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<UserInfo>>;
+  currentPage: string;
+  setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export const MainContext = createContext<MainContextType | undefined>(undefined);
@@ -17,11 +19,14 @@ export const MainProvider: React.FC<{ children: React.ReactNode }> = ({ children
     name: '',
     avatar: '',
   });
+  const [currentPage, setCurrentPage] = useState('sales');
   return (
     <MainContext.Provider
       value={{
         userInfo,
         setUserInfo,
+        currentPage,
+        setCurrentPage,
       }}
     >
       {children}

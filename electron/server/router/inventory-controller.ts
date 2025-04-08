@@ -11,7 +11,8 @@ export const queryInventoryTotal = async (req: Request, res: Response) => {
       total: result || 0,
     });
   } catch (error) {
-    logger.error('Error querying inventory total:', error);
+    logger.error('Error querying inventory total:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -55,7 +56,8 @@ export const queryInventoryList = async (req: Request, res: Response) => {
       data: rows || [],
     });
   } catch (error) {
-    logger.error('Error getting Inventory:', error);
+    logger.error('Error getting Inventory:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -73,7 +75,8 @@ export const queryInventoryByStyle = async (req: Request, res: Response) => {
       data: rows || [],
     });
   } catch (error) {
-    logger.error('Error getting Inventory:', error);
+    logger.error('Error getting Inventory:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -94,7 +97,8 @@ export const updateInventory = async (req: Request, res: Response) => {
       res.json({ error: 'Inventory not found' });
     }
   } catch (error) {
-    logger.error('Error updating Inventory:', error);
+    logger.error('Error updating Inventory:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -112,7 +116,8 @@ export const queryDetailBySku = async (req: Request, res: Response) => {
       res.json({ error: 'Inventory not found' });
     }
   } catch (error) {
-    logger.error('Error getting Inventory:', error);
+    logger.error('Error getting Inventory:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -134,7 +139,8 @@ export const createInventory = async (req: Request, res: Response) => {
       res.json({ error: 'sku had exists' });
     }
   } catch (error) {
-    logger.error('Error creating sku:', error);
+    logger.error('Error creating sku:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

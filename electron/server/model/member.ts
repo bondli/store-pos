@@ -32,6 +32,12 @@ const Member = sequelize.define('Member', {
     allowNull: true,
     defaultValue: 0,
   },
+  coupon: {
+    comment: '优惠券',
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: 0,
+  },
   name: {
     comment: '会员名',
     type: DataTypes.STRING,

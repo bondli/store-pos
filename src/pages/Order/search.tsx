@@ -51,9 +51,9 @@ const schema = {
       placeholder: 'select pay channel',
     },
     orderSn: {
-      title: 'order sn',
+      title: 'order code',
       type: 'string',
-      placeholder: 'input order sn',
+      placeholder: 'input order code',
     },
     salerId: {
       title: 'saler name',

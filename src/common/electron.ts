@@ -88,6 +88,36 @@ export const importData = () => {
   ipcRenderer.importData();
 }
 
+// 打印字符串
+export const printStr = (html: string) => {
+  const printWindow = window.open('', '_blank');
+  if (printWindow) {
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print</title>
+          <style>
+            body { margin: 0; padding: 20px; }
+            @media print {
+              body { padding: 0; }
+            }
+            ul, ol, li {
+              list-style: none;
+            }
+          </style>
+        </head>
+        <body>
+          ${html}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  }
+};
+
 const ElectronBridge = {
   setStore,
   getStore,

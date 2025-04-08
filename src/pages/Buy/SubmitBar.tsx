@@ -1,26 +1,32 @@
-import React, { memo, useContext, useEffect, useState } from 'react';
-import { Flex, Button, Row, Col, message } from 'antd';
+import React, { memo, useContext, useEffect, useState, useRef } from 'react';
+import { Flex, Button, Row, Col, message, Drawer, Result } from 'antd';
 
-import { getStore } from '@common/electron';
+import { getStore, setStore, printStr } from '@common/electron';
 import request from '@common/request';
 
 import { BuyContext } from './context';
+import Bill from '@/components/Bill';
 
 const SubmitBar: React.FC = () => {
   const {
     waitSales,
     buyer,
     storeSaler,
+    storeCoupons,
     setWaitSales,
     setStoreCoupons,
     setBuyer,
+    setStoreSaler,
   } = useContext(BuyContext);
 
   const [orderInCache, setOrderInCache] = useState(null);
+  const [showSuccessDrawer, setShowSuccessDrawer] = useState(false);
+  const [orderInfo, setOrderInfo] = useState(null);
+  const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const orderCache = getStore('orderCache') || {};
-    if (orderCache?.waitSales?.length) {
+    if (orderCache?.waitSales?.list?.length) {
       setOrderInCache(orderCache);
     }
   }, []);
@@ -36,10 +42,12 @@ const SubmitBar: React.FC = () => {
         payAmount: 0,
         actualAmount: 0,
         payType: '',
+        remark: '',
       },
     });
     setStoreCoupons([]);
     setBuyer(null);
+    setStoreSaler(null);
   };
 
   // 提交订单
@@ -61,10 +69,11 @@ const SubmitBar: React.FC = () => {
     }
 
     try {
-      const response = await request.post('/order/submit', {
+      const response = await request.post('/buy/submit', {
         waitSales,
         buyer,
         storeSaler,
+        storeCoupons,
       });
 
       const resData = response.data;
@@ -74,27 +83,72 @@ const SubmitBar: React.FC = () => {
       } else {
         message.success('订单提交成功');
         handleReset();
+        // 弹出下单成功的抽屉，提供打印小票的功能
+        setShowSuccessDrawer(true);
+        // 将订单信息写入state，用于打印小票
+        setOrderInfo(resData);
       }
     } catch (error) {
       message.error('订单提交失败，请重试');
     }
   };
 
+  // 从缓存中恢复订单
+  const handleRestore = () => {
+    setWaitSales(orderInCache.waitSales);
+    setBuyer(orderInCache.buyer);
+    setStoreSaler(orderInCache.storeSaler);
+    // 删除缓存
+    setOrderInCache(null);
+    // 删除store中的缓存
+    setStore('orderCache', null);
+  };
+
+  // 打印小票
+  const handlePrint = () => {
+    if (printRef.current) {
+      printStr(printRef.current.innerHTML);
+    } else {
+      message.error('小票内容为空');
+    }
+  };
+
   return (
     <Row gutter={16}>
       <Col span={12}>
-        <Flex gap={`small`} wrap>
-          <Button type={`primary`} onClick={handleSubmit}>Submit</Button>
-          <Button onClick={handleReset}>Cancel</Button>
+        <Flex gap={'small'} wrap>
+          <Button type={'primary'} onClick={handleSubmit}>Submit</Button>
+          <Button onClick={handleReset}>Clear</Button>
         </Flex>
       </Col>
       <Col span={12} style={{ textAlign: 'right' }}>
         {
-          orderInCache ? (
-            <Button>Restore from handed</Button>
+          orderInCache?.waitSales?.list?.length ? (
+            <Button onClick={handleRestore}>Restore from handed</Button>
           ) : null
         }
       </Col>
+      <Drawer
+        title='下单成功'
+        width={368}
+        open={showSuccessDrawer}
+        onClose={() => setShowSuccessDrawer(false)}
+      >
+        <Result
+          status='success'
+          title='下单成功'
+          subTitle='订单生成完毕，请确认顾客支付结果'
+          extra={[
+            <Button type='primary' key='print' onClick={handlePrint}>
+              打印小票
+            </Button>,
+            <Button key='close' onClick={() => setShowSuccessDrawer(false)}>关闭</Button>,
+          ]}
+        />
+        <div ref={printRef} style={{ display: 'block' }}>
+          <Bill orderInfo={orderInfo} orderItems={waitSales?.list} />
+        </div>
+      </Drawer>
     </Row>
   );
 };

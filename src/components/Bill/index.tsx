@@ -1,0 +1,165 @@
+import React, { memo } from 'react';
+import dayjs from 'dayjs';
+
+import StoreLogo from '@/components/StoreLogo';
+import { PAY_CHANNEL } from '@/common/constant';
+
+type ComProps = {
+  orderInfo: any;
+  orderItems: any[];
+};
+
+// 格式化手机号，中间四位用*代替
+const formatPhoneNumber = (phone: string) => {
+  if (!phone) return '';
+  return phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+};
+
+// 格式化金额，保留两位小数
+const formatPrice = (price: number) => {
+  return Number(price).toFixed(2);
+};
+
+const Bill: React.FC<ComProps> = (props) => {
+  const { orderInfo = {}, orderItems = [] } = props;
+
+  if (!orderInfo) {
+    return null;
+  }
+
+  const dataSource = [
+    {
+      key: '1',
+      label: '订单编号',
+      value: orderInfo.orderSn,
+    },
+    {
+      key: '2',
+      label: '订单时间',
+      value: dayjs(orderInfo.createdAt).format('YYYY-MM-DD'),
+    },
+    {
+      key: '3',
+      label: '商品数量',
+      value: orderInfo.orderItems,
+    },
+  ];
+  // 如果有会员，则添加会员信息
+  if (orderInfo.userPhone) {
+    dataSource.push({
+      key: '4',
+      label: '会员信息',
+      value: formatPhoneNumber(orderInfo.userPhone),
+    });
+  }
+  // 如果订单金额大于0，且有会员信息，则添加积分信息
+  if (orderInfo.orderActualAmount > 0 && orderInfo.userPhone) {
+    dataSource.push({
+      key: '5',
+      label: '本次积分',
+      value: orderInfo.orderActualAmount,
+    });
+  }
+  if (orderInfo.orderAmount > 0) {
+    dataSource.push({
+      key: '6',
+      label: '应收金额',
+      value: orderInfo.orderAmount,
+    });
+  }
+  // 如果使用了积分，则添加积分信息
+  if (orderInfo.usePoint > 0) {
+    dataSource.push({
+      key: '7',
+      label: '积分抵扣',
+      value: Math.floor(orderInfo.usePoint),
+    });
+  }
+  // 如果使用了优惠券，则添加优惠券信息
+  if (orderInfo.useCoupon > 0) {
+    dataSource.push({
+      key: '8',
+      label: '优惠券抵扣',
+      value: orderInfo.useCoupon,
+    });
+  }
+  // 如果使用了余额，则添加余额信息
+  if (orderInfo.useBalance > 0) {
+    dataSource.push({
+      key: '9',
+      label: '余额抵扣',
+      value: orderInfo.useBalance,
+    });
+  }
+  dataSource.push({
+    key: '10',
+    label: '实收金额',
+    value: `￥${orderInfo.orderActualAmount}[${PAY_CHANNEL[orderInfo.payType] || '其他'}]`,
+  });
+
+  const getItemsContent = () => {
+    if (orderItems.length === 0) {
+      return null;
+    }
+    return (
+      <table style={{ width: '100%', margin: '10px 0' }}>
+        <thead>
+          <tr style={{ fontSize: '12px', lineHeight: '1.5' }}>
+            <th style={{ textAlign: 'left' }}>款式/品名</th>
+            <th style={{ textAlign: 'center' }}>数量</th>
+            <th style={{ textAlign: 'center' }}>单价</th>
+            <th style={{ textAlign: 'center' }}>实收</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            orderItems.map((item) => (
+              <>
+                <tr key={item.id} style={{ fontSize: '12px', lineHeight: '1.5' }}>
+                  <td colSpan={4} style={{ textAlign: 'left' }}>{item.sku}/{item.name}</td>
+                </tr>
+                <tr style={{ fontSize: '12px', lineHeight: '1.5' }}>
+                  <td></td>
+                  <td style={{ textAlign: 'center' }}>{item.counts}</td>
+                  <td style={{ textAlign: 'center' }}>{formatPrice(item.originalPrice * item.discount)}</td>
+                  <td style={{ textAlign: 'center' }}>{formatPrice(item.actualPrice)}</td>
+                </tr>
+              </>
+            ))
+          }
+        </tbody>
+      </table>
+    );
+  };
+
+  return (
+    <div style={{ width: '320px', height: '100%', backgroundColor: '#fff' }}>
+      <StoreLogo />
+      <div style={{ textAlign: 'center', fontSize: '16px', padding: '10px 0 30px' }}>
+        <span>戴维贝拉世纪金源店</span>
+      </div>
+      {
+        dataSource.map((item) => (
+          <div key={item.key} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #f0f0f0' }}>
+            <span style={{ fontSize: '12px', color: '#666' }}>{item.label}</span>
+            <span style={{ fontSize: '12px', color: '#333' }}>{item.value}</span>
+          </div>
+        ))
+      }
+      {
+        getItemsContent()
+      }
+      <div style={{ textAlign: 'center', fontSize: '12px', color: '#999', padding: '10px 0', lineHeight: '1.5' }}>
+        如需换货，请确保吊牌完好<br />商品不影响二次销售，携带小票到店换货
+      </div>
+      <div style={{ textAlign: 'center', fontSize: '12px', color: '#333', padding: '10px 0', lineHeight: '1.5' }}>
+        店长微信：17757058183（可加好友）
+      </div>
+      <div style={{ textAlign: 'center', fontSize: '16px', padding: '10px 0 30px' }}>
+        <span>谢谢惠顾</span>
+      </div>
+    </div>
+  );
+};
+
+export default memo(Bill);

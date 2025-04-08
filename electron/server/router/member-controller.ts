@@ -6,6 +6,7 @@ import { Member } from '../model/member';
 import { Order } from '../model/order';
 import { MemberScore } from '../model/memberScore';
 import { MemberBalance } from '../model/memberBalance';
+import { MemberCoupon } from '../model/memberCoupon';
 
 // 新增会员
 export const createMember = async (req: Request, res: Response) => {
@@ -24,7 +25,8 @@ export const createMember = async (req: Request, res: Response) => {
       res.json({ error: 'member had exists' });
     }
   } catch (error) {
-    logger.error('Error creating member:', error);
+    logger.error('Error creating member:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -44,7 +46,8 @@ export const getMemberInfo = async (req: Request, res: Response) => {
       res.json({ error: 'Member not found' });
     }
   } catch (error) {
-    logger.error('Error getting Member by phone:', error);
+    logger.error('Error getting Member by phone:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -86,14 +89,15 @@ export const getMemberList = async (req: Request, res: Response) => {
       data: rows || [],
     });
   } catch (error) {
-    logger.error('Error query Member list:', error);
+    logger.error('Error query Member list:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
 // 更新会员信息
 export const updateMember = async (req: Request, res: Response) => {
-  const { phone, name, brithday } = req.body;
+  const { phone, name, birthday } = req.body;
   try {
     const resultCheckExists = await Member.findOne({
       where: {
@@ -101,13 +105,14 @@ export const updateMember = async (req: Request, res: Response) => {
       },
     });
     if (resultCheckExists) {
-      await resultCheckExists.update({ name, brithday });
+      await resultCheckExists.update({ name, birthday });
       res.json(resultCheckExists.toJSON());
     } else {
       res.json({ error: 'Member not found' });
     }
   } catch (error) {
-    logger.error('Error updating Member:', error);
+    logger.error('Error updating Member:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -128,7 +133,8 @@ export const deleteMember = async (req: Request, res: Response) => {
       res.json({ error: 'Member not found' });
     }
   } catch (error) {
-    logger.error('Error deleting Member:', error);
+    logger.error('Error deleting Member:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -156,7 +162,8 @@ export const queryMemberScoreList = async (req: Request, res: Response) => {
       res.json({ error: 'Member not found' });
     }
   } catch (error) {
-    logger.error('Error querying Member Score List:', error);
+    logger.error('Error querying Member Score List:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -188,7 +195,8 @@ export const updateMemberScore = async (req: Request, res: Response) => {
       res.json({ error: 'Member not found' });
     }
   } catch (error) {
-    logger.error('Error updating Member Score:', error);
+    logger.error('Error updating Member Score:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -267,7 +275,8 @@ export const memberIncomeBalance = async (req: Request, res: Response) => {
       res.json({ error: 'Member not found' });
     }
   } catch (error) {
-    logger.error('Error Income Member Balance:', error);
+    logger.error('Error Income Member Balance:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -295,7 +304,36 @@ export const queryMemberBalanceList = async (req: Request, res: Response) => {
       res.json({ error: 'Member not found' });
     }
   } catch (error) {
-    logger.error('Error querying Member Balance List:', error);
+    logger.error('Error querying Member Balance List:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// 根据会员查询用户的优惠券列表
+export const queryMemberCouponList = async (req: Request, res: Response) => {
+  const { phone } = req.query;
+  try {
+    const resultCheckExists = await Member.findOne({
+      where: {
+        phone,
+      },
+    });
+    if (resultCheckExists) {
+      const { count, rows } = await MemberCoupon.findAndCountAll({
+        where: { phone },
+        order: [['createdAt', 'DESC']],
+      });
+      res.json({
+        count: count || 0,
+        data: rows || [],
+      });
+    } else {
+      res.json({ error: 'Member not found' });
+    }
+  } catch (error) {
+    logger.error('Error querying Member Coupon List:');
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

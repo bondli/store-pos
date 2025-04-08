@@ -12,6 +12,7 @@ import Box from '@/components/Box';
 import orderColumns from './order';
 import pointColumns from './point';
 import balanceColumns from './balance';
+import couponColumns from './coupon';
 
 type ComProps = {
   userPhone: string;
@@ -23,6 +24,7 @@ const defaultMemberInfo = {
   actual: 0,
   point: 0,
   balance: 0,
+  coupon: 0,
 };
 
 const Detail: React.FC<ComProps> = (props) => {
@@ -120,6 +122,27 @@ const Detail: React.FC<ComProps> = (props) => {
     }
   };
 
+  // 获取用户优惠券流水
+  const getCouponRecords = async (t) => {
+    userLog('request coupon list by user phone params:', t);
+    try {
+      const response = await request.get('/member/queryCouponList', {
+        params: {
+          ...t,
+          phone: userPhone,
+        },
+      });
+      const result = response.data;
+      return {
+        data: result.data,
+        total: result.count,
+      };
+    } catch (error) {
+      message.error('查询会员优惠券失败');
+    }
+  };
+  
+
   return (
     <>
       <Button
@@ -146,11 +169,11 @@ const Detail: React.FC<ComProps> = (props) => {
             }, {
               key: '2',
               label: 'user name',
-              children: memberInfo.name,
+              children: memberInfo.name || '--',
             }, {
               key: '3',
               label: 'birthday',
-              children: memberInfo.birthday,
+              children: memberInfo.birthday || '--',
             }, {
               key: '4',
               label: 'order actual',
@@ -163,7 +186,11 @@ const Detail: React.FC<ComProps> = (props) => {
               key: '6',
               label: 'balance',
               children: memberInfo.balance,
-            }]
+            }, {
+              key: '7',
+              label: 'coupon',
+              children: memberInfo.coupon,
+            },]
           }
           column={1}
           size='small'
@@ -198,6 +225,18 @@ const Detail: React.FC<ComProps> = (props) => {
             <TableRender
               request={getBalanceRecords as any}
               columns={balanceColumns as ProColumnsType}
+              scroll={{ x: 'max-content' }}
+              size='small'
+            />
+          }
+        />
+
+        <Box
+          title={`User Coupon`}
+          content={
+            <TableRender
+              request={getCouponRecords as any}
+              columns={couponColumns as ProColumnsType}
               scroll={{ x: 'max-content' }}
               size='small'
             />

@@ -70,6 +70,12 @@ const Payment: React.FC = () => {
     }));
   };
 
+  // 备注处理函数
+  const handleRemarkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWaitSales(prev => ({ 
+      list: prev.list, brief: { ...prev.brief, remark: e.target.value }
+    }));
+  };
   return (
     <Card title={`Payment`} size='small' className={style.groupCard}>
       <Flex gap={`small`} vertical wrap>
@@ -106,7 +112,25 @@ const Payment: React.FC = () => {
             style={{ width: `200px` }}
             options={salers}
             onChange={handleSalerChange}
-            placeholder={`please select saler`}
+            labelRender={
+              (props) => {
+                const { label } = props;
+                if (label) {
+                  return label;
+                }
+                return <span>please select saler</span>;
+              }
+            }
+          />
+        </Flex>
+
+        <Flex align="center" gap="small">
+          <Typography.Text style={{ width: '100px' }}>Remark</Typography.Text>
+          <Input 
+            size='middle' 
+            placeholder='order remark' 
+            style={{ width: `200px` }}
+            onChange={handleRemarkChange}
           />
         </Flex>
       </Flex>

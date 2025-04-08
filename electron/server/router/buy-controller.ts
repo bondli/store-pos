@@ -1,0 +1,201 @@
+import { Request, Response } from 'express';
+import Sequelize, { Op } from 'sequelize';
+import dayjs from 'dayjs';
+import logger from 'electron-log';
+import { Order } from '../model/order';
+
+import { OrderItems } from '../model/orderItems';
+import { Member } from '../model/member';
+import { Inventory } from '../model/inventory';
+import { MemberScore } from '../model/memberScore';
+import { MemberBalance } from '../model/memberBalance';
+import { StoreCoupon } from '../model/storeCoupon';
+
+// 创建订单
+export const submitOrder = async (req: Request, res: Response) => {
+  const { buyer, storeSaler, waitSales } = req.body;
+  const { counts, totalAmount, payAmount, actualAmount, payType, remark } = waitSales?.brief || {};
+  try {
+    // 构造订单编号
+    const today = dayjs();
+    const todayStr = today.format('YYYYMMDD');
+    const start = today.startOf('day').toDate();
+    const end = today.endOf('day').toDate();
+    const where = {};
+    where['createdAt'] = {
+      [Op.gte]: start,
+      [Op.lte]: end,
+    };
+
+    const todayOrders = await Order.count({
+      where,
+    });
+
+    // 写入订单表
+    const resultOrderCreate = await Order.create({
+      orderSn: `${todayStr}${String(todayOrders+1).padStart(3, '0')}`,
+      orderStatus: `uncheck`,
+      orderItems: counts,
+      orderAmount: payAmount,
+      orderActualAmount: actualAmount,
+      payType,
+      userPhone: buyer.phone,
+      usePoint: buyer.point,
+      useBalance: buyer.balance,
+      useCoupon: 0, // 暂未实现
+      salerId: storeSaler.id,
+      salerName: storeSaler.name,
+      remark,
+    });
+
+    if (!resultOrderCreate) {
+      throw new Error('Failed to create order: No result returned');
+    }
+
+    const orderData = resultOrderCreate.toJSON();
+    if (!orderData.orderSn) {
+      throw new Error('Failed to create order: Invalid order data');
+    }
+
+    // 写入订单商品表
+    const rate = Number((actualAmount / payAmount).toFixed(2));
+    const orderItems = waitSales.list.map(item => ({
+      orderSn: orderData.orderSn,
+      sku: item.sku,
+      sn: item.sn,
+      name: item.name,
+      brand: item.brand,
+      color: item.color,
+      size: item.size,
+      originalPrice: item.originalPrice,
+      discount: item.discount,
+      counts: item.counts,
+      actualPrice: item.isGived ? 0 : Number((item.salePrice * rate).toFixed(2)) * item.counts,
+    }));
+
+    const resultOrderItemsCreate = await OrderItems.bulkCreate(orderItems);
+    if (!resultOrderItemsCreate || resultOrderItemsCreate.length !== waitSales.list.length) {
+      throw new Error('Failed to create order items: Invalid data');
+    }
+
+    // 扣减 SKU 对应的库存
+    for (const item of waitSales.list) {
+      const inventory = await Inventory.findOne({
+        where: { sku: item.sku }
+      });
+
+      if (!inventory) {
+        throw new Error(`Inventory not found for SKU: ${item.sku}`);
+      }
+
+      const inventoryData = inventory.toJSON();
+      if (inventoryData.counts < item.counts) {
+        // throw new Error(`Insufficient inventory for SKU: ${item.sku}`);
+        logger.error(`Insufficient inventory for SKU: ${item.sku}`);
+      }
+
+      await inventory.update({
+        counts: inventoryData.counts - item.counts
+      });
+    }
+
+    // 更新用户信息（消费金额更新，积分更新，余额更新）
+    const member = await Member.findOne({
+      where: { phone: buyer.phone }
+    });
+
+    if (!member) {
+      throw new Error(`Member not found for phone: ${buyer.phone}`);
+    }
+
+    const memberData = member.toJSON();
+    const updates = {
+      // 更新消费金额
+      actual: Number((memberData.actual + actualAmount).toFixed(2)),
+      // 更新积分（减去使用的积分，加上新获得的积分）
+      point: memberData.point - (buyer.usePoint || 0) + Math.floor(actualAmount),
+      // 更新余额（减去使用的余额）
+      balance: Number((memberData.balance - (buyer.useBalance || 0)).toFixed(2))
+    };
+
+    await member.update(updates);
+
+    // 写入用户积分流水表
+    const pointRecords: Array<{
+      phone: string;
+      point: number;
+      type: string;
+      reason: string;
+    }> = [];
+    
+    // 如果有使用积分，记录积分使用
+    if (buyer.usePoint > 0) {
+      pointRecords.push({
+        phone: buyer.phone,
+        point: -buyer.usePoint,
+        type: 'use',
+        reason: `订单${orderData.orderSn} 使用积分`
+      });
+    }
+
+    // 如果有实际支付金额，记录积分奖励
+    if (actualAmount > 0) {
+      const earnedPoints = Math.floor(actualAmount);
+      pointRecords.push({
+        phone: buyer.phone,
+        point: earnedPoints,
+        type: 'earn',
+        reason: `订单${orderData.orderSn}支付获取积分`
+      });
+    }
+
+    // 批量创建积分流水记录
+    if (pointRecords.length > 0) {
+      await MemberScore.bulkCreate(pointRecords);
+    }
+
+    // 写入用户余额流水表
+    const balanceRecords: Array<{
+      phone: string;
+      value: number;
+      type: string;
+      reason: string;
+    }> = [];
+    
+    // 如果有使用余额，记录余额使用
+    if (buyer.useBalance > 0) {
+      balanceRecords.push({
+        phone: buyer.phone,
+        value: -buyer.useBalance,
+        type: 'use',
+        reason: `订单${orderData.orderSn} 使用余额`
+      });
+    }
+
+    // 批量创建余额流水记录
+    if (balanceRecords.length > 0) {
+      await MemberBalance.bulkCreate(balanceRecords);
+    }
+
+    res.status(200).json(orderData);
+  } catch (error) {
+    logger.error('Error creating order:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// 通过实付金额获取符合条件的店铺优惠券
+export const getStoreCoupon = async (req: Request, res: Response) => {
+  const { amount } = req.query;
+  const coupon = await StoreCoupon.findAll({
+    where: {
+      couponStatus: 'active',
+      couponExpiredTime: { [Op.gte]: dayjs().toDate() },
+      couponCondition: { [Op.lte]: amount }
+    },
+    order: [['couponCondition', 'ASC']],
+  });
+
+  res.status(200).json(coupon);
+};

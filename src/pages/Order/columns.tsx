@@ -1,16 +1,15 @@
-import { Space } from 'antd';
+import { Space, Popover, List } from 'antd';
 import { InfoCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 
-// import RemoveOrder from './RemoveOrder';
 import Editor from './Editor';
 import Detail from './Detail';
+import MoreOperate from './MoreOperate';
 
 const columns = [
   {
-    title: 'sn',
+    title: 'order code',
     dataIndex: 'orderSn',
     key: 'orderSn',
-    copyable: true,
     fixed: 'left',
   },
   {
@@ -26,8 +25,58 @@ const columns = [
     align: 'right',
     dataIndex: 'orderActualAmount',
     key: 'orderActualAmount',
-    valueType: 'money',
     fixed: 'left',
+    render: (row, record) => {
+      // 如果存在使用优惠券，积分，余额等，需要加多一个图标，点击图标展示优惠使用的详情
+      if (record.useCoupon || record.usePoint || record.useBalance) {
+        const dataSource = [];
+        if (record.useCoupon) {
+          dataSource.push({
+            key: '1',
+            label: '优惠券',
+            value: record.useCoupon,
+          });
+        }
+        if (record.usePoint) {
+          dataSource.push({
+            key: '2',
+            label: '积分',
+            value: record.usePoint,
+          });
+        }
+        if (record.useBalance) {
+          dataSource.push({
+            key: '3',
+            label: '余额',
+            value: record.useBalance,
+          });
+        }
+        return (
+          <div>
+            <Popover
+              content={
+                <List
+                  dataSource={dataSource}
+                  renderItem={(item) => (
+                    <List.Item>
+                      <div>{item.label}</div>
+                      <div>{item.value}</div>
+                    </List.Item>
+                  )}
+                />
+              }
+              title={`优惠使用详情`}
+              trigger='click'
+              placement='bottomLeft'
+            >
+              <InfoCircleFilled style={{ color: 'red' }} />
+            </Popover>
+            <span>￥{record.orderActualAmount}</span>
+          </div>
+        );
+      }
+      return <span>￥{record.orderActualAmount}</span>;
+    }
   },
   {
     title: 'items',
@@ -91,7 +140,7 @@ const columns = [
         <Space>
           <Detail orderSn={row.orderSn} />
           <Editor orderSn={row.orderSn} />
-          {/* <RemoveOrder orderSn={row.orderSn} /> */}
+          <MoreOperate orderSn={row.orderSn} />
         </Space>
       );
     }

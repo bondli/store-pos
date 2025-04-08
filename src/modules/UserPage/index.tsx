@@ -11,12 +11,6 @@ import style from './index.module.less';
 
 const { Header, Content } = Layout;
 
-type LoginData = {
-  id: number;
-  name: string;
-  avatar: string;
-};
-
 type FieldType = {
   username?: string;
   password?: string;

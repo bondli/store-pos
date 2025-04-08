@@ -22,6 +22,7 @@ type WaitSaleBrief = {
   payAmount: number;
   actualAmount: number;
   payType: string;
+  remark: string;
 };
 
 type WaitSales = {
@@ -37,13 +38,19 @@ type Buyer = {
   coupon?: number;
   usePoint?: number;
   useBalance?: number;
-  useStoreCoupon?: number;
+  useCoupon?: number;
 };
 
 // 店铺优惠券(满减券/红包等)
 type StoreCoupon = {
-  label: string;
-  value: number;
+  id: number;
+  activityId: number;
+  couponCondition: number;
+  couponDesc: string;
+  couponValue: number;
+  couponCount: number;
+  couponStatus: string;
+  couponExpiredTime: string;
 };
 
 // 成单导购员信息
@@ -53,13 +60,13 @@ type StoreSaler = {
 };
 
 type BuyContextType = {
-  waitSales: WaitSales;
+  waitSales: WaitSales; // 待售商品 
   setWaitSales: React.Dispatch<React.SetStateAction<WaitSales>>;
-  buyer: Buyer;
+  buyer: Buyer; // 购买的会员信息
   setBuyer: React.Dispatch<React.SetStateAction<Buyer>>;
-  storeCoupons: StoreCoupon[];
+  storeCoupons: StoreCoupon[]; // 使用了的店铺优惠券
   setStoreCoupons: React.Dispatch<React.SetStateAction<StoreCoupon[]>>;
-  storeSaler: StoreSaler;
+  storeSaler: StoreSaler; // 成单导购员信息
   setStoreSaler: React.Dispatch<React.SetStateAction<StoreSaler>>;
 };
 
@@ -75,6 +82,7 @@ export const BuyProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       payAmount: 0,
       actualAmount: 0,
       payType: '',
+      remark: '',
     },
   });
   const [buyer, setBuyer] = useState<Buyer>(null);
