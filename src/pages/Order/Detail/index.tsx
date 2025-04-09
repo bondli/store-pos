@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Drawer, Descriptions, message } from 'antd';
+import { Button, Drawer, Descriptions, App } from 'antd';
 import dayjs from 'dayjs';
 
 import TableRender from 'table-render';
@@ -34,6 +34,8 @@ const defaultOrderInfo = {
 };
 
 const Detail: React.FC<ComProps> = (props) => {
+  const { message } = App.useApp();
+
   const { orderSn } = props;
 
   const [showPanel, setShowPanel] = useState(false);
@@ -95,7 +97,10 @@ const Detail: React.FC<ComProps> = (props) => {
         },
       });
       const result = response.data;
-      return result.data;
+      return {
+        data: result.data,
+        total: result.count,
+      };
     } catch (error) {
       message.error('查询订单优惠券失败');
     }

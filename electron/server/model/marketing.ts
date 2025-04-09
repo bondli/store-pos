@@ -24,10 +24,20 @@ const Marketing = sequelize.define('Marketing', {
     allowNull: false,
     defaultValue: 'full_send', // 'full_send' or 'full_reduce' or 'full_gift'
   },
+  marketingCondition: {
+    comment: '营销活动条件', // 满送活动：满多少元，满减活动：满多少元，满赠活动：满多少件
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+  },
+  marketingValue: {
+    comment: '营销活动值', // 满送活动：送多少钱，满减活动：减多少钱，满赠活动：送多少件
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+  },
   // 后台逻辑
   // 1、满送活动，在用户下单后，根据订单金额，计算可以获得的优惠券数量，发放到用户的优惠券表（MemberCoupon）
   // 2、满减活动，在活动创建之后，在店铺优惠券表（StoreCoupon）中创建优惠券，用于下单前店铺优惠直接使用
-  // 3、满赠活动，在用户下单后，根据订单中满足条件的商品，直接赠送最低的那个商品
+  // 3、满赠活动，在用户下单后，根据订单中满足条件的商品，直接赠送最低的那个商品，暂未实现
   startTime: {
     comment: '营销活动开始时间',
     type: DataTypes.DATE,

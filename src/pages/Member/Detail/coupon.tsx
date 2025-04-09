@@ -1,21 +1,25 @@
 import { Tag } from 'antd';
 
 const couponColumns = [
-  {
-    title: 'coupon id',
-    dataIndex: 'couponId',
-    key: 'couponId',
-    fixed: 'left',
-  },
+  // {
+  //   title: 'coupon id',
+  //   dataIndex: 'couponId',
+  //   key: 'couponId',
+  //   fixed: 'left',
+  //   width: 140,
+  //   ellipsis: true,
+  // },
   {
     title: 'coupon desc',
     dataIndex: 'couponDesc',
     key: 'couponDesc',
+    fixed: 'left',
   },
   {
     title: 'coupon value',
     dataIndex: 'couponValue',
     key: 'couponValue',
+    align: 'center',
   },
   {
     title: 'coupon status',

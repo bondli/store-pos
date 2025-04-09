@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState, useRef } from 'react';
-import { Button, Drawer, message, Flex } from 'antd';
+import { Button, Drawer, Flex, App } from 'antd';
 
 import { userLog } from '@/common/electron';
 import request from '@common/request';
@@ -26,6 +26,8 @@ const defaultOrderInfo = {
 };
 
 const Print: React.FC<ComProps> = (props) => {
+  const { message } = App.useApp();
+
   const { orderSn } = props;
 
   const [showPanel, setShowPanel] = useState(false);

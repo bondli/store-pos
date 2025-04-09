@@ -1,7 +1,8 @@
 import React, { memo, useState, useRef } from 'react';
+import { Button, App } from 'antd';
+import { RedoOutlined } from '@ant-design/icons';
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
-import { message, Space } from 'antd';
 
 import { userLog } from '@/common/electron';
 import request from '@common/request';
@@ -16,6 +17,8 @@ import QueryBySKU from './QueryBySKU';
 import style from './index.module.less';
 
 const OrderPage: React.FC = () => {
+  const { message } = App.useApp();
+
   const tableRef = useRef<TableContext>(null);
   const [dataList, setDataList] = useState([]);
 
@@ -56,10 +59,11 @@ const OrderPage: React.FC = () => {
         title={`Query Results of Orders`}
         scroll={{ x: 'max-content' }}
         toolbarRender={ 
-          <Space>
+          <>
+            <Button onClick={refreshData}><RedoOutlined />Refresh</Button>
             <Summary dataList={dataList} />
             <CheckBill dataList={dataList} callback={refreshData} />
-          </Space>
+          </>
         }
       />
     </div>

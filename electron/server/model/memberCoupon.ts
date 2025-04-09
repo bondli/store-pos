@@ -14,7 +14,7 @@ const MemberCoupon = sequelize.define('MemberCoupon', {
     allowNull: false,
   },
   couponId: {
-    comment: '优惠券ID',
+    comment: '优惠券ID', // 发券的时候通过uuid来生成
     type: DataTypes.INTEGER,
     allowNull: false,
   },
@@ -33,7 +33,7 @@ const MemberCoupon = sequelize.define('MemberCoupon', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },
-  couponCount: {
+  couponCount: { // 这个字段估计要废弃，系统发券的时候，相同的直接实例化发给用户
     comment: '优惠券数量',
     type: DataTypes.INTEGER,
     allowNull: false,

@@ -7,7 +7,7 @@ type ComProps = {
   id: number;
 };
 
-const RemoveMarketing: React.FC<ComProps> = (props) => {
+const OfflineMarketing: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
 
   const { id } = props;
@@ -15,17 +15,17 @@ const RemoveMarketing: React.FC<ComProps> = (props) => {
   const confirm: PopconfirmProps['onConfirm'] = async (e) => {
     console.log(e);
     try {
-      const response = await request.post(`/marketing/delete`, {
+      const response = await request.post(`/marketing/offline`, {
         id,
       });
       if (response.status === 200) {
-        message.success('活动删除成功');
+        message.success('活动下线成功');
       } else {
-        message.error('活动删除失败');
+        message.error('活动下线失败');
       }
     } catch (error) {
       console.log(error);
-      message.error('活动删除失败');
+      message.error('活动下线失败');
     }
   };
   
@@ -35,17 +35,17 @@ const RemoveMarketing: React.FC<ComProps> = (props) => {
 
   return (
     <Popconfirm
-      title={`Delete Marketing`}
-      description={`Are you sure to delete this marketing?`}
+      title={`Offline Marketing`}
+      description={`Are you sure to offline this marketing?`}
       onConfirm={confirm}
       onCancel={cancel}
       okText={`Yes`}
       cancelText={`No`}
     >
-      <Button type='link'>delete</Button>
+      <Button type='link'>offline</Button>
     </Popconfirm>
   );
 
 };
 
-export default memo(RemoveMarketing);
+export default memo(OfflineMarketing);

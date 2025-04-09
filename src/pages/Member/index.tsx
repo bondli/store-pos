@@ -1,5 +1,6 @@
 import React, { memo, useRef } from 'react';
-import { message } from 'antd';
+import { Button, App } from 'antd';
+import { RedoOutlined } from '@ant-design/icons';
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
@@ -14,6 +15,8 @@ import NewJoin from './NewJoin';
 import style from './index.module.less';
 
 const MemberPage: React.FC = () => {
+  const { message } = App.useApp();
+
   const tableRef = useRef<TableContext>(null);
 
   const getMemberList = async (t) => {
@@ -46,8 +49,11 @@ const MemberPage: React.FC = () => {
         columns={columns as ProColumnsType}
         title={`Query Results of Members`}
         scroll={{ x: 'max-content' }}
-        toolbarRender={ 
-          <NewJoin callback={refreshData} />
+        toolbarRender={
+          <>
+            <Button onClick={refreshData}><RedoOutlined />Refresh</Button>
+            <NewJoin callback={refreshData} />
+          </>
         }
       />
     </div>

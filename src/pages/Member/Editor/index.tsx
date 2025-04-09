@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Card, Drawer, message, Space } from 'antd';
+import { Button, Card, Drawer, Space, App } from 'antd';
 import FormRender, { useForm } from 'form-render';
 
 import { userLog } from '@/common/electron';
@@ -13,6 +13,8 @@ type ComProps = {
 };
 
 const Editor: React.FC<ComProps> = (props) => {
+  const { message } = App.useApp();
+
   const { userPhone, callback } = props;
   
   const formBaseInfo = useForm();

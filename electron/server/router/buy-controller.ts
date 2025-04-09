@@ -1,19 +1,24 @@
 import { Request, Response } from 'express';
 import Sequelize, { Op } from 'sequelize';
 import dayjs from 'dayjs';
+import { v4 as uuidv4 } from 'uuid';
 import logger from 'electron-log';
-import { Order } from '../model/order';
+import Decimal from 'decimal.js';
 
+import { Order } from '../model/order';
 import { OrderItems } from '../model/orderItems';
 import { Member } from '../model/member';
 import { Inventory } from '../model/inventory';
 import { MemberScore } from '../model/memberScore';
 import { MemberBalance } from '../model/memberBalance';
 import { StoreCoupon } from '../model/storeCoupon';
+import { MemberCoupon } from '../model/memberCoupon';
+import { OrderCoupons } from '../model/orderCoupons';
+import { Marketing } from '../model/marketing';
 
 // 创建订单
 export const submitOrder = async (req: Request, res: Response) => {
-  const { buyer, storeSaler, waitSales } = req.body;
+  const { buyer = {}, storeSaler = {}, waitSales = {}, storeCoupons = [] } = req.body;
   const { counts, totalAmount, payAmount, actualAmount, payType, remark } = waitSales?.brief || {};
   try {
     // 构造订单编号
@@ -31,18 +36,23 @@ export const submitOrder = async (req: Request, res: Response) => {
       where,
     });
 
+    // 计算使用优惠券的金额
+    const useStoreCouponAmount = storeCoupons.reduce((acc, coupon) => acc + coupon.couponValue, 0);
+    const useUserCouponAmount = buyer?.useCoupon || 0;
+
     // 写入订单表
     const resultOrderCreate = await Order.create({
       orderSn: `${todayStr}${String(todayOrders+1).padStart(3, '0')}`,
       orderStatus: `uncheck`,
       orderItems: counts,
-      orderAmount: payAmount,
-      orderActualAmount: actualAmount,
+      originalAmount: totalAmount, // 商品吊牌总金额
+      orderAmount: payAmount, // 商品折扣之后的应付金额
+      orderActualAmount: actualAmount, // 商品折扣之后的实付金额
       payType,
-      userPhone: buyer.phone,
-      usePoint: buyer.point,
-      useBalance: buyer.balance,
-      useCoupon: 0, // 暂未实现
+      userPhone: buyer?.phone || '',
+      usePoint: buyer?.usePoint || 0,
+      useBalance: buyer?.useBalance || 0,
+      useCoupon: useStoreCouponAmount + useUserCouponAmount,
       salerId: storeSaler.id,
       salerName: storeSaler.name,
       remark,
@@ -58,7 +68,7 @@ export const submitOrder = async (req: Request, res: Response) => {
     }
 
     // 写入订单商品表
-    const rate = Number((actualAmount / payAmount).toFixed(2));
+    const rate = new Decimal(actualAmount).div(payAmount); // 这个地方别做toFixed，否则会丢失精度
     const orderItems = waitSales.list.map(item => ({
       orderSn: orderData.orderSn,
       sku: item.sku,
@@ -70,7 +80,7 @@ export const submitOrder = async (req: Request, res: Response) => {
       originalPrice: item.originalPrice,
       discount: item.discount,
       counts: item.counts,
-      actualPrice: item.isGived ? 0 : Number((item.salePrice * rate).toFixed(2)) * item.counts,
+      actualPrice: item.isGived ? 0 : new Decimal(item.salePrice).mul(rate).mul(item.counts).toDecimalPlaces(2),
     }));
 
     const resultOrderItemsCreate = await OrderItems.bulkCreate(orderItems);
@@ -99,82 +109,178 @@ export const submitOrder = async (req: Request, res: Response) => {
       });
     }
 
-    // 更新用户信息（消费金额更新，积分更新，余额更新）
-    const member = await Member.findOne({
-      where: { phone: buyer.phone }
+    if (buyer.phone) {
+      // 更新用户信息（消费金额更新，积分更新，余额更新）
+      const member = await Member.findOne({
+        where: { phone: buyer.phone }
+      });
+
+      if (!member) {
+        throw new Error(`Member not found for phone: ${buyer.phone}`);
+      }
+
+      const memberData = member.toJSON();
+      const updates = {
+        // 更新消费金额
+        actual: new Decimal(memberData.actual).plus(actualAmount).toDecimalPlaces(2),
+        // 更新积分（减去使用的积分，加上新获得的积分）
+        point: new Decimal(memberData.point).minus(buyer.usePoint || 0).plus(Math.floor(actualAmount)).toNumber(),
+        // 更新余额（减去使用的余额）
+        balance: new Decimal(memberData.balance).minus(buyer.useBalance || 0).toDecimalPlaces(2)
+      };
+
+      await member.update(updates);
+
+      // 写入用户积分流水表
+      const pointRecords: Array<{
+        phone: string;
+        point: number;
+        type: string;
+        reason: string;
+      }> = [];
+
+      // 如果有实际支付金额，记录积分奖励
+      if (actualAmount > 0) {
+        const earnedPoints = Math.floor(actualAmount);
+        pointRecords.push({
+          phone: buyer.phone,
+          point: earnedPoints,
+          type: 'earn',
+          reason: `订单 ${orderData.orderSn} 获取积分`,
+        });
+      }
+      
+      // 如果有使用积分，记录积分使用
+      if (buyer.usePoint > 0) {
+        pointRecords.push({
+          phone: buyer.phone,
+          point: -buyer.usePoint,
+          type: 'use',
+          reason: `订单 ${orderData.orderSn} 使用积分`,
+        });
+      }
+
+      // 批量创建积分流水记录
+      if (pointRecords.length > 0) {
+        await MemberScore.bulkCreate(pointRecords);
+      }
+      
+      // 如果有使用余额，记录余额使用
+      if (buyer.useBalance > 0) {
+        // 写入用户余额流水表
+        const balanceRecords: Array<{
+          phone: string;
+          value: number;
+          type: string;
+          reason: string;
+        }> = [];
+        balanceRecords.push({
+          phone: buyer.phone,
+          value: -buyer.useBalance,
+          type: 'use',
+          reason: `订单 ${orderData.orderSn} 使用余额`,
+        });
+        // 批量创建余额流水记录
+        await MemberBalance.bulkCreate(balanceRecords);
+      }
+
+      // 如果用户有使用券，记录券使用
+      if (buyer.useCoupon > 0 && buyer.useCouponId) {
+        // 获取优惠券信息
+        const memberCoupon = await MemberCoupon.findOne({
+          where: { id: buyer.useCouponId }
+        });
+
+        if (!memberCoupon) {
+          throw new Error(`Member coupon not found for id: ${buyer.useCouponId}`);
+        }
+
+        const memberCouponData = memberCoupon.toJSON();
+
+        // 更新优惠券使用状态
+        await MemberCoupon.update({
+          couponStatus: 'used',
+        }, {
+          where: { id: buyer.useCouponId }
+        });
+        // 将这个优惠券的信息写到订单优惠券表
+        await OrderCoupons.create({
+          orderSn: orderData.orderSn,
+          couponId: buyer.useCouponId,
+          usedValue: buyer.useCoupon,
+          couponDesc: memberCouponData.couponDesc || '',
+          couponType: 'member',
+          usedTime: dayjs().toDate(),
+        });
+      }
+    }
+
+    // 如果下单有使用店铺优惠券，需要将这个店铺券写到订单优惠券表
+    if (storeCoupons.length > 0) {
+      await OrderCoupons.create({
+        orderSn: orderData.orderSn,
+        couponId: storeCoupons[0].id,
+        usedValue: storeCoupons[0].couponValue,
+        couponDesc: storeCoupons[0].couponDesc || '',
+        couponType: 'store',
+        usedTime: dayjs().toDate(),
+      });
+    }
+
+    // 判断*当前*是否有店铺活动，如果有*满送活动*，需要判断*实际支付金额是否达成*，如果达成需要给用户优惠券表发券
+    const storeActivity = await Marketing.findOne({
+      where: {
+        marketingType: 'full_send',
+        marketingCondition: { [Op.lte]: actualAmount },
+        startTime: { [Op.lte]: dayjs().toDate() },
+        endTime: { [Op.gte]: dayjs().toDate() },
+      },
     });
-
-    if (!member) {
-      throw new Error(`Member not found for phone: ${buyer.phone}`);
-    }
-
-    const memberData = member.toJSON();
-    const updates = {
-      // 更新消费金额
-      actual: Number((memberData.actual + actualAmount).toFixed(2)),
-      // 更新积分（减去使用的积分，加上新获得的积分）
-      point: memberData.point - (buyer.usePoint || 0) + Math.floor(actualAmount),
-      // 更新余额（减去使用的余额）
-      balance: Number((memberData.balance - (buyer.useBalance || 0)).toFixed(2))
-    };
-
-    await member.update(updates);
-
-    // 写入用户积分流水表
-    const pointRecords: Array<{
-      phone: string;
-      point: number;
-      type: string;
-      reason: string;
-    }> = [];
-    
-    // 如果有使用积分，记录积分使用
-    if (buyer.usePoint > 0) {
-      pointRecords.push({
-        phone: buyer.phone,
-        point: -buyer.usePoint,
-        type: 'use',
-        reason: `订单${orderData.orderSn} 使用积分`
+    // 如有符合上述条件的活动，则给用户优惠券表发券
+    if (storeActivity && buyer.phone) {
+      const storeActivityData = storeActivity.toJSON();
+      // 根据这个storeActivityData.id，去店铺优惠券表中查询优惠券列表
+      const storeActivityCoupons = await StoreCoupon.findAll({
+        where: {
+          activityId: storeActivityData.id
+        }
+      }); 
+      // 给用户优惠券表发券（实例化）
+      const memberCoupons = storeActivityCoupons.flatMap(coupon => {
+        const couponData = coupon.toJSON();
+        const counts = couponData.couponCount || 1;
+        // 根据counts生成多条记录
+        return Array(counts).fill(null).map(() => ({
+          phone: buyer.phone,
+          couponId: uuidv4(),
+          couponCondition: couponData.couponCondition,
+          couponDesc: couponData.couponDesc,
+          couponValue: couponData.couponValue,
+          couponCount: 1,
+          couponStatus: 'active',
+          couponExpiredTime: couponData.couponExpiredTime,
+        }));
       });
-    }
-
-    // 如果有实际支付金额，记录积分奖励
-    if (actualAmount > 0) {
-      const earnedPoints = Math.floor(actualAmount);
-      pointRecords.push({
-        phone: buyer.phone,
-        point: earnedPoints,
-        type: 'earn',
-        reason: `订单${orderData.orderSn}支付获取积分`
-      });
-    }
-
-    // 批量创建积分流水记录
-    if (pointRecords.length > 0) {
-      await MemberScore.bulkCreate(pointRecords);
-    }
-
-    // 写入用户余额流水表
-    const balanceRecords: Array<{
-      phone: string;
-      value: number;
-      type: string;
-      reason: string;
-    }> = [];
-    
-    // 如果有使用余额，记录余额使用
-    if (buyer.useBalance > 0) {
-      balanceRecords.push({
-        phone: buyer.phone,
-        value: -buyer.useBalance,
-        type: 'use',
-        reason: `订单${orderData.orderSn} 使用余额`
-      });
-    }
-
-    // 批量创建余额流水记录
-    if (balanceRecords.length > 0) {
-      await MemberBalance.bulkCreate(balanceRecords);
+      
+      if (memberCoupons.length > 0) {
+        // 写入会员优惠券表
+        await MemberCoupon.bulkCreate(memberCoupons);
+        const member2 = await Member.findOne({
+          where: { phone: buyer.phone }
+        });
+  
+        if (!member2) {
+          throw new Error(`Member2 not found for phone: ${buyer.phone}`);
+        }
+  
+        const memberData2 = member2.toJSON();
+        // 更新会员表中券字段
+        await Member.update({
+          coupon: new Decimal(memberData2.coupon).plus(memberCoupons.length).toNumber(),
+        }, {
+          where: { phone: buyer.phone }
+        });
+      }
     }
 
     res.status(200).json(orderData);

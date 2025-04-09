@@ -7,22 +7,22 @@ type WaitSaleItem = {
   name: string;
   color: string;
   size: string;
-  originalPrice: number;
-  salePrice: number;
-  discount: number;
-  counts: number;
-  isGived: boolean;
+  originalPrice: number; // 商品吊牌价
+  salePrice: number; // 商品折扣价
+  discount: number; // 商品折扣率
+  counts: number; // 商品数量
+  isGived: boolean; // 商品是否赠送
 };
 
 // 待售商品汇总信息和支付信息
 type WaitSaleBrief = {
-  skuNum: number;
-  counts: number;
-  totalAmount: number;
-  payAmount: number;
-  actualAmount: number;
-  payType: string;
-  remark: string;
+  skuNum: number; // SKU数量
+  counts: number; // 商品数量
+  totalAmount: number; // 商品吊牌总金额
+  payAmount: number; // 商品折扣之后的应付金额
+  actualAmount: number; // 商品折扣之后的实付金额
+  payType: string; // 支付方式
+  remark: string; // 订单备注
 };
 
 type WaitSales = {
@@ -32,13 +32,14 @@ type WaitSales = {
 
 // 购买的会员信息(资产)
 type Buyer = {
-  phone: string;
-  point: number;
-  balance: number;
-  coupon?: number;
-  usePoint?: number;
-  useBalance?: number;
-  useCoupon?: number;
+  phone: string; // 会员手机号
+  point: number; // 会员积分
+  balance: number; // 会员余额
+  coupon?: number; // 会员优惠券
+  usePoint?: number; // 使用积分数量
+  useBalance?: number; // 使用余额
+  useCoupon?: number; // 使用优惠券价值
+  useCouponId?: number; // 使用优惠券ID
 };
 
 // 店铺优惠券(满减券/红包等)

@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useState, useRef, useContext } from 'react';
-import { Col, Input, Row, Button, message, Modal } from 'antd';
+import { Col, Input, Row, Button, Modal, App } from 'antd';
 import { BarcodeOutlined, UserOutlined } from '@ant-design/icons';
 
 import request from '@common/request';
@@ -22,6 +22,8 @@ import SubmitBar from './SubmitBar';
 import style from './index.module.less';
 
 const BuyPageContainer: React.FC = () => {
+  const { message } = App.useApp();
+
   const {
     waitSales,
     setWaitSales,
@@ -31,6 +33,7 @@ const BuyPageContainer: React.FC = () => {
   } = useContext(BuyContext);
 
   const [scanSkuCode, setScanSkuCode] = useState('');
+  const [memberPhone, setMemberPhone] = useState('');
 
   const debounceTimer = useRef<number>();
   
@@ -160,6 +163,8 @@ const BuyPageContainer: React.FC = () => {
         },
       });
     }
+    // 清除输入框的值
+    setMemberPhone('');
   };
 
   // 处理挂单
@@ -221,6 +226,8 @@ const BuyPageContainer: React.FC = () => {
                 prefix={<UserOutlined />} 
                 allowClear
                 onSearch={handleMemberSearch}
+                value={memberPhone}
+                onChange={(e) => setMemberPhone(e.target.value)}
               />
             }
             footer={

@@ -16,8 +16,8 @@ export const getCoreData = async (req: Request, res: Response) => {
   try {
     // 处理日期范围
     if (dateRange && Array.isArray(dateRange) && dateRange.length === 2) {
-      startTime = dayjs(dateRange[0]).toDate();
-      endTime = dayjs(dateRange[1]).toDate();
+      startTime = dayjs(dateRange[0]).startOf('day').toDate();
+      endTime = dayjs(dateRange[1]).endOf('day').toDate();
     } else {
       // 默认查询最近30天
       startTime = dayjs().subtract(30, 'days').startOf('day').toDate();

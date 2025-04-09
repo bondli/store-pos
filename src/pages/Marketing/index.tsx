@@ -1,5 +1,7 @@
 import React, { memo, useRef } from 'react';
-import { message } from 'antd';
+import { Button, App } from 'antd';
+import { RedoOutlined } from '@ant-design/icons';
+
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
@@ -14,10 +16,12 @@ import NewMarketing from './NewMarketing';
 import style from './index.module.less';
 
 const MarketingPage: React.FC = () => {
+  const { message } = App.useApp();
+
   const tableRef = useRef<TableContext>(null);
 
   const getMemberList = async (t) => {
-    userLog('request member list params:', t);
+    userLog('request marketing list params:', t);
     try {
       const response = await request.get('/marketing/list', {
         params: t,
@@ -46,8 +50,11 @@ const MarketingPage: React.FC = () => {
         columns={columns as ProColumnsType}
         title={`Query Results of Marketing`}
         scroll={{ x: 'max-content' }}
-        toolbarRender={ 
-          <NewMarketing callback={refreshData} />
+        toolbarRender={
+          <>
+            <Button onClick={refreshData}><RedoOutlined />Refresh</Button>
+            <NewMarketing callback={refreshData} />
+          </>
         }
       />
     </div>

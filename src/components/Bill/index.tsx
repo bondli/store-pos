@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, Fragment } from 'react';
 import dayjs from 'dayjs';
 
 import StoreLogo from '@/components/StoreLogo';
@@ -6,7 +6,7 @@ import { PAY_CHANNEL } from '@/common/constant';
 
 type ComProps = {
   orderInfo: any;
-  orderItems: any[];
+  orderItems?: any[];
 };
 
 // 格式化手机号，中间四位用*代替
@@ -71,8 +71,8 @@ const Bill: React.FC<ComProps> = (props) => {
   if (orderInfo.usePoint > 0) {
     dataSource.push({
       key: '7',
-      label: '积分抵扣',
-      value: Math.floor(orderInfo.usePoint),
+      label: `${orderInfo.usePoint}积分抵扣`,
+      value: `-￥${Number(orderInfo.usePoint / 100).toFixed(2)}`,
     });
   }
   // 如果使用了优惠券，则添加优惠券信息
@@ -80,7 +80,7 @@ const Bill: React.FC<ComProps> = (props) => {
     dataSource.push({
       key: '8',
       label: '优惠券抵扣',
-      value: orderInfo.useCoupon,
+      value: `-￥${orderInfo.useCoupon}`,
     });
   }
   // 如果使用了余额，则添加余额信息
@@ -88,13 +88,13 @@ const Bill: React.FC<ComProps> = (props) => {
     dataSource.push({
       key: '9',
       label: '余额抵扣',
-      value: orderInfo.useBalance,
+      value: `-￥${orderInfo.useBalance}`,
     });
   }
   dataSource.push({
     key: '10',
     label: '实收金额',
-    value: `￥${orderInfo.orderActualAmount}[${PAY_CHANNEL[orderInfo.payType] || '其他'}]`,
+    value: `￥${orderInfo.orderActualAmount} [${PAY_CHANNEL[orderInfo.payType] || '其他'}]`,
   });
 
   const getItemsContent = () => {
@@ -114,7 +114,7 @@ const Bill: React.FC<ComProps> = (props) => {
         <tbody>
           {
             orderItems.map((item) => (
-              <>
+              <Fragment key={item.id}>
                 <tr key={item.id} style={{ fontSize: '12px', lineHeight: '1.5' }}>
                   <td colSpan={4} style={{ textAlign: 'left' }}>{item.sku}/{item.name}</td>
                 </tr>
@@ -124,7 +124,7 @@ const Bill: React.FC<ComProps> = (props) => {
                   <td style={{ textAlign: 'center' }}>{formatPrice(item.originalPrice * item.discount)}</td>
                   <td style={{ textAlign: 'center' }}>{formatPrice(item.actualPrice)}</td>
                 </tr>
-              </>
+              </Fragment>
             ))
           }
         </tbody>

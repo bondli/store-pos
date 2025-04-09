@@ -1,13 +1,25 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { ConfigProvider, notification } from 'antd';
+import { App, ConfigProvider, notification } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+
+// 配置 dayjs 时区
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.locale('zh-cn');
+dayjs.tz.setDefault('Asia/Shanghai');
 
 import { MainProvider } from '@common/context';
 
-import App from './App';
+import AppContainer from './App';
 
 import 'antd/dist/reset.css';
+
+dayjs.locale('zh-cn');
 
 notification.config({
   placement: 'topRight',
@@ -18,31 +30,33 @@ notification.config({
 
 const root = createRoot(document.getElementById('root'));
 root.render(
-  <ConfigProvider
-    locale={zhCN}
-    input={{ autoComplete: 'off' }}
-    theme={{
-      token: {
-        colorPrimary: '#18181b',
-        colorPrimaryActive: 'rgb(24 24 27 / 80%)',
-        colorPrimaryHover: 'rgb(24 24 27 / 80%)',
-        borderRadius: 6,
-      },
-      components: {
-        Menu: {
-          itemHeight: 36,
-          itemSelectedColor: 'white',
-          itemSelectedBg: '#18181b',
+  <App>
+    <ConfigProvider
+      locale={zhCN}
+      input={{ autoComplete: 'off' }}
+      theme={{
+        token: {
+          colorPrimary: '#18181b',
+          colorPrimaryActive: 'rgb(24 24 27 / 80%)',
+          colorPrimaryHover: 'rgb(24 24 27 / 80%)',
+          borderRadius: 6,
         },
-        Button: {
-          contentFontSizeSM: 12,
-          primaryShadow: '0',
-        }
-      },
-    }}
-  >
-    <MainProvider>
-      <App />
-    </MainProvider>
-  </ConfigProvider>,
+        components: {
+          Menu: {
+            itemHeight: 36,
+            itemSelectedColor: 'white',
+            itemSelectedBg: '#18181b',
+          },
+          Button: {
+            contentFontSizeSM: 12,
+            primaryShadow: '0',
+          }
+        },
+      }}
+    >
+      <MainProvider>
+        <AppContainer />
+      </MainProvider>
+    </ConfigProvider>
+  </App>,
 );

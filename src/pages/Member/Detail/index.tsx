@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Button, Drawer, Descriptions, message } from 'antd';
+import { Button, Drawer, Descriptions, App } from 'antd';
 
 import TableRender from 'table-render';
 import type { ProColumnsType } from 'table-render';
@@ -28,6 +28,8 @@ const defaultMemberInfo = {
 };
 
 const Detail: React.FC<ComProps> = (props) => {
+  const { message } = App.useApp();
+
   const { userPhone } = props;
 
   const [showPanel, setShowPanel] = useState(false);

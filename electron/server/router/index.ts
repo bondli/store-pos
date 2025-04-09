@@ -59,6 +59,7 @@ import {
   deleteMarketing,
   getMarketingDetail,
   getMarketingCouponList,
+  offlineMarketing,
 } from './marketing-controller';
 
 const router = express.Router();
@@ -116,5 +117,6 @@ router.post('/marketing/update', updateMarketing); // 更新营销活动
 router.post('/marketing/delete', deleteMarketing); // 删除营销活动
 router.get('/marketing/queryDetail', getMarketingDetail); // 获取营销活动详情
 router.get('/marketing/queryCouponList', getMarketingCouponList); // 获取营销活动下属优惠券列表
+router.post('/marketing/offline', offlineMarketing); // 下线营销活动
 
 export default router;

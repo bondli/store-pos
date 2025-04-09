@@ -268,6 +268,7 @@ export const memberIncomeBalance = async (req: Request, res: Response) => {
         useCoupon: 0,
         salerId: 0,
         salerName: '',
+        remark: `用户充值`,
       });
 
       res.json(resultOrderCreate.toJSON());
@@ -312,7 +313,7 @@ export const queryMemberBalanceList = async (req: Request, res: Response) => {
 
 // 根据会员查询用户的优惠券列表
 export const queryMemberCouponList = async (req: Request, res: Response) => {
-  const { phone } = req.query;
+  const { phone, status, expiredTime } = req.query;
   try {
     const resultCheckExists = await Member.findOne({
       where: {
@@ -320,8 +321,16 @@ export const queryMemberCouponList = async (req: Request, res: Response) => {
       },
     });
     if (resultCheckExists) {
+      const where = {};
+      where['phone'] = phone;
+      if (status) {
+        where['couponStatus'] = status;
+      }
+      if (expiredTime) {
+        where['couponExpiredTime'] = { [Op.gte]: dayjs().toDate() };
+      }
       const { count, rows } = await MemberCoupon.findAndCountAll({
-        where: { phone },
+        where,
         order: [['createdAt', 'DESC']],
       });
       res.json({

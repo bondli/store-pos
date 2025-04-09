@@ -13,6 +13,7 @@ const BillInfo: React.FC = () => {
     const tmp = [];
     let needPay = waitSales?.brief?.payAmount;
     tmp.push({
+      key: 1,
       desc: `订单应收:`,
       amount: waitSales?.brief?.payAmount,
     });
@@ -20,6 +21,7 @@ const BillInfo: React.FC = () => {
     if (storeCoupons?.length) {
       needPay -= storeCoupons?.reduce((acc, curr) => acc + curr.couponValue, 0);
       tmp.push({
+        key: 2,
         desc: `使用店铺优惠券抵扣:`,
         amount: `-${(storeCoupons?.reduce((acc, curr) => acc + curr.couponValue, 0))}`
       });
@@ -27,6 +29,7 @@ const BillInfo: React.FC = () => {
     if (buyer?.usePoint) {
       needPay -= buyer?.usePoint / 100;
       tmp.push({
+        key: 3,
         desc: `使用(${buyer?.usePoint})积分抵扣:`,
         amount: `-${(buyer?.usePoint / 100)}`,
       });
@@ -35,6 +38,7 @@ const BillInfo: React.FC = () => {
     if (buyer?.useBalance) {
       needPay -= buyer?.useBalance;
       tmp.push({
+        key: 4,
         desc: `使用(${buyer?.useBalance})余额抵扣:`,
         amount: `-${(buyer?.useBalance)}`,
       });
@@ -43,17 +47,20 @@ const BillInfo: React.FC = () => {
     if (buyer?.useCoupon) {
       needPay -= buyer?.useCoupon;
       tmp.push({
+        key: 5,
         desc: `使用会员优惠券抵扣:`,
         amount: `-${(buyer?.useCoupon)}`,
       });
     }
     tmp.push({
+      key: 6,
       desc: `订单应付:`,
       amount: needPay,
     });
 
     if (buyer?.phone && needPay > 1) {
       tmp.push({
+        key: 7,
         desc: `本次获得积分:`,
         amount: Math.floor(needPay),
       });
@@ -78,9 +85,15 @@ const BillInfo: React.FC = () => {
         bordered
         dataSource={list}
         renderItem={(item) => (
-          <List.Item>
+          <List.Item key={item.key}>
             <List.Item.Meta title={<div className={style.billListTitle}>{item.desc}</div>}/>
-            <div>¥{item.amount}</div>
+            {
+              item.key === 1 || item.key === 6 ? (
+                <div>¥{item.amount}</div>
+              ) : (
+                <div>{item.amount}</div>
+              )
+            }
           </List.Item>
         )}
       />

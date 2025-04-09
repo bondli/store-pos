@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Button, Drawer, message } from 'antd';
+import { Button, Drawer, App } from 'antd';
 import FormRender, { useForm } from 'form-render';
 
 import request from '@common/request';
@@ -13,6 +13,8 @@ type ComProps = {
 };
 
 const NewMarketing: React.FC<ComProps> = (props) => {
+  const { message } = App.useApp();
+
   const { callback } = props;
   const form = useForm();
 

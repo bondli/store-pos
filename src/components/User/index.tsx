@@ -1,7 +1,7 @@
 import React, { memo, useContext } from 'react';
 import { GithubFilled, CloudDownloadOutlined, CloudUploadOutlined, CloudSyncOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Dropdown, Space, message, Modal } from 'antd';
+import { Dropdown, Space, Modal, App } from 'antd';
 
 import ElectronBridge, { deleteStore, userLog } from '@common/electron';
 import { MainContext } from '@common/context';
@@ -9,6 +9,7 @@ import { MainContext } from '@common/context';
 import style from './index.module.less';
 
 const User: React.FC = () => {
+  const { message } = App.useApp();
   const { userInfo, setUserInfo } = useContext(MainContext);
   const [modalApi, modalContextHolder] = Modal.useModal();
 
@@ -22,7 +23,7 @@ const User: React.FC = () => {
       type: 'divider',
     },
     {
-      label: '导出数据',
+      label: '数据备份',
       key: '2',
       icon: <CloudDownloadOutlined style={{ fontSize: '16px' }} />,
     }, {
@@ -58,7 +59,7 @@ const User: React.FC = () => {
         }
       });
     }
-    // 刷新下数据，首次进入存在一定概率的调研接口失败
+    // 刷新下数据，首次进入存在一定概率的调用接口失败
     else if (key === '4') {
       message.success('同步成功');
       window.location.reload();

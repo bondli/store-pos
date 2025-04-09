@@ -1,11 +1,13 @@
 import React, { memo, useState, useRef } from 'react';
-import { Button, Drawer, Input, message, Table } from 'antd';
+import { App, Button, Drawer, Input, Table } from 'antd';
 import dayjs from 'dayjs';
 
 import request from '@/common/request';
 import { BarcodeOutlined, CopyOutlined } from '@ant-design/icons';
 
 const QueryBySKU: React.FC = () => {
+  const { message } = App.useApp();
+
   const [showPanel, setShowPanel] = useState(false);
   const [dataList, setDataList] = useState([]);
 
@@ -117,6 +119,7 @@ const QueryBySKU: React.FC = () => {
         <div style={{ marginTop: 24 }}>
           {dataList.length > 0 && (
             <Table
+              rowKey={(record) => record.orderSn}
               title={() => <span style={{ fontSize: 16, fontWeight: 600 }}>Order List</span>}
               dataSource={dataList}
               columns={columns as any}

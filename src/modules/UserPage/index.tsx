@@ -1,6 +1,6 @@
 import React, { memo, useState, useContext } from 'react';
 import type { FormProps } from 'antd';
-import { Layout, Row, Col, Form, Input, Button, message } from 'antd';
+import { Layout, Row, Col, Form, Input, Button, message, App } from 'antd';
 import { userLog, setStore } from '@common/electron';
 import request from '@common/request';
 import { MainContext } from '@common/context';
@@ -23,6 +23,8 @@ type RegFieldType = {
 };
 
 const UserPage: React.FC = () => {
+  const { message } = App.useApp();
+
   const [showLogin, setShowLogin] = useState(true);
   const { setUserInfo } = useContext(MainContext);
 

@@ -33,6 +33,12 @@ electron + sqlite3 + express + react + antd
     - 下单的时候根据支付金额 + 当前系统是否有活动（满多少送多少，可以是满减券，或者现金红包），直接发到用户的账单中
     - 自行领取（后续配合用户端小程序中领取）
 
+- 数据库中几个coupon表解释：
+  - marketing 活动表，根据活动类型，在创建的时候会在 storeCoupon表中生成记录，通过activityId 和 marketing表形成关联
+  - storeCoupon 店铺优惠券表，用于承接店铺活动，会在满足条件的情况下给用户发券，和在满减活动的时候直接下单时可以使用
+  - memberCoupon 会员优惠券表，从店铺满送活动中，满足条件的时候，实例化到这个表中，成为用户的券资产，下单的时候可以使用
+  - orderCoupon 订单关联优惠券，用于保存订单中使用的券记录，方便追溯
+
 ### dev
 yarn run dev
 
@@ -41,4 +47,6 @@ yarn run pack:mac
 yarn run pack:win
 
 edit by 2025-03-12 by init project
+
+edit by 2025-04-09 only refund/exchange/pitchstock
 

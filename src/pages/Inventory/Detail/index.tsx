@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Drawer, Descriptions, message } from 'antd';
+import { Button, Drawer, Descriptions, App } from 'antd';
 
 import TableRender from 'table-render';
 import type { ProColumnsType } from 'table-render';
@@ -26,6 +26,8 @@ const defaultItemInfo = {
 };
 
 const Detail: React.FC<ComProps> = (props) => {
+  const { message } = App.useApp();
+
   const { sku, sn } = props;
 
   const [showPanel, setShowPanel] = useState(false);

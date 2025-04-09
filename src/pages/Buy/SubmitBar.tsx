@@ -21,8 +21,11 @@ const SubmitBar: React.FC = () => {
 
   const [orderInCache, setOrderInCache] = useState(null);
   const [showSuccessDrawer, setShowSuccessDrawer] = useState(false);
-  const [orderInfo, setOrderInfo] = useState(null);
+  
+  // 打印小票用
   const printRef = useRef<HTMLDivElement>(null);
+  const [orderInfo, setOrderInfo] = useState(null);
+  const [orderItems, setOrderItems] = useState([]);
 
   useEffect(() => {
     const orderCache = getStore('orderCache') || {};
@@ -82,6 +85,13 @@ const SubmitBar: React.FC = () => {
         message.error(resData?.error || '订单提交失败');
       } else {
         message.success('订单提交成功');
+        // 在清除待售商品之前，先将待售的商品写入state，用于打印小票
+        const rate = waitSales?.brief?.actualAmount / waitSales?.brief?.payAmount;
+        const orderItems = waitSales?.list.map((item) => ({
+          ...item,
+          actualPrice: item.isGived ? 0 : Number((item.salePrice * rate).toFixed(2)) * item.counts,
+        }));
+        setOrderItems(orderItems);
         handleReset();
         // 弹出下单成功的抽屉，提供打印小票的功能
         setShowSuccessDrawer(true);
@@ -146,7 +156,7 @@ const SubmitBar: React.FC = () => {
           ]}
         />
         <div ref={printRef} style={{ display: 'block' }}>
-          <Bill orderInfo={orderInfo} orderItems={waitSales?.list} />
+          <Bill orderInfo={orderInfo} orderItems={orderItems} />
         </div>
       </Drawer>
     </Row>

@@ -6,7 +6,7 @@ import { MainContext } from '@common/context';
 import UserPage from '@/modules/UserPage';
 import MainPage from '@/modules/MainPage';
 
-const App: React.FC = () => {
+const AppContainer: React.FC = () => {
   const { userInfo, setUserInfo } = useContext(MainContext);
   const [loading, setLoading] = useState(true);
 
@@ -33,4 +33,4 @@ const App: React.FC = () => {
   return <MainPage />;
 };
 
-export default App;
+export default AppContainer;

@@ -17,8 +17,10 @@ const columns = [
     align: 'right',
     dataIndex: 'orderAmount',
     key: 'orderAmount',
-    valueType: 'money',
     fixed: 'left',
+    render: (row, record) => {
+      return record.orderAmount > 0 ? <span>￥{record.orderAmount}</span> : '--';
+    },
   },
   {
     title: 'actual',
@@ -118,6 +120,9 @@ const columns = [
     title: 'saler',
     dataIndex: 'salerName',
     key: 'salerName',
+    render: (row, record) => {
+      return record.salerName || '--';
+    },
   },
   {
     title: 'status',

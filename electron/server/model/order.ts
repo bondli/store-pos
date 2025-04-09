@@ -23,25 +23,35 @@ const Order = sequelize.define('Order', {
     allowNull: true,
     defaultValue: 0,
   },
-  orderAmount: {
-    comment: '订单总金额',
+  originalAmount: {
+    comment: '商品吊牌总金额',
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
+    allowNull: true,
+    defaultValue: 0,
+  },
+  orderAmount: {
+    comment: '商品折扣之后的应付金额',
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true,
+    defaultValue: 0,
   },
   orderActualAmount: {
     comment: '订单实付金额',
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
+    allowNull: true,
+    defaultValue: 0,
   },
   payType: {
     comment: '付款方式',
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+    defaultValue: 'other',
   },
   userPhone: {
     comment: '会员手机号',
     type: DataTypes.STRING,
     allowNull: true,
+    defaultValue: '',
   },
   usePoint: {
     comment: '使用积分',

@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Drawer, Space, Table, message } from 'antd';
+import { Button, Drawer, Space, Table, App } from 'antd';
 import { InfoCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 
 import { PAY_CHANNEL } from '@/common/constant';
@@ -18,6 +18,7 @@ type ComProps = {
 };
 
 const CheckBill: React.FC<ComProps> = (props) => {
+  const { message } = App.useApp();
   const { callback } = props;
   const [showPanel, setShowPanel] = useState(false);
   const [dataList, setDataList] = useState(props.dataList);
@@ -36,7 +37,7 @@ const CheckBill: React.FC<ComProps> = (props) => {
 
   // 确认订单
   const confirmOrder = async (orderSn: string) => {
-    console.log('confirmOrder', orderSn);
+    // console.log('confirmOrder', orderSn);
     try {
       const response = await request.post(`/order/checkBill?orderSn=${orderSn}`);
       if (response.data.error) {
@@ -136,6 +137,7 @@ const CheckBill: React.FC<ComProps> = (props) => {
         destroyOnClose={true}
       >
         <Table
+          rowKey={(record) => record.orderSn}
           dataSource={dataList}
           columns={columns as any}
           pagination={false}

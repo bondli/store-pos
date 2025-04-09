@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import Remove from './Remove';
 import Editor from './Editor';
 import Detail from './Detail';
+import Offline from './Offline';
 
 const columns = [
   {
@@ -76,6 +77,7 @@ const columns = [
         <Space>
           <Detail id={record.id} />
           <Editor id={record.id} />
+          <Offline id={record.id} />
           <Remove id={record.id} />
         </Space>
       );

@@ -24,23 +24,27 @@ const StoreCoupon: React.FC = () => {
     setCoupons(coupons.map(item => ({
       ...item,
       label: item.couponDesc,
-      value: item.id,
+      value: item.couponValue,
     })));
   };
 
+  // 选择了店铺优惠券
   const handleChange = (value: string) => {
     const selectedCoupon = coupons.find(item => item.value === value);
     console.log('selectedCoupon:', selectedCoupon);
     setStoreCoupons(selectedCoupon ? [selectedCoupon] : []);
   };
 
+  // 外部依赖变化时，重新获取优惠券（比如待售商品的应付金额变化）
   useEffect(() => {
     if (waitSales?.list?.length && waitSales?.brief?.payAmount) {
+      setStoreCoupons([]); // 清空原来已选的优惠券
       getCoupons();
     }
   }, [waitSales?.brief?.payAmount]);
 
-  if (!waitSales?.list?.length) {
+  // 如果待售商品为空，或者应付金额为空，或者优惠券为空，则不显示优惠券选择组件
+  if (!waitSales?.list?.length || !waitSales?.brief?.payAmount || !coupons?.length) {
     return null;
   }
 

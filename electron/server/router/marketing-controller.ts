@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import logger from 'electron-log';
 import { Marketing } from '../model/marketing';
 import { StoreCoupon } from '../model/storeCoupon';
+import dayjs from 'dayjs';
 
 // 获取营销活动列表
 export const getMarketingList = async (req: Request, res: Response) => {
@@ -56,6 +57,7 @@ export const getMarketingList = async (req: Request, res: Response) => {
 // 创建营销活动
 export const createMarketing = async (req: Request, res: Response) => {
   const { activityName, activityType, activityDesc, activityTime, activityContent } = req.body;
+  const { full, reduce } = activityContent;
   try {
     const [startTime, endTime] = activityTime;
     
@@ -63,6 +65,8 @@ export const createMarketing = async (req: Request, res: Response) => {
       marketingName: activityName,
       marketingDesc: activityDesc,
       marketingType: activityType,
+      marketingCondition: full || 0, // 仅限满送活动有值写入
+      marketingValue: reduce || 0, // 仅限满送活动有值写入
       startTime,
       endTime,
     });
@@ -138,16 +142,16 @@ export const updateMarketing = async (req: Request, res: Response) => {
 export const deleteMarketing = async (req: Request, res: Response) => {
   const { id } = req.body;
   try {
-    const marketing = await Marketing.findByPk(id);
+    const marketing = await Marketing.findByPk(id as string);
     if (marketing) {
       await marketing.destroy();
-      res.json({ message: 'Marketing deleted successfully' });
       // 删除营销活动下属优惠券
       await StoreCoupon.destroy({
         where: {
-          marketingId: id,
+          activityId: id,
         },
       });
+      res.json({ message: 'Marketing deleted successfully' });
     } else {
       res.status(404).json({ error: 'Marketing not found' });
     }
@@ -183,4 +187,33 @@ export const getMarketingCouponList = async (req: Request, res: Response) => {
     count: count || 0,
     data: rows || [],
   });
+};
+
+// 下线营销活动
+export const offlineMarketing = async (req: Request, res: Response) => {
+  const { id } = req.body;
+  try {
+    const marketing = await Marketing.findByPk(id as string);
+    if (marketing) {
+      await marketing.update({
+        endTime: dayjs().toDate(),
+      });
+      // 营销活动下属优惠券全部设置过期掉
+      await StoreCoupon.update({
+        couponStatus: 'expired',
+        couponExpiredTime: dayjs().toDate(),
+      }, {
+        where: {
+          activityId: id,
+        },
+      });
+      res.json({ message: 'Marketing offline successfully' });
+    } else {
+      res.status(404).json({ error: 'Marketing not found' });
+    }
+  } catch (error) {
+    logger.error('Error offline Marketing:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 };

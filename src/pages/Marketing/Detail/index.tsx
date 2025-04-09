@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Drawer, Descriptions, message } from 'antd';
+import { Button, Drawer, Descriptions, App } from 'antd';
 import dayjs from 'dayjs';
 
 import TableRender from 'table-render';
@@ -30,6 +30,8 @@ type ComProps = {
 };
 
 const Detail: React.FC<ComProps> = (props) => {
+  const { message } = App.useApp();
+
   const { id } = props;
 
   const [showPanel, setShowPanel] = useState(false);

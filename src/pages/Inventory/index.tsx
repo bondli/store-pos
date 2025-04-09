@@ -1,7 +1,9 @@
 import React, { memo, useRef } from 'react';
+import { Button, App } from 'antd';
+import { RedoOutlined } from '@ant-design/icons';
+
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
-import { message, Space } from 'antd';
 
 import { userLog } from '@/common/electron';
 import request from '@common/request';
@@ -15,6 +17,8 @@ import SingleStock from './SingleStock';
 import style from './index.module.less';
 
 const InventroyPage: React.FC = () => {
+  const { message } = App.useApp();
+
   const tableRef = useRef<TableContext>(null);
 
   const getInventroyList = async (t) => {
@@ -39,7 +43,12 @@ const InventroyPage: React.FC = () => {
 
   return (
     <div className={style.container}>
-      <PageTitle text={`Inventroys`} />
+      <PageTitle
+        text={`Inventroys`}
+        extra={
+          <BitchStock callback={refreshData} />
+        }
+      />
       <TableRender
         ref={tableRef}
         search={search}
@@ -48,10 +57,10 @@ const InventroyPage: React.FC = () => {
         title={`Query Results of Inventroys`}
         scroll={{ x: 'max-content' }}
         toolbarRender={ 
-          <Space>
-            <BitchStock callback={refreshData} />
+          <>
+            <Button onClick={refreshData}><RedoOutlined />Refresh</Button>
             <SingleStock callback={refreshData} />
-          </Space>
+          </>
         }
       />
     </div>

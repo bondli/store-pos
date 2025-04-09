@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
-import { Button, Drawer, message, Upload } from 'antd';
+import { Button, Drawer, Upload, App } from 'antd';
 import type { UploadProps } from 'antd';
-import { InboxOutlined } from '@ant-design/icons';
+import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
 
 const { Dragger } = Upload;
 
@@ -10,6 +10,8 @@ type ComProps = {
 };
 
 const BitchStock: React.FC<ComProps> = (props) => {
+  const { message } = App.useApp();
+
   const [showPanel, setShowPanel] = useState(false);
 
   const togglePanel = () => {
@@ -39,10 +41,10 @@ const BitchStock: React.FC<ComProps> = (props) => {
   return (
     <>
       <Button
-        type='default'
+        type='link'
         onClick={togglePanel}
       >
-        bitch stock
+        <UploadOutlined />Bitch Stock
       </Button>
       <Drawer
         title={`Bitch Stock`}

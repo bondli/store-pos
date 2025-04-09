@@ -21,7 +21,10 @@ type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 const { RangePicker } = DatePicker;
 
 const DataPage: React.FC = () => {
-  const [dateRange, setDateRange] = useState<RangePickerProps['value']>([dayjs().startOf('day').subtract(30, 'day'), dayjs().endOf('day')]);
+  const [dateRange, setDateRange] = useState<RangePickerProps['value']>([
+    dayjs().startOf('day').subtract(30, 'day'),
+    dayjs().endOf('day')
+  ]);
 
   const [columnData, setColumnData] = useState<Array<{month: string; amounts: number}>>([]);
   const [recentSaleList, setRecentSaleList] = useState<Array<{label: React.ReactNode; key: number; icon: React.ReactNode}>>([]);
@@ -34,7 +37,7 @@ const DataPage: React.FC = () => {
   });
 
   const disabledDate: RangePickerProps['disabledDate'] = (current) => {
-    return current && current >= dayjs().endOf('day');
+    return current && current > dayjs().endOf('day');
   };
 
   // 获取统计数据
@@ -89,7 +92,16 @@ const DataPage: React.FC = () => {
 
   return (
     <div className={style.container}>
-      <PageTitle text={`Dashboard`} extra={<RangePicker disabledDate={disabledDate} value={dateRange} onChange={setDateRange} />} />
+      <PageTitle
+        text={`Dashboard`}
+        extra={
+          <RangePicker
+            disabledDate={disabledDate}
+            value={dateRange}
+            onChange={setDateRange}
+          />
+        }
+      />
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={6}>
           <Card className={style.card}>

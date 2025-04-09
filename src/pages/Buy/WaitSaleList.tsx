@@ -1,5 +1,5 @@
 import React, { ChangeEvent, memo, useContext, useState } from 'react';
-import { Avatar, List, Tag, Modal, Select, Input, Flex, Typography, Radio, RadioChangeEvent } from 'antd';
+import { Avatar, List, Tag, Modal, Input, Flex, Typography, Radio, RadioChangeEvent } from 'antd';
 import { DeleteFilled, MoneyCollectFilled } from '@ant-design/icons';
 
 import { DEFAULT_DISCOUNT } from '@/common/constant';
@@ -9,15 +9,16 @@ import { BuyContext } from './context';
 import style from './index.module.less';
 
 const WaitSaleList: React.FC = () => {
-  const { waitSales, setWaitSales, buyer, storeSaler } = useContext(BuyContext);
+  const { waitSales, setWaitSales, buyer, storeSaler, storeCoupons } = useContext(BuyContext);
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
   const [currentSku, setCurrentSku] = useState('');
   // 设置临时的折扣
   const [changeDiscount, setChangeDiscount] = useState(DEFAULT_DISCOUNT);
 
-  console.log('WaitSaleList Component waitSales:', waitSales);
-  console.log('WaitSaleList Component buyer:', buyer);
-  console.log('WaitSaleList Component storeSaler:', storeSaler);
+  // console.log('WaitSaleList Component waitSales:', waitSales);
+  // console.log('WaitSaleList Component buyer:', buyer);
+  // console.log('WaitSaleList Component storeSaler:', storeSaler);
+  // console.log('WaitSaleList Component storeCoupons:', storeCoupons);
 
   // 删除商品
   const handleDelete = (sku) => {
