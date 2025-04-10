@@ -234,13 +234,13 @@ export const MarketingFullGift = (props: any) => {
 };
 
 const MarketingCustom = (props: any) => {
-  const { value, onChange, activityType } = props;
+  const { value, onChange, marketingType } = props;
 
-  if (activityType === 'full_send') {
+  if (marketingType === 'full_send') {
     return <MarketingFullSend {...props} />;
-  } else if (activityType === 'full_reduce') {
+  } else if (marketingType === 'full_reduce') {
     return <MarketingFullReduce {...props} />;
-  } else if (activityType === 'full_gift') {
+  } else if (marketingType === 'full_gift') {
     return <MarketingFullGift {...props} />;
   } else {
     return <span style={{ color: '#ccc' }}>请选择活动类型，再设置活动内容</span>;

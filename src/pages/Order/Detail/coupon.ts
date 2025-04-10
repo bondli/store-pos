@@ -4,6 +4,7 @@ const couponColumns = [
     dataIndex: 'couponId',
     key: 'couponId',
     fixed: 'left',
+    align: 'center',
   },
   {
     title: 'coupon desc',
@@ -14,6 +15,7 @@ const couponColumns = [
     title: 'coupon type',
     key: 'couponType',
     dataIndex: 'couponType',
+    align: 'center',
     enum: {
       store: '店铺优惠券',
       member: '会员优惠券',
@@ -23,12 +25,14 @@ const couponColumns = [
     title: 'used value',
     key: 'usedValue',
     dataIndex: 'usedValue',
+    align: 'center',
     valueType: 'money',
   },
   {
     title: 'used time',
     dataIndex: 'usedTime',
     key: 'usedTime',
+    align: 'center',
     valueType: 'dateTime',
   },
 ];

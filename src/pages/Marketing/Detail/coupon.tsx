@@ -1,3 +1,5 @@
+import { Tag } from 'antd';
+
 const couponColumns = [
   {
     title: 'id',
@@ -28,6 +30,15 @@ const couponColumns = [
     align: 'center',
     dataIndex: 'couponCount',
     key: 'couponCount',
+  },
+  {
+    title: 'status',
+    align: 'center',
+    dataIndex: 'couponStatus',
+    key: 'couponStatus',
+    render: (row, record) => {
+      return record.couponStatus === 'active' ? <Tag color='success'>有效</Tag> : <Tag color='error'>无效</Tag>;
+    }
   },
   {
     title: 'expired time',

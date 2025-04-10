@@ -1,3 +1,6 @@
+import { InfoCircleFilled } from "@ant-design/icons";
+import { Tooltip } from "antd";
+
 const orderColumns = [
   {
     title: 'order sn',
@@ -17,7 +20,20 @@ const orderColumns = [
     align: 'right',
     dataIndex: 'orderActualAmount',
     key: 'orderActualAmount',
-    valueType: 'money',
+    // 如果有退单，则hover上去显示有退单
+    render: (row, record) => {
+      if (record.status === 'refund') {
+        return (
+          <div>
+            <Tooltip title='已退单' placement='topLeft'>
+              <InfoCircleFilled style={{ color: 'red' }} />
+            </Tooltip>
+            <span>￥{record.orderActualAmount}</span>
+          </div>
+        );
+      }
+      return <span>￥{record.orderActualAmount}</span>;
+    }
   },
   {
     title: 'order items',

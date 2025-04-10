@@ -40,6 +40,7 @@
     "express": "^4.19.2",
     "form-render": "latest",
     "lodash-es": "^4.17.21",
+    "multer": "^1.4.5-lts.2",
     "react": "^18.2.0",
     "react-countup": "6.5.3",
     "react-dom": "^18.2.0",
@@ -48,12 +49,14 @@
     "sqlite3": "^5.1.7",
     "table-render": "latest",
     "timeago.js": "^4.0.2",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^7.18.10",
     "@types/body-parser": "^1.19.5",
     "@types/express": "^4.17.21",
+    "@types/multer": "^1.4.12",
     "@types/node": "^20.12.12",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.9",

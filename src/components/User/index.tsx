@@ -42,7 +42,7 @@ const User: React.FC = () => {
   ];
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     const { key } = e;
-    userLog('Click MainMenu: ', key);
+    // userLog('Click MainMenu: ', key);
     // 导出数据
     if (key === '2') {
       ElectronBridge.exportData();

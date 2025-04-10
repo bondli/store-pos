@@ -7,33 +7,32 @@ import dayjs from 'dayjs';
 
 // 获取营销活动列表
 export const getMarketingList = async (req: Request, res: Response) => {
-  const { activityName, activityType, startDate, endDate, pageSize, current } = req.query;
+  const { marketingName, marketingType, startDate, endDate, pageSize, current } = req.query;
   const limit = Number(pageSize);
   const offset = (Number(current) - 1) * limit;
   const where = {};
 
-  if (activityName) {
-    where['activityName'] = {
-      [Op.substring]: activityName,
+  if (marketingName) {
+    where['marketingName'] = {
+      [Op.substring]: marketingName,
     };
   }
-  if (activityType) {
-    where['activityType'] = {
-      [Op.substring]: activityType,
+  if (marketingType) {
+    where['marketingType'] = {
+      [Op.substring]: marketingType,
     };
   }
 
   // 处理起止时间
   if (startDate && endDate) {
-    const startTmp = new Date(startDate as string);
-    const endTmp = new Date(endDate as string);
-    const start = new Date(startTmp.getFullYear(), startTmp.getMonth(), startTmp.getDate());
-    const end = new Date(endTmp.getFullYear(), endTmp.getMonth(), endTmp.getDate(), 23, 59, 59, 999);
+    const start = dayjs(startDate as string).startOf('day').toDate();
+    const end = dayjs(endDate as string).endOf('day').toDate();
+
     where['startTime'] = {
-      [Op.gte]: start,
+      [Op.lte]: start,
     };
     where['endTime'] = {
-      [Op.lte]: end,
+      [Op.gte]: end,
     };
   }
   try {
@@ -56,23 +55,21 @@ export const getMarketingList = async (req: Request, res: Response) => {
 
 // 创建营销活动
 export const createMarketing = async (req: Request, res: Response) => {
-  const { activityName, activityType, activityDesc, activityTime, activityContent } = req.body;
-  const { full, reduce } = activityContent;
+  const { marketingName, marketingType, marketingDesc, startTime, endTime, marketingContent } = req.body;
+  const { full, reduce } = marketingContent;
   try {
-    const [startTime, endTime] = activityTime;
-    
     const marketing = await Marketing.create({
-      marketingName: activityName,
-      marketingDesc: activityDesc,
-      marketingType: activityType,
+      marketingName,
+      marketingDesc,
+      marketingType,
       marketingCondition: full || 0, // 仅限满送活动有值写入
       marketingValue: reduce || 0, // 仅限满送活动有值写入
       startTime,
       endTime,
     });
     // 根据活动类型，创建活动内容
-    if (activityType === 'full_send') { // 满送活动
-      const { distributionRules } = activityContent;
+    if (marketingType === 'full_send') { // 满送活动
+      const { distributionRules } = marketingContent;
       // 将满送的优惠券写入店铺优惠券表
       for (const rule of distributionRules) {
         const { full, reduce, count } = rule;
@@ -86,8 +83,8 @@ export const createMarketing = async (req: Request, res: Response) => {
           couponCount: count,
         });
       }
-    } else if (activityType === 'full_reduce') { // 满减活动
-      const { rules } = activityContent;
+    } else if (marketingType === 'full_reduce') { // 满减活动
+      const { rules } = marketingContent;
       // 将满减的优惠券写入店铺优惠券表
       for (const rule of rules) {
         const { full, reduce } = rule;
@@ -101,7 +98,7 @@ export const createMarketing = async (req: Request, res: Response) => {
           couponCount: 1,
         });
       }
-    } else if (activityType === 'full_gift') { // 满赠活动
+    } else if (marketingType === 'full_gift') { // 满赠活动
       // 将满赠的优惠券写入店铺优惠券表
       // 暂不实现
     }
@@ -116,16 +113,15 @@ export const createMarketing = async (req: Request, res: Response) => {
 // 更新营销活动
 export const updateMarketing = async (req: Request, res: Response) => {
   const { id } = req.query;
-  const { activityName, activityTime, activityDesc } = req.body;
-  const [startTime, endTime] = activityTime;
+  const { marketingName, startTime, endTime, marketingDesc } = req.body;
   try {
     const marketing = await Marketing.findByPk(id as string); 
     if (marketing) {
       await marketing.update({
-        marketingName: activityName,
+        marketingName: marketingName,
         startTime,
         endTime,
-        marketingDesc: activityDesc,
+        marketingDesc: marketingDesc,
       });
       res.json(marketing);
     } else {
@@ -200,7 +196,7 @@ export const offlineMarketing = async (req: Request, res: Response) => {
       });
       // 营销活动下属优惠券全部设置过期掉
       await StoreCoupon.update({
-        couponStatus: 'expired',
+        couponStatus: 'invalid',
         couponExpiredTime: dayjs().toDate(),
       }, {
         where: {

@@ -21,7 +21,7 @@ type ComProps = {
   id: number;
 };
 
-  const defaultActivityInfo = {
+  const defaultMarketingInfo = {
   marketingName: '',
   marketingDesc: '',
   marketingType: '',
@@ -35,7 +35,7 @@ const Detail: React.FC<ComProps> = (props) => {
   const { id } = props;
 
   const [showPanel, setShowPanel] = useState(false);
-  const [activityInfo, setActivityInfo] = useState(defaultActivityInfo);
+  const [marketingInfo, setMarketingInfo] = useState(defaultMarketingInfo);
   
   const togglePanel = () => {
     setShowPanel(!showPanel);
@@ -52,7 +52,7 @@ const Detail: React.FC<ComProps> = (props) => {
       });
       const result = response.data;
       if (!result.error) {
-        setActivityInfo(result);
+        setMarketingInfo(result);
       }
 
     } catch (error) {
@@ -107,27 +107,27 @@ const Detail: React.FC<ComProps> = (props) => {
             [{
               key: '1',
               label: 'name',
-              children: activityInfo.marketingName,
+              children: marketingInfo.marketingName,
             },
             {
               key: '2',
               label: 'description',
-              children: activityInfo.marketingDesc,
+              children: marketingInfo.marketingDesc,
             },
             {
               key: '3',
               label: 'type',
-              children: MARKETING_TYPE_MAP[activityInfo.marketingType as keyof typeof MARKETING_TYPE_MAP] || activityInfo.marketingType,
+              children: MARKETING_TYPE_MAP[marketingInfo.marketingType as keyof typeof MARKETING_TYPE_MAP] || marketingInfo.marketingType,
             },
             {
               key: '4',
               label: 'start time',
-              children: dayjs(activityInfo.startTime).format('YYYY/MM/DD'),
+              children: dayjs(marketingInfo.startTime).format('YYYY/MM/DD'),
             },
             {
               key: '5',
               label: 'end time',
-              children: dayjs(activityInfo.endTime).format('YYYY/MM/DD'),
+              children: dayjs(marketingInfo.endTime).format('YYYY/MM/DD'),
             }]
           }
           column={1}
@@ -136,7 +136,7 @@ const Detail: React.FC<ComProps> = (props) => {
         />
 
         <Box
-          title={`The Activity's Coupon List`}  
+          title={`The Marketing's Coupon List`}  
           content={
             <TableRender
               request={getCouponList as any}

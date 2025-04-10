@@ -62,6 +62,8 @@ import {
   offlineMarketing,
 } from './marketing-controller';
 
+import { uploadFile } from './common-controller';
+
 const router = express.Router();
 
 // 买单相关接口
@@ -118,5 +120,8 @@ router.post('/marketing/delete', deleteMarketing); // 删除营销活动
 router.get('/marketing/queryDetail', getMarketingDetail); // 获取营销活动详情
 router.get('/marketing/queryCouponList', getMarketingCouponList); // 获取营销活动下属优惠券列表
 router.post('/marketing/offline', offlineMarketing); // 下线营销活动
+
+// 上传文件
+router.post('/common/uploadFile', uploadFile); // 上传文件
 
 export default router;

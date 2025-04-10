@@ -12,6 +12,8 @@ const pointColumns = [
     enum: {
       earn: `购物赚取`,
       use: `购物抵扣`,
+      refund: `退货回滚`,
+      exchange: `换货退补`,
       manualAdd: `手动增加`,
       manualReduce: `手动减少`,
     },

@@ -8,7 +8,7 @@ import Offline from './Offline';
 
 const columns = [
   {
-    title: 'activity name',
+    title: 'marketing name',
     dataIndex: 'marketingName',
     key: 'marketingName',
     fixed: 'left',
@@ -20,7 +20,7 @@ const columns = [
     ellipsis: true,
   },
   {
-    title: 'activity type',
+    title: 'marketing type',
     align: 'center',
     dataIndex: 'marketingType',
     key: 'marketingType',
@@ -73,11 +73,18 @@ const columns = [
     title: 'operation',
     align: 'center',
     render: (row, record) => {
+      let status = 'active';
+      const now = dayjs();
+      const endTime = dayjs(record.endTime);
+
+      if (now.isAfter(endTime)) {
+        status = 'offline';
+      }
       return (
         <Space>
           <Detail id={record.id} />
           <Editor id={record.id} />
-          <Offline id={record.id} />
+          <Offline id={record.id} status={status} />
           <Remove id={record.id} />
         </Space>
       );

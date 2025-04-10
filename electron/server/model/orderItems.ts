@@ -67,6 +67,12 @@ const OrderItems = sequelize.define('OrderItems', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  status: {
+    comment: '状态',
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: 'normal', // normal|refund
+  },
 }, {
   // 这是其他模型参数
   tableName: 'OrderItems',

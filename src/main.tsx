@@ -23,7 +23,7 @@ dayjs.locale('zh-cn');
 
 notification.config({
   placement: 'topRight',
-  top: 100,
+  top: 20,
   duration: 3,
   rtl: false,
 });

@@ -5,15 +5,15 @@ import request from '@/common/request';
 
 type ComProps = {
   id: number;
+  status: string;
 };
 
 const OfflineMarketing: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
 
-  const { id } = props;
+  const { id, status } = props;
 
   const confirm: PopconfirmProps['onConfirm'] = async (e) => {
-    console.log(e);
     try {
       const response = await request.post(`/marketing/offline`, {
         id,
@@ -32,6 +32,10 @@ const OfflineMarketing: React.FC<ComProps> = (props) => {
   const cancel: PopconfirmProps['onCancel'] = (e) => {
     // console.log(e);
   };
+
+  if (status !== 'active') {
+    return <Button type='link' disabled>offline</Button>;
+  }
 
   return (
     <Popconfirm

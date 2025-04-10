@@ -1,15 +1,17 @@
 import React, { memo, useState, useRef } from 'react';
 import { App, Button, Drawer, Input, Table } from 'antd';
+import { BarcodeOutlined, CopyOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 import request from '@/common/request';
-import { BarcodeOutlined, CopyOutlined } from '@ant-design/icons';
+import Box from '@/components/Box';
 
 const QueryBySKU: React.FC = () => {
   const { message } = App.useApp();
 
   const [showPanel, setShowPanel] = useState(false);
   const [dataList, setDataList] = useState([]);
+  const [scanSkuCode, setScanSkuCode] = useState('');
 
   const togglePanel = () => {
     setShowPanel(!showPanel);
@@ -23,6 +25,10 @@ const QueryBySKU: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim();
+
+    // 更新输入框的值
+    setScanSkuCode(value);
+
     if (!value) {
       return;
     }
@@ -43,6 +49,8 @@ const QueryBySKU: React.FC = () => {
         } else {
           setDataList(result.data);
         }
+        // 清除输入框的值
+        setScanSkuCode('');
       }).catch((error: any) => {
         message.error('查询失败');
       });
@@ -92,7 +100,7 @@ const QueryBySKU: React.FC = () => {
       key: 'userPhone',
     },
     {
-      title: 'item count',
+      title: 'items',
       align: 'center',
       dataIndex: 'orderItems',
       key: 'orderItems',
@@ -105,27 +113,37 @@ const QueryBySKU: React.FC = () => {
         type='link'
         onClick={togglePanel}
       >
-        query order by sku code
+        Query Order by Sku Code
       </Button>
       <Drawer
-        title='Query Order by SKU Code'
+        title='Query Order by Sku Code'
         width={700}
         open={showPanel}
         onClose={closePanel}
         destroyOnClose={true}
       >
-        <Input prefix={<BarcodeOutlined />}  placeholder='input sku code' onChange={handleChange} autoFocus />
+        <Input
+          prefix={<BarcodeOutlined />} 
+          placeholder='input sku code'
+          onChange={handleChange}
+          autoFocus
+          value={scanSkuCode}
+        />
 
         <div style={{ marginTop: 24 }}>
-          {dataList.length > 0 && (
-            <Table
-              rowKey={(record) => record.orderSn}
-              title={() => <span style={{ fontSize: 16, fontWeight: 600 }}>Order List</span>}
-              dataSource={dataList}
-              columns={columns as any}
-              pagination={false}
-            />
-          )}
+          <Box
+            title={`Order List`}
+            content={
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '20px' }}>
+                <Table
+                  rowKey={(record) => record.orderSn}
+                  dataSource={dataList}
+                  columns={columns as any}
+                  pagination={false}
+                />
+              </div>
+            }
+          />
         </div>
       </Drawer>
     </>
@@ -134,3 +152,7 @@ const QueryBySKU: React.FC = () => {
 };
 
 export default memo(QueryBySKU);
+function setScanSkuCode(arg0: string) {
+  throw new Error('Function not implemented.');
+}
+

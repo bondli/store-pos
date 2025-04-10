@@ -86,11 +86,11 @@ const Payment: React.FC = () => {
             buttonStyle={`solid`}
             onChange={handlePayTypeChange}
           >
-            <Radio.Button value="alipay">支付宝</Radio.Button>
-            <Radio.Button value="weixin">微信</Radio.Button>
-            <Radio.Button value="cash">现金</Radio.Button>
-            <Radio.Button value="card">银行卡</Radio.Button>
-            <Radio.Button value="other">其他</Radio.Button>
+            <Radio.Button value='weixin'>微信</Radio.Button>
+            <Radio.Button value='alipay'>支付宝</Radio.Button>
+            <Radio.Button value='cash'>现金</Radio.Button>
+            <Radio.Button value='card'>银行卡</Radio.Button>
+            <Radio.Button value='other'>其他</Radio.Button>
           </Radio.Group>
         </Flex>
 

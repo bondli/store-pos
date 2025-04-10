@@ -1,10 +1,11 @@
-import { message } from 'antd';
+import { notification } from 'antd';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { userLog, getStore } from '@common/electron';
 
+export const baseURL = 'http://localhost:9527/';
 // 创建axios实例
 const service: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:9527/', // api的base_url
+  baseURL, // api的base_url
   timeout: 5000 // 请求超时时间
 });
 
@@ -20,7 +21,11 @@ service.interceptors.request.use(
   error => {
     // 请求错误处理
     userLog('request error:', error);
-    message.error(error?.message || `unknown error`);
+    notification.error({
+      message: 'request error',
+      description: error?.message || `unknown error`,
+      duration: 3,
+    });
     Promise.reject(error);
   }
 );
@@ -29,13 +34,21 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response: AxiosResponse) => {
     if (response.data?.error) {
-      message.error(response.data?.error || `unknown error`);
+      notification.error({
+        message: 'response error',
+        description: response.data?.error || `unknown error`,
+        duration: 3,
+      });
     }
     return response;
   },
   error => {
     userLog('response error:', error);
-    message.error(error?.message || `unknown error`);
+    notification.error({
+      message: 'response error',
+      description: error?.message || `unknown error`,
+      duration: 3,
+    });
     return Promise.reject(error);
   }
 );

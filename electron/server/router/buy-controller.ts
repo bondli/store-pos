@@ -40,7 +40,7 @@ export const submitOrder = async (req: Request, res: Response) => {
     const useStoreCouponAmount = storeCoupons.reduce((acc, coupon) => acc + coupon.couponValue, 0);
     const useUserCouponAmount = buyer?.useCoupon || 0;
 
-    // 写入订单表
+    // 1.写入订单表
     const resultOrderCreate = await Order.create({
       orderSn: `${todayStr}${String(todayOrders+1).padStart(3, '0')}`,
       orderStatus: `uncheck`,
@@ -67,7 +67,7 @@ export const submitOrder = async (req: Request, res: Response) => {
       throw new Error('Failed to create order: Invalid order data');
     }
 
-    // 写入订单商品表
+    // 2.写入订单商品表
     const rate = new Decimal(actualAmount).div(payAmount); // 这个地方别做toFixed，否则会丢失精度
     const orderItems = waitSales.list.map(item => ({
       orderSn: orderData.orderSn,
@@ -88,7 +88,7 @@ export const submitOrder = async (req: Request, res: Response) => {
       throw new Error('Failed to create order items: Invalid data');
     }
 
-    // 扣减 SKU 对应的库存
+    // 3.扣减 SKU 对应的库存
     for (const item of waitSales.list) {
       const inventory = await Inventory.findOne({
         where: { sku: item.sku }
@@ -109,8 +109,8 @@ export const submitOrder = async (req: Request, res: Response) => {
       });
     }
 
+    // 4.更新用户信息（消费金额更新，积分更新，余额更新）
     if (buyer.phone) {
-      // 更新用户信息（消费金额更新，积分更新，余额更新）
       const member = await Member.findOne({
         where: { phone: buyer.phone }
       });
@@ -131,7 +131,7 @@ export const submitOrder = async (req: Request, res: Response) => {
 
       await member.update(updates);
 
-      // 写入用户积分流水表
+      // 5.写入用户积分流水表
       const pointRecords: Array<{
         phone: string;
         point: number;
@@ -165,7 +165,7 @@ export const submitOrder = async (req: Request, res: Response) => {
         await MemberScore.bulkCreate(pointRecords);
       }
       
-      // 如果有使用余额，记录余额使用
+      // 6.如果有使用余额，记录余额使用
       if (buyer.useBalance > 0) {
         // 写入用户余额流水表
         const balanceRecords: Array<{
@@ -184,7 +184,7 @@ export const submitOrder = async (req: Request, res: Response) => {
         await MemberBalance.bulkCreate(balanceRecords);
       }
 
-      // 如果用户有使用券，记录券使用
+      // 7.如果用户有使用券，记录券使用
       if (buyer.useCoupon > 0 && buyer.useCouponId) {
         // 获取优惠券信息
         const memberCoupon = await MemberCoupon.findOne({
@@ -215,7 +215,7 @@ export const submitOrder = async (req: Request, res: Response) => {
       }
     }
 
-    // 如果下单有使用店铺优惠券，需要将这个店铺券写到订单优惠券表
+    // 8.如果下单有使用店铺优惠券，需要将这个店铺券写到订单优惠券表
     if (storeCoupons.length > 0) {
       await OrderCoupons.create({
         orderSn: orderData.orderSn,
@@ -227,7 +227,7 @@ export const submitOrder = async (req: Request, res: Response) => {
       });
     }
 
-    // 判断*当前*是否有店铺活动，如果有*满送活动*，需要判断*实际支付金额是否达成*，如果达成需要给用户优惠券表发券
+    // 9.判断*当前*是否有店铺活动，如果有*满送活动*，需要判断*实际支付金额是否达成*，如果达成需要给用户优惠券表发券
     const storeActivity = await Marketing.findOne({
       where: {
         marketingType: 'full_send',

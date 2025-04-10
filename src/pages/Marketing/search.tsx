@@ -2,13 +2,13 @@ const schema = {
   type: 'object',
   labelWidth: 100,
   properties: {
-    activityTime: {
+    marketingTime: {
       title: 'time',
       bind: ['startDate', 'endDate'],
       type: 'range',
       format: 'date',
     },
-    activityName: {
+    marketingName: {
       title: 'name',
       type: 'string',
       placeholder: 'input activity name',
@@ -16,14 +16,14 @@ const schema = {
         allowClear: true,
       },
     },
-    activityType: {
+    marketingType: {
       title: 'type',
       type: 'string',
       widget: 'select',
       props: {
         options: [
-          { label: '满送活动', value: 'full_send' },
           { label: '满减活动', value: 'full_reduce' },
+          { label: '满送活动', value: 'full_send' },
           { label: '满赠活动', value: 'full_gift' },
         ],
       },

@@ -1,4 +1,4 @@
-import { Space, Popover, List } from 'antd';
+import { Space, Popover, List, Tooltip } from 'antd';
 import { InfoCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 
 import Editor from './Editor';
@@ -13,12 +13,22 @@ const columns = [
     fixed: 'left',
   },
   {
+    title: 'items',
+    align: 'center',
+    key: 'orderItems',
+    dataIndex: 'orderItems',
+    fixed: 'left',
+  },
+  {
     title: 'amount',
     align: 'right',
     dataIndex: 'orderAmount',
     key: 'orderAmount',
     fixed: 'left',
     render: (row, record) => {
+      if (record.orderAmount <= 0 && record.orderItems <= 0) {
+        return <span>会员充值</span>;
+      }
       return record.orderAmount > 0 ? <span>￥{record.orderAmount}</span> : '--';
     },
   },
@@ -71,24 +81,18 @@ const columns = [
               trigger='click'
               placement='bottomLeft'
             >
-              <InfoCircleFilled style={{ color: 'red' }} />
+              <InfoCircleFilled style={{ color: '#faad14' }} />
             </Popover>
-            <span>￥{record.orderActualAmount}</span>
+            <span style={{ color: 'red' }}>￥{record.orderActualAmount}</span>
           </div>
         );
       }
-      return <span>￥{record.orderActualAmount}</span>;
+      return <span style={{ color: 'red' }}>￥{record.orderActualAmount}</span>;
     }
   },
   {
-    title: 'items',
-    align: 'center',
-    key: 'orderItems',
-    dataIndex: 'orderItems',
-    fixed: 'left',
-  },
-  {
     title: 'payment',
+    align: 'center',
     dataIndex: 'payType',
     key: 'payType',
     enum: {
@@ -130,10 +134,16 @@ const columns = [
     dataIndex: 'orderStatus',
     key: 'orderStatus',
     render: (row, record) => {
-      if (record.orderStatus === 'uncheck') {
-        return <InfoCircleFilled style={{ color: '#666' }} />
+      if (record.orderStatus === 'refund') {
+        return <Tooltip title='有退货' placement='right'><InfoCircleFilled style={{ color: '#666' }} /></Tooltip>
+      }
+      else if (record.orderStatus === 'exchange') {
+        return <Tooltip title='有换货' placement='right'><InfoCircleFilled style={{ color: '#666' }} /></Tooltip>
+      }
+      else if (record.orderStatus === 'uncheck') {
+        return <Tooltip title='未完成对账' placement='right'><InfoCircleFilled style={{ color: '#faad14' }} /></Tooltip>
       } else {
-        return <CheckCircleFilled style={{ color: 'green' }} />;
+        return <Tooltip title='已对账' placement='right'><CheckCircleFilled style={{ color: 'green' }} /></Tooltip>;
       }
     }
   },

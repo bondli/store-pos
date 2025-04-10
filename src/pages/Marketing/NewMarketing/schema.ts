@@ -1,47 +1,48 @@
 export default {
   type: 'object',
   properties: {
-    activityName: {
-      title: 'activity name',
-      placeholder: 'input activity name',
+    marketingName: {
+      title: 'marketing name',
+      placeholder: 'input marketing name',
       type: 'string',
       required: true,
       widget: 'input'
     },
-    activityDesc: {
-      title: 'activity description',
-      placeholder: 'input activity description',
+    marketingDesc: {
+      title: 'marketing description',
+      placeholder: 'input marketing description',
       type: 'string',
       required: true,
       widget: 'input',
     },
-    activityTime: {
-      title: 'activity time',
-      placeholder: 'select activity time',
+    marketingTime: {
+      bind: ['startTime', 'endTime'],
+      title: 'marketing time',
+      placeholder: 'select marketing time',
       type: 'range',
       required: true,
       widget: 'dateRange',
     },
-    activityType: {
-      title: 'activity type',
+    marketingType: {
+      title: 'marketing type',
       type: 'string',
       required: true,
-      placeholder: 'select activity type',
+      placeholder: 'select marketing type',
       widget: 'select',
       props: {
         options: [
-          { label: '满送活动', value: 'full_send' },
           { label: '满减活动', value: 'full_reduce' },
+          { label: '满送活动', value: 'full_send' },
           { label: '买赠活动', value: 'full_gift' },
         ],
       },
     },
-    activityContent: {
-      title: 'activity content',
+    marketingContent: {
+      title: 'marketing content',
       type: 'object',
       widget: 'MarketingCustom',
       props: {
-        activityType: '{{ formData.activityType }}'
+        marketingType: '{{ formData.marketingType }}'
       },
     },
   },

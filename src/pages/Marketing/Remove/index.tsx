@@ -13,7 +13,6 @@ const RemoveMarketing: React.FC<ComProps> = (props) => {
   const { id } = props;
 
   const confirm: PopconfirmProps['onConfirm'] = async (e) => {
-    console.log(e);
     try {
       const response = await request.post(`/marketing/delete`, {
         id,
