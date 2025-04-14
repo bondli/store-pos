@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Drawer, Col, Row, Statistic, Card } from 'antd';
+import { Drawer, Col, Row, Statistic, Card } from 'antd';
+import { EyeFilled } from '@ant-design/icons';
 
 import { OrderListProps, OrderStatistics, PaymentChannelStats } from '@common/constant';
 import style from './index.module.less';
@@ -43,12 +44,12 @@ const Summary: React.FC<OrderListProps> = (props) => {
 
   return (
     <>
-      <Button
-        type='default'
+      <span
+        className={style.summary}
         onClick={togglePanel}
       >
-        summary
-      </Button>
+        <EyeFilled />
+      </span>
       <Drawer
         title={`Query Result of Order's Summary`}
         height={410}

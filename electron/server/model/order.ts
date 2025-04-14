@@ -89,6 +89,18 @@ const Order = sequelize.define('Order', {
     allowNull: true,
     defaultValue: '',
   },
+  source: {
+    comment: '订单来源',
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: 'inshop', // inshop|outlet
+  },
+  extra: {
+    comment: '额外信息', // 用于存储导入订单的额外信息，下单时的所有参数信息，便于导出的时候直接导入，走下单重放
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: '{}',
+  },
 }, {
   // 这是其他模型参数
   tableName: 'Order',

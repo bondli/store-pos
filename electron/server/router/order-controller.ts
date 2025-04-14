@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Sequelize, { Op } from 'sequelize';
 import dayjs from 'dayjs';
 import logger from 'electron-log';
+import ExcelJS from 'exceljs';
 import { Order } from '../model/order';
 
 import { OrderItems } from '../model/orderItems';
@@ -439,6 +440,44 @@ export const queryOrderCouponList = async (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error('Error getting Order coupons:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// 导出订单
+export const exportOrder = async (req: Request, res: Response) => {
+  const { orderSnList } = req.body;
+  try {
+    const result = await Order.findAll({
+      where: { orderSn: { [Op.in]: orderSnList } },
+    });
+    if (!result) {
+      return res.json({ error: 'Order not found' });
+    }
+    // 将结果写入excel文件
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Orders');
+    worksheet.addRow(['orderSn', 'orderActualAmount', 'orderItems', 'payType', 'userPhone', 'salerName', 'createdAt', 'extra']);
+    const orderData = result.map(item => item.toJSON());
+    orderData.forEach(item => {
+      worksheet.addRow([
+        item.orderSn, 
+        item.orderActualAmount, 
+        item.orderItems, 
+        item.payType, 
+        item.userPhone, 
+        item.salerName, 
+        dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+        item.extra
+      ]);
+    });
+    // 将文件写入响应
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=orders-${dayjs().format('YYYY-MM-DD')}.xlsx`);
+    workbook.xlsx.write(res);
+  } catch (error) {
+    logger.error('Error exporting order:');
     console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }

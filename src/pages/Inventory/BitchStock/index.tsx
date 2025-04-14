@@ -19,6 +19,8 @@ const BitchStock: React.FC<ComProps> = (props) => {
 
   const [showPanel, setShowPanel] = useState(false);
 
+  // 定义一个变量，用来判断用户是否上传了文件
+  const [isUploadFile, setIsUploadFile] = useState(false);
   // 上传的文件数据行数
   const [dataList, setDataList] = useState([]);
   // 上传的文件中商品总数
@@ -72,9 +74,21 @@ const BitchStock: React.FC<ComProps> = (props) => {
 
   // 执行入库
   const handleBitchStock = async () => {
-    console.log('执行入库');
+    // 如果没有数据，则提示用户
+    if (!dataList.length) {
+      message.error('请先上传文件');
+      return;
+    }
+    // 需要对 dataList 进行去重
+    const uniqueDataList = dataList.filter((item, index, self) =>
+      index === self.findIndex((t) => t.SKU === item.SKU)
+    );
+    if (uniqueDataList.length !== dataList.length) {
+      message.error('数据存在重复，请检查');
+      return;
+    }
     const response = await request.post('/inventory/batchCreate', {
-      dataList,
+      dataList: uniqueDataList,
     });
     const result = response.data;
     if (!result.error) {
@@ -87,6 +101,7 @@ const BitchStock: React.FC<ComProps> = (props) => {
           callback && callback();
           setShowPanel(false);
           setDataList([]);
+          setIsUploadFile(false);
         },
       });
     } else {
@@ -97,6 +112,7 @@ const BitchStock: React.FC<ComProps> = (props) => {
   const handleClear = () => {
     setDataList([]);
     setShowPanel(false);
+    setIsUploadFile(false);
   };
 
   return (
@@ -137,81 +153,84 @@ const BitchStock: React.FC<ComProps> = (props) => {
             </p>
           </Dragger>
         </div>
-
-        <Box
-          title={`上传的文件中记录 (${dataList.length ? `共${dataList.length}条，商品${totalCount}个` : '0条'})`}
-          content={
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '20px' }}>
-              <Table
-                rowKey='SKU'
-                columns={[
-                  {
-                    title: '品名',
-                    dataIndex: '品名',
-                  },
-                  {
-                    title: '货号',
-                    dataIndex: '货号',
-                  },
-                  {
-                    title: '品牌',
-                    dataIndex: '品牌',
-                  },
-                  {
-                    title: 'SKU',
-                    dataIndex: 'SKU',
-                  },
-                  {
-                    title: '尺码',
-                    dataIndex: '尺码',
-                  },
-                  {
-                    title: '颜色',
-                    dataIndex: '颜色',
-                  },
-                  {
-                    title: '吊牌价',
-                    dataIndex: '吊牌价',
-                  },
-                  {
-                    title: '进货价',
-                    dataIndex: '进货价',
-                  },
-                  {
-                    title: '数量',
-                    dataIndex: '数量',
-                    render: (text, record) => {
-                      if (record.type === 'newStyle') {
-                        return (
-                          <>
-                            {text}
-                            <Tag color='blue' style={{ marginLeft: '10px' }}>新款</Tag>
-                          </>
-                        );
-                      } else if (record.type === 'addSku') {
-                        return (
-                          <>
-                            {text} 
-                            <Tag color='green' style={{ marginLeft: '10px' }}>补款</Tag>
-                          </>
-                        );
-                      } else if (record.type === 'addNum') {
-                        return (
-                          <>
-                            {text} 
-                            <Tag color='red' style={{ marginLeft: '10px' }}>补货</Tag>
-                          </>
-                        );
-                      }
-                    },
-                  },
-                ]}
-                dataSource={dataList}
-                pagination={false}
-              />
-            </div>
-          }
-        />
+        {
+          isUploadFile && (
+            <Box
+              title={`上传的文件中记录 (${dataList.length ? `共${dataList.length}条，商品${totalCount}个` : '0条'})`}
+              content={
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '20px' }}>
+                  <Table
+                    rowKey='SKU'
+                    columns={[
+                      {
+                        title: '品名',
+                        dataIndex: '品名',
+                      },
+                      {
+                        title: '货号',
+                        dataIndex: '货号',
+                      },
+                      {
+                        title: '品牌',
+                        dataIndex: '品牌',
+                      },
+                      {
+                        title: 'SKU',
+                        dataIndex: 'SKU',
+                      },
+                      {
+                        title: '尺码',
+                        dataIndex: '尺码',
+                      },
+                      {
+                        title: '颜色',
+                        dataIndex: '颜色',
+                      },
+                      {
+                        title: '吊牌价',
+                        dataIndex: '吊牌价',
+                      },
+                      {
+                        title: '进货价',
+                        dataIndex: '进货价',
+                      },
+                      {
+                        title: '数量',
+                        dataIndex: '数量',
+                        render: (text, record) => {
+                          if (record.type === 'newStyle') {
+                            return (
+                              <>
+                                {text}
+                                <Tag color='blue' style={{ marginLeft: '10px' }}>新款</Tag>
+                              </>
+                            );
+                          } else if (record.type === 'addSku') {
+                            return (
+                              <>
+                                {text} 
+                                <Tag color='green' style={{ marginLeft: '10px' }}>补款</Tag>
+                              </>
+                            );
+                          } else if (record.type === 'addNum') {
+                            return (
+                              <>
+                                {text} 
+                                <Tag color='red' style={{ marginLeft: '10px' }}>补货</Tag>
+                              </>
+                            );
+                          }
+                        },
+                      },
+                    ]}
+                    dataSource={dataList}
+                    pagination={false}
+                  />
+                </div>
+              }
+            />
+          )
+        }
       </Drawer>
     </>
   );

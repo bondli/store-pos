@@ -186,7 +186,7 @@ export const updateMemberScore = async (req: Request, res: Response) => {
       // 插入记录到用户积分表
       const result = await MemberScore.create({
         phone,
-        score: justifyScore,
+        point: justifyScore,
         type,
         reason,
       });

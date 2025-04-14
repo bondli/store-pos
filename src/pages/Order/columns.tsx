@@ -11,6 +11,13 @@ const columns = [
     dataIndex: 'orderSn',
     key: 'orderSn',
     fixed: 'left',
+    render: (row, record) => {
+      if (record.source === 'outlet') {
+        return <Tooltip title='特卖场' placement='top'>{row}</Tooltip>;
+      } else {
+        return row;
+      }
+    },
   },
   {
     title: 'items',

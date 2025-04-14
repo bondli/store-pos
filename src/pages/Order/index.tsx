@@ -13,6 +13,7 @@ import columns from './columns';
 import Summary from './Summary';
 import CheckBill from './CheckBill';
 import QueryBySKU from './QueryBySKU';
+import ExportAndImport from './ExportAndImport';
 
 import style from './index.module.less';
 
@@ -56,13 +57,18 @@ const OrderPage: React.FC = () => {
         search={search}
         request={getOrderList as any}
         columns={columns as ProColumnsType}
-        title={`Query Results of Orders`}
+        title={
+          <div>
+            <span>Query Results of Orders</span>
+            <Summary dataList={dataList} />
+          </div>
+        }
         scroll={{ x: 'max-content' }}
         toolbarRender={ 
           <>
             <Button onClick={refreshData}><RedoOutlined />Refresh</Button>
-            <Summary dataList={dataList} />
             <CheckBill dataList={dataList} callback={refreshData} />
+            <ExportAndImport dataList={dataList} callback={refreshData} />
           </>
         }
       />

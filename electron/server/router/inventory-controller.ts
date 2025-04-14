@@ -113,7 +113,7 @@ export const queryDetailBySku = async (req: Request, res: Response) => {
     if (result) {
       res.json(result.toJSON());
     } else {
-      res.json({ error: 'Inventory not found' });
+      res.json({ sku: null, msg: 'Inventory not found' });
     }
   } catch (error) {
     logger.error('Error getting Inventory:');

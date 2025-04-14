@@ -17,6 +17,7 @@ import {
   checkOrderBill,
   modifyOrder,
   queryOrderCouponList,
+  exportOrder,
 } from './order-controller';
 
 import {
@@ -52,6 +53,7 @@ import {
 import {
   submitOrder,
   getStoreCoupon,
+  importOrder,
 } from './buy-controller';
 
 import {
@@ -70,6 +72,7 @@ const router = express.Router();
 
 // 买单相关接口
 router.post('/buy/submit', submitOrder); // 提交订单
+router.post('/buy/importOrder', importOrder); // 导入订单
 router.get('/buy/getStoreCoupon', getStoreCoupon); // 获取店铺优惠券
 
 // 订单相关接口
@@ -82,6 +85,7 @@ router.get('/order/queryBySku', queryOrderBySku); // 根据SKU查询订单(退�
 router.post('/order/checkBill', checkOrderBill); // 确认订单
 router.post('/order/modify', modifyOrder); // 修改订单
 router.get('/order/queryCouponList', queryOrderCouponList); // 查询订单中的优惠券列表
+router.post('/order/export', exportOrder); // 导出订单
 
 // 商品相关接口
 router.get('/inventory/queryTotal', queryInventoryTotal); // 库存总量

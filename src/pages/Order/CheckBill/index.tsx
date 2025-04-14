@@ -67,7 +67,7 @@ const CheckBill: React.FC<ComProps> = (props) => {
     },
     {
       title: 'actual',
-      align: 'right',
+      align: 'center',
       dataIndex: 'orderActualAmount',
       key: 'orderActualAmount',
       valueType: 'money',
@@ -75,6 +75,7 @@ const CheckBill: React.FC<ComProps> = (props) => {
     },
     {
       title: 'payment',
+      align: 'center',
       dataIndex: 'payType',
       key: 'payType',
       render: (row, record) => {

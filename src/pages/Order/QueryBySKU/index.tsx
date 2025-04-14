@@ -1,6 +1,6 @@
 import React, { memo, useState, useRef } from 'react';
 import { App, Button, Drawer, Input, Table } from 'antd';
-import { BarcodeOutlined, CopyOutlined } from '@ant-design/icons';
+import { CopyOutlined, ScanOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 import request from '@/common/request';
@@ -123,8 +123,8 @@ const QueryBySKU: React.FC = () => {
         destroyOnClose={true}
       >
         <Input
-          prefix={<BarcodeOutlined />} 
-          placeholder='input sku code'
+          prefix={<ScanOutlined />} 
+          placeholder='scan sku code'
           onChange={handleChange}
           autoFocus
           value={scanSkuCode}

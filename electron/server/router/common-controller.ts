@@ -35,6 +35,7 @@ interface RequestWithFile extends Request {
   file?: Express.Multer.File;
 }
 
+// 上传文件（批量入库，导入订单）
 export const uploadFile = (req: RequestWithFile, res: Response, next: NextFunction): void => {
   upload(req as any, res as any, async (err: any) => {
     if (err instanceof multer.MulterError) {

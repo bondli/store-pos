@@ -4,6 +4,7 @@ import { app, ipcMain, BrowserWindow, globalShortcut } from 'electron';
 import { fork } from 'child_process';
 import Store from 'electron-store';
 import logger from 'electron-log';
+import dayjs from 'dayjs';
 
 // file position on macOS: ~/Library/Logs/{app name}/main.log
 // db file position on macOs:  ~/Library/Application Support/store-pos/sqlite3/storepos-database.db
@@ -37,13 +38,13 @@ const initIpcRenderer = () => {
 
   // 导出数据库
   ipcMain.on('export-data', () => {
-    const filePath = path.join(app.getPath('downloads'), './storepos-database.db');
+    const filePath = path.join(app.getPath('downloads'), `storepos-database-${dayjs().format('YYYY-MM-DD')}.db`);
     const fileToDownload = path.join(app.getPath('userData'), './sqlite3/storepos-database.db');
 
     // 从用户数据目录拷贝文件到下载路径
     try {
       fs.copyFileSync(fileToDownload, filePath);
-      logger.info('database copyed to downloads directory');
+      logger.info(`database copyed to downloads directory: ${filePath}`);
     } catch(err) {
       logger.error(err);
     }
@@ -57,7 +58,7 @@ const initIpcRenderer = () => {
     // 从用户数据目录拷贝文件到下载路径
     try {
       fs.copyFileSync(filePath, fileToUploadload);
-      logger.info('database copyed to application data directory');
+      logger.info(`database copyed to application data directory: ${fileToUploadload}`);
     } catch(err) {
       logger.error(err);
     }
