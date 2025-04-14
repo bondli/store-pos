@@ -1,9 +1,9 @@
 import React, { memo, useState } from 'react';
-import { Button, Drawer, Upload, App, Flex, Table, Space } from 'antd';
+import { Button, Drawer, Upload, App, Flex, Table, Space, Tag } from 'antd';
 import type { UploadProps } from 'antd';
 import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
 
-import { baseURL } from '@common/request';
+import request, { baseURL } from '@common/request';
 import Box from '@/components/Box';
 
 const { Dragger } = Upload;
@@ -13,11 +13,16 @@ type ComProps = {
 };
 
 const BitchStock: React.FC<ComProps> = (props) => {
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
+
+  const { callback } = props;
 
   const [showPanel, setShowPanel] = useState(false);
 
+  // 上传的文件数据行数
   const [dataList, setDataList] = useState([]);
+  // 上传的文件中商品总数
+  const [totalCount, setTotalCount] = useState(0);
 
   const togglePanel = () => {
     setShowPanel(!showPanel);
@@ -38,7 +43,21 @@ const BitchStock: React.FC<ComProps> = (props) => {
           const { data, total } = response;
           // data 是解析后的Excel数据数组
           console.log(`成功解析 ${total} 条数据:`, data);
-          setDataList(data);
+          // setDataList(data);
+          setTotalCount(total);
+          // 发请求取预处理数据
+          request.post('/inventory/batchProcessData', {
+            dataList: data,
+          }).then((res) => {  
+            const result = res.data;
+            if (result.success) {
+              setDataList(result.dataList);
+              setTotalCount(result.totalCount);
+            }
+            else {
+              message.error(result.error);
+            }
+          });
         } else {
           message.error(response.error);
         }
@@ -51,8 +70,28 @@ const BitchStock: React.FC<ComProps> = (props) => {
     },
   };
 
-  const handleBitchStock = () => {
+  // 执行入库
+  const handleBitchStock = async () => {
     console.log('执行入库');
+    const response = await request.post('/inventory/batchCreate', {
+      dataList,
+    });
+    const result = response.data;
+    if (!result.error) {
+      message.success('入库成功');
+      // 通过modal的方式提示用户操作成功的数量和失败的数量
+      modal.success({
+        title: '入库成功',
+        content: `成功入库 ${result.totalCount-result.errorCount} 条数据，失败 ${result.errorCount} 条数据`,
+        onOk: () => {
+          callback && callback();
+          setShowPanel(false);
+          setDataList([]);
+        },
+      });
+    } else {
+      message.error(result.error);
+    }
   };
 
   const handleClear = () => {
@@ -100,7 +139,7 @@ const BitchStock: React.FC<ComProps> = (props) => {
         </div>
 
         <Box
-          title={`上传的文件中记录 (${dataList.length})`}
+          title={`上传的文件中记录 (${dataList.length ? `共${dataList.length}条，商品${totalCount}个` : '0条'})`}
           content={
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '20px' }}>
               <Table
@@ -141,6 +180,30 @@ const BitchStock: React.FC<ComProps> = (props) => {
                   {
                     title: '数量',
                     dataIndex: '数量',
+                    render: (text, record) => {
+                      if (record.type === 'newStyle') {
+                        return (
+                          <>
+                            {text}
+                            <Tag color='blue' style={{ marginLeft: '10px' }}>新款</Tag>
+                          </>
+                        );
+                      } else if (record.type === 'addSku') {
+                        return (
+                          <>
+                            {text} 
+                            <Tag color='green' style={{ marginLeft: '10px' }}>补款</Tag>
+                          </>
+                        );
+                      } else if (record.type === 'addNum') {
+                        return (
+                          <>
+                            {text} 
+                            <Tag color='red' style={{ marginLeft: '10px' }}>补货</Tag>
+                          </>
+                        );
+                      }
+                    },
                   },
                 ]}
                 dataSource={dataList}

@@ -144,3 +144,138 @@ export const createInventory = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+// 批量处理预处理数据
+export const batchProcessData = async (req: Request, res: Response) => {
+  const { dataList } = req.body;
+
+  let totalCount = 0;
+  // 对传入的数据进行遍历，目的是根据styleNo和sku字段来判断入库方式
+  // 新增一个叫type的字段，值为addSku、addStyle、newStyle
+  // 如果通过styleNo，没有查询到数据，则type赋值newStyle
+  // 如果通过sku没有查询到数据，则type赋值addSku
+  // 如果通过sku查询到了数据，则type赋值addNum
+  // 最后将记录返回
+  for (const item of dataList) {
+    // 将中文字段名映射到数据库字段名
+    const inventoryData = {
+      name: item.品名,
+      sn: item.货号,
+      brand: item.品牌,
+      sku: item.SKU,
+      size: item.尺码,
+      color: item.颜色,
+      originalPrice: item.吊牌价,
+      costPrice: item.进货价,
+      counts: Number(item.数量)
+    };
+
+    totalCount += Number(inventoryData.counts);
+
+    const sn = inventoryData.sn;
+    const sku = inventoryData.sku;
+    const result = await Inventory.findOne({
+      where: { sn: sn },
+    });
+    if (result) {
+      const resultSku = await Inventory.findOne({
+        where: { sku: sku },
+      });
+      if (resultSku) {
+        item['type'] = 'addNum';
+      } else {
+        item['type'] = 'addSku';
+      }
+    } else {
+      item['type'] = 'newStyle';
+    }
+  }
+
+  res.json({
+    success: true,
+    dataList,
+    totalCount,
+  });
+};
+
+// 批量入库
+export const batchCreateInventory = async (req: Request, res: Response) => {
+  const { dataList } = req.body;
+  try {
+    const results: Array<{
+      sku: string;
+      status: 'created' | 'updated';
+      data: any;
+    }> = [];
+    const errors: Array<{
+      sku: string;
+      error: string;
+    }> = [];
+
+    // 定义一个变量来保存r入库的总数和错误的数量
+    let totalCount = 0;
+    let errorCount = 0;
+    for (const item of dataList) {
+      try {
+        // 将中文字段名映射到数据库字段名
+        const inventoryData = {
+          name: item.品名,
+          sn: item.货号,
+          brand: item.品牌,
+          sku: item.SKU,
+          size: item.尺码,
+          color: item.颜色,
+          originalPrice: item.吊牌价,
+          costPrice: item.进货价,
+          counts: Number(item.数量)
+        };
+
+        totalCount += Number(inventoryData.counts);
+
+        // 检查该SKU是否已存在
+        const existingItem = await Inventory.findOne({
+          where: { sku: inventoryData.sku }
+        });
+
+        if (existingItem) {
+          // SKU存在，更新库存数量
+          const currentCounts = Number((existingItem as any).counts || 0);
+          const updatedItem = await existingItem.update({
+            counts: currentCounts + inventoryData.counts
+          });
+          results.push({
+            sku: inventoryData.sku,
+            status: 'updated',
+            data: updatedItem.toJSON()
+          });
+        } else {
+          // SKU不存在，创建新记录
+          const newItem = await Inventory.create(inventoryData);
+          results.push({
+            sku: inventoryData.sku,
+            status: 'created',
+            data: newItem.toJSON()
+          });
+        }
+      } catch (itemError) {
+        errorCount += Number(item['数量']);
+        errors.push({
+          sku: item.SKU,
+          error: itemError instanceof Error ? itemError.message : String(itemError)
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      results,
+      errors: errors.length > 0 ? errors : undefined,
+      totalCount,
+      errorCount
+    });
+  } catch (error) {
+    logger.error('Error in batch creating inventory:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
