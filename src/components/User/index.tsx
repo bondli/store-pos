@@ -1,9 +1,10 @@
-import React, { memo, useContext } from 'react';
-import { GithubFilled, CloudDownloadOutlined, CloudUploadOutlined, CloudSyncOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import React, { memo, useContext, useEffect } from 'react';
+import { GithubFilled, CloudDownloadOutlined, CloudUploadOutlined, UserSwitchOutlined, RedoOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Dropdown, Space, Modal, App } from 'antd';
+import { Dropdown, Space, App } from 'antd';
 
-import ElectronBridge, { deleteStore, userLog } from '@common/electron';
+import ElectronBridge from '@common/electron';
+import { deleteStore } from '@common/electron';
 import { MainContext } from '@common/context';
 
 import style from './index.module.less';
@@ -11,13 +12,44 @@ import style from './index.module.less';
 const User: React.FC = () => {
   const { message } = App.useApp();
   const { userInfo, setUserInfo } = useContext(MainContext);
-  const [modalApi, modalContextHolder] = Modal.useModal();
+
+  useEffect(() => {
+    const handleExportReply = (event: any, data: { success: boolean; error?: string }) => {
+      if (data.success) {
+        message.success('数据导出成功');
+      } else {
+        message.error(`数据导出失败: ${data.error}`);
+      }
+    };
+
+    const handleImportReply = (event: any, data: { success: boolean; error?: string }) => {
+      if (data.success) {
+        message.success('数据导入成功，请刷新页面查看最新数据');
+      } else {
+        message.error(`数据导入失败: ${data.error}`);
+      }
+    };
+
+    // 添加监听器
+    ElectronBridge.onExportDataReply(handleExportReply);
+    ElectronBridge.onImportDataReply(handleImportReply);
+
+    // 清理监听器
+    return () => {
+      ElectronBridge.removeExportDataReplyListener(handleExportReply);
+      ElectronBridge.removeImportDataReplyListener(handleImportReply);
+    };
+  }, [message]);
 
   const items: MenuProps['items'] = [
     {
       key: '1',
       label: userInfo?.name,
       disabled: true,
+      extra: <RedoOutlined onClick={() => {
+        message.success('同步成功');
+        window.location.reload();
+      }} />
     },
     {
       type: 'divider',
@@ -31,9 +63,7 @@ const User: React.FC = () => {
       key: '3',
       icon: <CloudUploadOutlined style={{ fontSize: '16px' }} />,
     }, {
-      label: '刷新数据',
-      key: '4',
-      icon: <CloudSyncOutlined style={{ fontSize: '16px' }} />,
+      type: 'divider',
     }, {
       label: '退出登录',
       key: '5',
@@ -42,28 +72,13 @@ const User: React.FC = () => {
   ];
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     const { key } = e;
-    // userLog('Click MainMenu: ', key);
     // 导出数据
     if (key === '2') {
       ElectronBridge.exportData();
-      message.success('数据导出成功，请在下载目录下检查是否存在文件：storepos-database.db');
     }
     // 本地恢复数据
     else if (key === '3') {
-      modalApi.confirm({
-        title: '确认恢复数据？',
-        content: '请确认已将数据文件命名成：storepos-database.db，并放在Downloads目录下。',
-        onOk() {
-          ElectronBridge.importData();
-          message.warning('本地数据已导入，请检查是否正确');
-        }
-      });
-    }
-    // 刷新下数据，首次进入存在一定概率的调用接口失败
-    else if (key === '4') {
-      message.success('同步成功');
-      window.location.reload();
-      return;
+      ElectronBridge.importData();
     }
     // 退出登录
     else if (key === '5') {
@@ -88,7 +103,6 @@ const User: React.FC = () => {
           <div className={style.name}>{userInfo?.name}</div>
         </Space>
       </Dropdown>
-      <div>{modalContextHolder}</div>
     </div>
   );
 };

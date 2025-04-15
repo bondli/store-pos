@@ -39,5 +39,25 @@ contextBridge.exposeInMainWorld('electron', {
     importData() {
       ipcRenderer.send('import-data');
     },
+
+    // 监听导出数据回复
+    onExportDataReply(callback: (event: any, data: { success: boolean; error?: string }) => void) {
+      ipcRenderer.on('export-data-reply', callback);
+    },
+
+    // 监听导入数据回复
+    onImportDataReply(callback: (event: any, data: { success: boolean; error?: string }) => void) {
+      ipcRenderer.on('import-data-reply', callback);
+    },
+
+    // 移除导出数据回复监听
+    removeExportDataReplyListener(callback: (event: any, data: { success: boolean; error?: string }) => void) {
+      ipcRenderer.removeListener('export-data-reply', callback);
+    },
+
+    // 移除导入数据回复监听
+    removeImportDataReplyListener(callback: (event: any, data: { success: boolean; error?: string }) => void) {
+      ipcRenderer.removeListener('import-data-reply', callback);
+    },
   },
 });

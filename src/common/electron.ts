@@ -88,6 +88,38 @@ export const importData = () => {
   ipcRenderer.importData();
 }
 
+// 监听导出数据回复
+export const onExportDataReply = (callback: (event: any, data: { success: boolean; error?: string }) => void) => {
+  if (!isInElectron) {
+    return;
+  }
+  ipcRenderer.onExportDataReply(callback);
+}
+
+// 监听导入数据回复
+export const onImportDataReply = (callback: (event: any, data: { success: boolean; error?: string }) => void) => {
+  if (!isInElectron) {
+    return;
+  }
+  ipcRenderer.onImportDataReply(callback);
+}
+
+// 移除导出数据回复监听
+export const removeExportDataReplyListener = (callback: (event: any, data: { success: boolean; error?: string }) => void) => {
+  if (!isInElectron) {
+    return;
+  }
+  ipcRenderer.removeExportDataReplyListener(callback);
+}
+
+// 移除导入数据回复监听
+export const removeImportDataReplyListener = (callback: (event: any, data: { success: boolean; error?: string }) => void) => {
+  if (!isInElectron) {
+    return;
+  }
+  ipcRenderer.removeImportDataReplyListener(callback);
+}
+
 // 打印字符串
 export const printStr = (html: string) => {
   const printWindow = window.open('', '_blank');
@@ -125,6 +157,10 @@ const ElectronBridge = {
   userLog,
   exportData,
   importData,
+  onExportDataReply,
+  onImportDataReply,
+  removeExportDataReplyListener,
+  removeImportDataReplyListener,
 };
 
 export default ElectronBridge;

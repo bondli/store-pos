@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { app, ipcMain, BrowserWindow, globalShortcut } from 'electron';
+import { app, ipcMain, BrowserWindow, globalShortcut, dialog } from 'electron';
 import { fork } from 'child_process';
 import Store from 'electron-store';
 import logger from 'electron-log';
@@ -37,30 +37,60 @@ const initIpcRenderer = () => {
   });
 
   // 导出数据库
-  ipcMain.on('export-data', () => {
-    const filePath = path.join(app.getPath('downloads'), `storepos-database-${dayjs().format('YYYY-MM-DD')}.db`);
+  ipcMain.on('export-data', async (event) => {
     const fileToDownload = path.join(app.getPath('userData'), './sqlite3/storepos-database.db');
+    const defaultFileName = `storepos-database-${dayjs().format('YYYY-MM-DD')}.db`;
 
-    // 从用户数据目录拷贝文件到下载路径
     try {
+      const { canceled, filePath } = await dialog.showSaveDialog({
+        title: '保存数据库文件',
+        defaultPath: defaultFileName,
+        filters: [
+          { name: 'Database Files', extensions: ['db'] },
+          { name: 'All Files', extensions: ['*'] }
+        ]
+      });
+
+      if (canceled || !filePath) {
+        return;
+      }
+
+      // 从用户数据目录拷贝文件到用户选择的路径
       fs.copyFileSync(fileToDownload, filePath);
-      logger.info(`database copyed to downloads directory: ${filePath}`);
+      logger.info(`database copied to: ${filePath}`);
+      event.reply('export-data-reply', { success: true });
     } catch(err) {
       logger.error(err);
+      event.reply('export-data-reply', { success: false, error: err.message });
     }
   });
 
   // 导入数据库
-  ipcMain.on('import-data', () => {
-    const filePath = path.join(app.getPath('downloads'), './storepos-database.db');
-    const fileToUploadload = path.join(app.getPath('userData'), './sqlite3/storepos-database.db');
-
-    // 从用户数据目录拷贝文件到下载路径
+  ipcMain.on('import-data', async (event) => {
     try {
-      fs.copyFileSync(filePath, fileToUploadload);
-      logger.info(`database copyed to application data directory: ${fileToUploadload}`);
+      const { canceled, filePaths } = await dialog.showOpenDialog({
+        title: '选择要导入的数据库文件',
+        filters: [
+          { name: 'Database Files', extensions: ['db'] },
+          { name: 'All Files', extensions: ['*'] }
+        ],
+        properties: ['openFile']
+      });
+
+      if (canceled || !filePaths || filePaths.length === 0) {
+        return;
+      }
+
+      const filePath = filePaths[0];
+      const fileToUpload = path.join(app.getPath('userData'), './sqlite3/storepos-database.db');
+
+      // 从用户选择的文件拷贝到应用数据目录
+      fs.copyFileSync(filePath, fileToUpload);
+      logger.info(`database copied to application data directory: ${fileToUpload}`);
+      event.reply('import-data-reply', { success: true });
     } catch(err) {
       logger.error(err);
+      event.reply('import-data-reply', { success: false, error: err.message });
     }
   });
 };
