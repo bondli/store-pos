@@ -1,15 +1,16 @@
 {
   "name": "store-pos",
-  "description": "an easy store pos system",
+  "description": "An easy-to-use store point of sale system",
   "version": "0.0.1",
+  "license": "MIT",
   "main": "dist/electron/main.js",
   "scripts": {
     "before:pack": "tsc -p tsconfig.electron.json",
     "build": "vite build",
     "dev": "npm run before:pack && vite --open=false -m electron",
-    "pack:win": "npm run build && npm run before:pack && electron-builder --win --ia32",
+    "pack:win": "npm run build && npm run before:pack && electron-builder --win --x64",
     "pack:mac": "npm run build && npm run before:pack && electron-builder --mac",
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall": "electron-builder install-app-deps && npm run rebuild-sqlite3",
     "lint": "npm run prettier && npm run eslint",
     "eslint": "eslint ./ --fix --ext .ts,.tsx,.js,.jsx",
     "prettier": "prettier --write ./**/*.{ts,tsx,js,jsx,html,css,scss,less}",
@@ -18,7 +19,8 @@
     "update-x": "npm i js-xhttp js-xxx js-xcall",
     "update-x-dev": "npm i js-xcmd -D",
     "clean": "xcmd clean",
-    "time": "xcmd update-time"
+    "time": "xcmd update-time",
+    "rebuild-sqlite3": "electron-rebuild -f -w sqlite3"
   },
   "husky": {
     "hooks": {
@@ -47,7 +49,8 @@
     "react-dom": "^18.2.0",
     "react-quill": "^2.0.0",
     "sequelize": "^6.37.3",
-    "sqlite3": "^5.1.7",
+    "sql.js": "^1.8.0",
+    "sqlite3": "5.1.6",
     "table-render": "latest",
     "timeago.js": "^4.0.2",
     "uuid": "^10.0.0",
@@ -67,6 +70,7 @@
     "electron": "^30.0.1",
     "electron-builder": "^24.13.3",
     "electron-packager": "^17.1.2",
+    "electron-rebuild": "^3.2.9",
     "eslint": "^9.1.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
@@ -87,6 +91,18 @@
     "node": ">=18.0.0"
   },
   "author": "bondli",
+  "homepage": "https://github.com/bondli/store-pos",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bondli/store-pos.git"
+  },
+  "keywords": [
+    "pos",
+    "store",
+    "retail",
+    "electron",
+    "react"
+  ],
   "build": {
     "productName": "StorePos",
     "appId": "com.storepos.react.electron",
@@ -100,9 +116,14 @@
     },
     "win": {
       "target": [
-        "nsis"
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
       ],
-      "icon": "dist/electron/icons/Icon.ico"
+      "icon": "dist/electron/icons/icon.ico"
     },
     "mac": {
       "artifactName": "${productName}-Mac-${arch}-${version}.${ext}",
@@ -122,15 +143,21 @@
       "language": 2052,
       "artifactName": "${productName}-Windows-${version}-Setup.${ext}",
       "allowElevation": true,
-      "installerHeader": "dist/electron/icons/icon.ico",
-      "installerHeaderIcon": "dist/electron/icons/icon.ico",
-      "uninstallerIcon": "dist/electron/icons/icon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "deleteAppDataOnUninstall": true,
       "allowToChangeInstallationDirectory": true,
-      "oneClick": false
-    }
+      "oneClick": false,
+      "installerIcon": "dist/electron/icons/icon.ico",
+      "uninstallerIcon": "dist/electron/icons/icon.ico",
+      "installerHeaderIcon": "dist/electron/icons/icon.ico"
+    },
+    "extraResources": [
+      {
+        "from": "node_modules/sql.js/dist/sql-wasm.wasm",
+        "to": "sql.js/sql-wasm.wasm"
+      }
+    ]
   },
   "time": "3020291721072022"
 }

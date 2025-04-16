@@ -46,7 +46,7 @@ const BitchStock: React.FC<ComProps> = (props) => {
           // data 是解析后的Excel数据数组
           console.log(`成功解析 ${total} 条数据:`, data);
           // setDataList(data);
-          setTotalCount(total);
+          // setTotalCount(total);
           // 发请求取预处理数据
           request.post('/inventory/batchProcessData', {
             dataList: data,
@@ -55,6 +55,7 @@ const BitchStock: React.FC<ComProps> = (props) => {
             if (result.success) {
               setDataList(result.dataList);
               setTotalCount(result.totalCount);
+              setIsUploadFile(true);
             }
             else {
               message.error(result.error);

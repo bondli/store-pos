@@ -24,13 +24,13 @@ export default defineConfig(({ command, mode }) => {
         },
         preload: {
           // eslint-disable-next-line no-undef
-          input: path.join(__dirname, 'electron/preload.ts'), // 预加载文件
+          input: path.join(__dirname, 'electron', 'preload.ts'), // 预加载文件
         },
       }),
     );
   }
   return {
-    root: getPath('./'),
+    root: path.resolve(__dirname),
     base: './',
     build: {
       target: 'modules',

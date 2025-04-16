@@ -38,7 +38,7 @@ const initIpcRenderer = () => {
 
   // 导出数据库
   ipcMain.on('export-data', async (event) => {
-    const fileToDownload = path.join(app.getPath('userData'), './sqlite3/storepos-database.db');
+    const fileToDownload = path.join(app.getPath('userData'), 'sqlite3', 'storepos-database.db');
     const defaultFileName = `storepos-database-${dayjs().format('YYYY-MM-DD')}.db`;
 
     try {
@@ -82,7 +82,7 @@ const initIpcRenderer = () => {
       }
 
       const filePath = filePaths[0];
-      const fileToUpload = path.join(app.getPath('userData'), './sqlite3/storepos-database.db');
+      const fileToUpload = path.join(app.getPath('userData'), 'sqlite3', 'storepos-database.db');
 
       // 从用户选择的文件拷贝到应用数据目录
       fs.copyFileSync(filePath, fileToUpload);
@@ -102,9 +102,9 @@ initIpcRenderer();
 let serverStatus = '';
 const startNodeServer = () => {
   logger.info('server will be start');
-  const dbPath = path.join(app.getPath('userData'), './sqlite3/storepos-database.db');
+  const dbPath = path.join(app.getPath('userData'), 'sqlite3', 'storepos-database.db');
   logger.info('server db path: ', dbPath);
-  const child = fork(path.join(__dirname,'./server/index'), [], {
+  const child = fork(path.join(__dirname, 'server', 'index'), [], {
     env: {
       ...process.env,
       DBPATH: dbPath,
@@ -150,7 +150,7 @@ const createWindow = () => {
     webPreferences: {
       webSecurity: false,
       // eslint-disable-next-line no-undef
-      preload: path.join(__dirname, './preload.js'),
+      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true, // 解决无法使用 require 加载的 bug
     },
   });
