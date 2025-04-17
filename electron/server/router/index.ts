@@ -42,6 +42,7 @@ import {
   queryMemberCouponList,
   updateMemberScore,
   memberIncomeBalance,
+  queryMemberBigdayCouponList,
 } from './member-controller';
 
 import {
@@ -108,6 +109,7 @@ router.get('/member/queryBalanceList', queryMemberBalanceList); // 会员余额�
 router.get('/member/queryCouponList', queryMemberCouponList); // 会员优惠券记录
 router.post('/member/updateScore', updateMemberScore); // 会员积分更新
 router.post('/member/incomeBalance', memberIncomeBalance); // 会员充值
+router.get('/member/queryBigdayCouponList', queryMemberBigdayCouponList); // 会员权益列表
 
 // 导购员相关接口
 router.post('/user/register', createUser); // 导购员注册

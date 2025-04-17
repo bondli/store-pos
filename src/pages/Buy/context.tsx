@@ -36,10 +36,15 @@ type Buyer = {
   point: number; // 会员积分
   balance: number; // 会员余额
   coupon?: number; // 会员优惠券
+  bigdayCoupon?: number; // 会员日优惠券
+  level?: string; // 会员等级
+  status?: string; // 会员状态
   usePoint?: number; // 使用积分数量
   useBalance?: number; // 使用余额
   useCoupon?: number; // 使用优惠券价值
   useCouponId?: number; // 使用优惠券ID
+  useBigdayCoupon?: number; // 使用会员日优惠券
+  useBigdayCouponId?: number; // 使用会员日优惠券ID
 };
 
 // 店铺优惠券(满减券/红包等)

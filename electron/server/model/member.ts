@@ -48,6 +48,18 @@ const Member = sequelize.define('Member', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  level: {
+    comment: '会员等级',
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: 'normal', // normal (普通会员), super (超级会员)
+  },
+  status: {
+    comment: '会员状态',
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: 'normal', // normal (正常), disabled (禁用)
+  },
 }, {
   // 这是其他模型参数
   tableName: 'Member',

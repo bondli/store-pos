@@ -33,6 +33,8 @@ const PhoneInput: React.FC = () => {
         point: result.point || 0,
         balance: result.balance || 0,
         coupon: result.coupon || 0,
+        level: result.level || 'normal',
+        status: result.status || 'normal',
       });
     } else {
       modal.confirm({
@@ -54,6 +56,8 @@ const PhoneInput: React.FC = () => {
                 point: 0,
                 balance: 0,
                 coupon: 0,
+                level: 'normal',
+                status: 'normal',
               });
             }
           } catch (error) {

@@ -48,6 +48,11 @@ const Marketing = sequelize.define('Marketing', {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  extra: {
+    comment: '额外信息',
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 }, {
   // 这是其他模型参数
   tableName: 'Marketing',

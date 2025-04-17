@@ -5,14 +5,14 @@ import Detail from './Detail';
 
 const columns = [
   {
-    title: 'style no',
+    title: 'style',
     dataIndex: 'sn',
     key: 'sn',
     fixed: 'left',
     copyable: true,
   },
   {
-    title: 'item name',
+    title: 'itemName',
     dataIndex: 'name',
     key: 'name',
     fixed: 'left',
@@ -24,7 +24,7 @@ const columns = [
     fixed: 'left',
   },
   {
-    title: 'sku code',
+    title: 'sku',
     dataIndex: 'sku',
     key: 'sku',
     copyable: true,

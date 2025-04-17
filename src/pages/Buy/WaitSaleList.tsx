@@ -147,6 +147,10 @@ const WaitSaleList: React.FC = () => {
     setChangeDiscount(Number((Number(event.target.value) / 10).toFixed(2)));
   }
 
+  if (!waitSales?.list || waitSales?.list.length === 0) {
+    return null;
+  }
+
   return (
     <div className={style.waitSaleList}>
       <List

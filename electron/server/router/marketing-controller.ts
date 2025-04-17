@@ -79,7 +79,7 @@ export const createMarketing = async (req: Request, res: Response) => {
           couponCondition: full,
           couponValue: reduce,
           couponStatus: 'active',
-          couponExpiredTime: endTime,
+          couponExpiredTime: dayjs(endTime).add(1, 'year').toDate(), // 活动结束时间延长1年
           couponCount: count,
         });
       }
@@ -94,7 +94,7 @@ export const createMarketing = async (req: Request, res: Response) => {
           couponCondition: full,
           couponValue: reduce,
           couponStatus: 'active',
-          couponExpiredTime: endTime,
+          couponExpiredTime: endTime, // 满减活动的优惠券，有效期就是活动结束时间
           couponCount: 1,
         });
       }

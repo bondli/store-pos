@@ -8,7 +8,7 @@ import Offline from './Offline';
 
 const columns = [
   {
-    title: 'marketing name',
+    title: 'name',
     dataIndex: 'marketingName',
     key: 'marketingName',
     fixed: 'left',
@@ -20,7 +20,7 @@ const columns = [
     ellipsis: true,
   },
   {
-    title: 'marketing type',
+    title: 'type',
     align: 'center',
     dataIndex: 'marketingType',
     key: 'marketingType',
@@ -31,7 +31,7 @@ const columns = [
     }
   },
   {
-    title: 'start time',
+    title: 'start',
     align: 'center',
     dataIndex: 'startTime',
     key: 'startTime',
@@ -41,7 +41,7 @@ const columns = [
     }
   },
   {
-    title: 'end time',
+    title: 'end',
     align: 'center',
     key: 'endTime',
     dataIndex: 'endTime',

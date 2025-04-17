@@ -81,6 +81,7 @@ const BillInfo: React.FC = () => {
             Marketing Info
           </div>
         }
+        size='small'
         itemLayout={`horizontal`}
         bordered
         dataSource={list}

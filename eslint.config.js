@@ -21,9 +21,7 @@ module.exports = {
       "prettier",
       "react",
       "@typescript-eslint",
-      "spellcheck",
-      "import",
-      "zob"
+      "import"
   ],
   "rules": {
       "@typescript-eslint/ban-ts-comment": "off",

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import dayjs from 'dayjs';
+import { v4 as uuidv4 } from 'uuid';
 import { Op } from 'sequelize';
 import logger from 'electron-log';
 import { Member } from '../model/member';
@@ -20,6 +21,18 @@ export const createMember = async (req: Request, res: Response) => {
     });
     if (resultCheckExists === null) {
       const result = await Member.create({ phone, name, birthday });
+      // 创建会员权益（第二单可以消费的5元抵扣券）
+      await MemberCoupon.create({
+        phone,
+        couponId: uuidv4(),
+        couponCondition: 0, // 无门槛
+        couponDesc: '入会权益(第二单可用)',
+        couponValue: 5,
+        couponCount: 1,
+        couponStatus: 'active',
+        couponExpiredTime: dayjs().add(1, 'year').toDate(), // 1年后过期
+      });
+
       res.status(200).json(result.toJSON());
     } else {
       res.json({ error: 'member had exists' });
@@ -215,6 +228,7 @@ export const memberIncomeBalance = async (req: Request, res: Response) => {
       // 更新用户余额
       await resultCheckExists.increment({
         balance: justifyBalance,
+        level: 'super', // 充值后自动升级为超级会员
       });
       // 插入记录到用户余额记录表
       const balanceRecords: Array<{
@@ -342,6 +356,51 @@ export const queryMemberCouponList = async (req: Request, res: Response) => {
     }
   } catch (error) {
     logger.error('Error querying Member Coupon List:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// 根据会员查询用户的会员权益列表
+export const queryMemberBigdayCouponList = async (req: Request, res: Response) => {
+  const { phone } = req.query;
+  const couponList: Array<{
+    id: number;
+    couponDesc: string;
+    couponValue: number;
+  }> = [];
+
+  try {
+    const resultCheckExists = await Member.findOne({
+      where: {
+        phone,
+      },
+    });
+    if (resultCheckExists) {
+      const memberData = resultCheckExists.toJSON();
+      // 判断会员生日是否是当月
+      const birthday = dayjs(memberData.birthday);
+      if (birthday.month() === dayjs().month()) {
+        couponList.push({
+          id: 1, // 生日特价
+          couponDesc: '会员生日权益特价',
+          couponValue: 1,
+        });
+      }
+      // 判断当前时间是否会员日，会员日每月18号
+      if (dayjs().date() === 18) {
+        couponList.push({
+          id: 2, // 会员日特价
+          couponDesc: '会员日权益特价',
+          couponValue: 1,
+        });
+      }
+      res.json({ data: couponList });
+    } else {
+      res.json({ error: 'Member not found' });
+    }
+  } catch (error) {
+    logger.error('Error querying Member Bigday Coupon List:');
     console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }

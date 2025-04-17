@@ -1,4 +1,4 @@
-import { Space } from 'antd';
+import { Space, Tag } from 'antd';
 
 import Editor from './Editor';
 import Detail from './Detail';
@@ -15,12 +15,26 @@ const columns = [
     title: 'user name',
     dataIndex: 'name',
     key: 'name',
-    render: (row) => {
-      return row || '--';
+    render: (row, record) => {
+      if (record.level === 'super') {
+        return (
+          <>
+            <Tag color='green'>超级会员</Tag>
+            {row && <span>{row}</span>}
+          </>
+        );
+      } else {
+        return (
+          <>
+            <Tag color='blue'>普通会员</Tag>
+            {row && <span>{row}</span>}
+          </>
+        );
+      }
     },
   },
   {
-    title: 'order actual',
+    title: 'actual',
     align: 'center',
     dataIndex: 'actual',
     key: 'actual',
@@ -50,7 +64,7 @@ const columns = [
     valueType: 'number',
   },
   {
-    title: 'create time',
+    title: 'createdAt',
     align: 'center',
     dataIndex: 'createdAt',
     key: 'createdAt',

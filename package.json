@@ -47,12 +47,9 @@
     "react": "^18.2.0",
     "react-countup": "6.5.3",
     "react-dom": "^18.2.0",
-    "react-quill": "^2.0.0",
     "sequelize": "^6.37.3",
-    "sql.js": "^1.8.0",
     "sqlite3": "5.1.6",
     "table-render": "latest",
-    "timeago.js": "^4.0.2",
     "uuid": "^10.0.0",
     "xlsx": "^0.18.5"
   },
@@ -67,17 +64,14 @@
     "@typescript-eslint/eslint-plugin": "^5.19.0",
     "@typescript-eslint/parser": "^5.19.0",
     "@vitejs/plugin-react": "^2.0.1",
-    "electron": "^30.0.1",
+    "electron": "^35.1.5",
     "electron-builder": "^24.13.3",
-    "electron-packager": "^17.1.2",
     "electron-rebuild": "^3.2.9",
     "eslint": "^9.1.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.4",
-    "eslint-plugin-spellcheck": "0.0.19",
-    "eslint-plugin-zob": "^0.4.0",
     "husky": "^7.0.4",
     "js-xcmd": "^1.3.0",
     "less": "^4.2.0",
@@ -145,19 +139,13 @@
       "allowElevation": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "deleteAppDataOnUninstall": true,
+      "deleteAppDataOnUninstall": false,
       "allowToChangeInstallationDirectory": true,
       "oneClick": false,
       "installerIcon": "dist/electron/icons/icon.ico",
       "uninstallerIcon": "dist/electron/icons/icon.ico",
       "installerHeaderIcon": "dist/electron/icons/icon.ico"
-    },
-    "extraResources": [
-      {
-        "from": "node_modules/sql.js/dist/sql-wasm.wasm",
-        "to": "sql.js/sql-wasm.wasm"
-      }
-    ]
+    }
   },
   "time": "3020291721072022"
 }

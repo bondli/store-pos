@@ -30,6 +30,11 @@ const MemberScore = sequelize.define('MemberScore', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  extra: {
+    comment: '额外信息',
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 }, {
   // 这是其他模型参数
   tableName: 'MemberScore',
