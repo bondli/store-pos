@@ -145,8 +145,8 @@ export const createInventory = async (req: Request, res: Response) => {
   }
 };
 
-// 批量处理预处理数据
-export const batchProcessData = async (req: Request, res: Response) => {
+// 批量处理预处理数据(入库)
+export const batchProcessPurchaseData = async (req: Request, res: Response) => {
   const { dataList } = req.body;
 
   let totalCount = 0;
@@ -278,4 +278,97 @@ export const batchCreateInventory = async (req: Request, res: Response) => {
     console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
+};
+
+// 批量处理预处理数据(退库)
+export const batchProcessReturnsData = async (req: Request, res: Response) => {
+  const { dataList } = req.body;
+
+  let totalCount = 0;
+  // 对传入的数据进行遍历，将重复的行合并，数量列相加
+  interface ReturnItem {
+    sku: string;
+    returnCounts: string | number;
+    [key: string]: any;  // 允许其他可能的字段
+  }
+  const newDataList: ReturnItem[] = [];
+  const map = new Map<string, ReturnItem>();
+  for (const item of dataList) {
+    const sku = item.SKU;
+    if (map.has(sku)) {
+      const data = map.get(sku)!;
+      data.returnCounts = Number(data.returnCounts) + Number(item.数量);
+    } else {  
+      map.set(sku, {
+        sku,
+        returnCounts: Number(item.数量),
+      });
+    }
+  }
+  for (const item of map.values()) {
+    newDataList.push(item);
+  }
+  
+  // 最后将记录返回
+  interface FinalReturnItem extends ReturnItem {
+    id?: number;
+    name?: string;
+    brand?: string;
+    color?: string;
+    size?: string;
+    originalPrice?: number;
+    costPrice?: number;
+    counts?: number;
+    createdAt?: Date;
+    updatedAt?: Date;
+  }
+  const finalDataList: FinalReturnItem[] = [];
+  for (const item of newDataList) {
+    totalCount += Number(item.returnCounts);
+
+    const sku = item.sku;
+    const result = await Inventory.findOne({
+      where: { sku },
+    });
+    const data = result?.toJSON();
+    if (data) {
+      finalDataList.push({
+        ...data,
+        returnCounts: Number(item.returnCounts),
+      });
+    }
+  }
+
+  res.json({
+    success: true,
+    dataList: finalDataList,
+    totalCount,
+  });
+};
+
+// 批量退库
+export const batchReturnsInventory = async (req: Request, res: Response) => {
+  const { dataList } = req.body;
+  let errorCount = 0;
+  let totalCount = 0;
+  // 对dataList进行遍历，将sku作为where条件，将counts的值减去returnCounts再保存
+  for (const item of dataList) {
+    totalCount += Number(item.returnCounts);
+    const result = await Inventory.findOne({
+      where: { sku: item.sku },
+    });
+    if (result) {
+      const updatedItem = await result.decrement('counts', { by: Number(item.returnCounts) });
+      if (!updatedItem) {
+        errorCount += 1;
+      }
+    } else {
+      errorCount += 1;
+    }
+  }
+  res.json({
+    success: true,
+    errorCount,
+    totalCount,
+  });
 };

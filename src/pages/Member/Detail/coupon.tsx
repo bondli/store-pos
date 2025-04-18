@@ -22,7 +22,8 @@ const couponColumns = [
     align: 'center',
   },
   {
-    title: 'coupon status',
+    title: 'status',
+    align: 'center',
     dataIndex: 'couponStatus',
     key: 'couponStatus',
     render: (row, record) => {

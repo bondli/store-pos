@@ -27,8 +27,10 @@ import {
   queryInventoryByStyle,
   updateInventory,
   createInventory,
-  batchProcessData,
+  batchProcessPurchaseData,
+  batchProcessReturnsData,
   batchCreateInventory,
+  batchReturnsInventory,
 } from './inventory-controller';
 
 import {
@@ -95,8 +97,10 @@ router.get('/inventory/queryDetailBySku', queryDetailBySku); // 单个SKU的详�
 router.get('/inventory/queryByStyle', queryInventoryByStyle); // 根据款式查询下属 SKU 的列表
 router.post('/inventory/update', updateInventory); // 单个更新
 router.post('/inventory/create', createInventory); // 单个入库
-router.post('/inventory/batchProcessData', batchProcessData); // 批量处理预处理数据
+router.post('/inventory/batchProcessPurchaseData', batchProcessPurchaseData); // 批量处理预处理数据(入库)
+router.post('/inventory/batchProcessReturnsData', batchProcessReturnsData); // 批量处理预处理数据(退库)
 router.post('/inventory/batchCreate', batchCreateInventory); // 批量入库
+router.post('/inventory/batchReturns', batchReturnsInventory); // 批量退库
 
 // 会员相关接口
 router.get('/member/list', getMemberList); // 会员列表

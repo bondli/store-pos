@@ -3,21 +3,22 @@ import { Tooltip } from "antd";
 
 const orderColumns = [
   {
-    title: 'order sn',
+    title: 'order',
+    align: 'left',
     dataIndex: 'orderSn',
     key: 'orderSn',
     fixed: 'left',
   },
   {
-    title: 'order amount',
-    align: 'right',
+    title: 'amount',
+    align: 'center',
     dataIndex: 'orderAmount',
     key: 'orderAmount',
     valueType: 'money',
   },
   {
-    title: 'order actual',
-    align: 'right',
+    title: 'actual',
+    align: 'center',
     dataIndex: 'orderActualAmount',
     key: 'orderActualAmount',
     // 如果有退单，则hover上去显示有退单
@@ -36,13 +37,14 @@ const orderColumns = [
     }
   },
   {
-    title: 'order items',
+    title: 'items',
     align: 'center',
     key: 'orderItems',
     dataIndex: 'orderItems',
   },
   {
-    title: 'pay channel',
+    title: 'payment',
+    align: 'center',
     dataIndex: 'payType',
     key: 'payType',
     enum: {
@@ -54,7 +56,8 @@ const orderColumns = [
     },
   },
   {
-    title: 'create time',
+    title: 'createdAt',
+    align: 'center',
     dataIndex: 'createdAt',
     key: 'createdAt',
     valueType: 'dateTime',

@@ -228,8 +228,13 @@ export const memberIncomeBalance = async (req: Request, res: Response) => {
       // 更新用户余额
       await resultCheckExists.increment({
         balance: justifyBalance,
-        level: 'super', // 充值后自动升级为超级会员
       });
+      // 充值后自动升级为超级会员
+      if (justifyBalance >= 1000) {
+        await resultCheckExists.update({
+          level: 'super',
+        });
+      }
       // 插入记录到用户余额记录表
       const balanceRecords: Array<{
         phone: string;
@@ -244,10 +249,10 @@ export const memberIncomeBalance = async (req: Request, res: Response) => {
         type: `income`,
         reason: `充值${inComeBalance}`,
       });
-      if (sendValue) {
+      if (Number(sendValue)) {
         balanceRecords.push({
           phone,
-          value: sendValue,
+          value: Number(sendValue),
           type: `send`,
           reason: reason || `充值${inComeBalance}送${sendValue}`,
         });
