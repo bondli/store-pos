@@ -101,7 +101,6 @@ const Print: React.FC<ComProps> = (props) => {
       </Button>
       <Drawer
         title={language[currentLang].order.billInfo}
-        width={368}
         open={showPanel}
         onClose={() => setShowPanel(false)}
         destroyOnClose={true}

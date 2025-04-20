@@ -129,9 +129,13 @@ export const printStr = (html: string) => {
         <head>
           <title>Print</title>
           <style>
-            body { margin: 0; padding: 20px; }
+            body { margin: 0; padding: 20px; width: 384px; }
             @media print {
-              body { padding: 0; }
+              body { 
+                padding: 0; 
+                margin: 0;
+                size: 58mm auto;
+              }
             }
             ul, ol, li {
               list-style: none;

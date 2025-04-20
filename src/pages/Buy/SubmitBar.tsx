@@ -144,7 +144,6 @@ const SubmitBar: React.FC = () => {
       </Col>
       <Drawer
         title={language[currentLang].buy.success}
-        width={368}
         open={showSuccessDrawer}
         onClose={() => setShowSuccessDrawer(false)}
       >
