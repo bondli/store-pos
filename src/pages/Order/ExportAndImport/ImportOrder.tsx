@@ -1,8 +1,10 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useContext } from 'react';
 import { Button, Drawer, Flex, Upload, App, Space, Table } from 'antd';
 import type { UploadProps } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 import request, { baseURL } from '@common/request';
 import Box from '@/components/Box';
 import { PAY_CHANNEL } from '@/common/constant';
@@ -15,6 +17,7 @@ type ComProps = {
 
 const ImportOrder: React.FC<ComProps> = (props) => {
   const { message, modal } = App.useApp();
+  const { currentLang } = useContext(MainContext);
   const { callback } = props;
 
   const [showPanel, setShowPanel] = useState(false);
@@ -98,22 +101,22 @@ const ImportOrder: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        导入订单
+        {language[currentLang].order.importOrderBtn}
       </Button>
       <Drawer
-        title={`Import Order`}
+        title={language[currentLang].order.importOrder}
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
         destroyOnClose={true}
         footer={
-          <Flex justify='center'>
+          <Flex justify='right'>
             <Space>
               <Button type='primary' key='import' onClick={handleImport}>
-                导入订单
+                {language[currentLang].order.importOrderSubmit}
               </Button>
               <Button type='default' key='clear' onClick={handleClear}>
-                取消
+                {language[currentLang].order.importOrderCancel}
               </Button>
             </Space>
           </Flex>
@@ -140,27 +143,27 @@ const ImportOrder: React.FC<ComProps> = (props) => {
                     rowKey='SKU'
                     columns={[
                       {
-                        title: 'sn',
+                        title: language[currentLang].order.tableColumnOrderNo,
                         dataIndex: 'orderSn',
                         key: 'orderSn',
                         fixed: 'left',
                       },
                       {
-                        title: 'items',
+                        title: language[currentLang].order.tableColumnItems,
                         align: 'center',
                         key: 'orderItems',
                         dataIndex: 'orderItems',
                         fixed: 'left',
                       },
                       {
-                        title: 'actual',
+                        title: language[currentLang].order.tableColumnActual,
                         align: 'center',
                         dataIndex: 'orderActualAmount',
                         key: 'orderActualAmount',
                         fixed: 'left',
                       },
                       {
-                        title: 'payment',
+                        title: language[currentLang].order.tableColumnPayment,
                         align: 'center',
                         dataIndex: 'payType',
                         key: 'payType',
@@ -169,7 +172,7 @@ const ImportOrder: React.FC<ComProps> = (props) => {
                         }
                       },
                       {
-                        title: 'user',
+                        title: language[currentLang].order.tableColumnUser,
                         align: 'center',
                         dataIndex: 'userPhone',
                         key: 'userPhone',
@@ -178,7 +181,7 @@ const ImportOrder: React.FC<ComProps> = (props) => {
                         }
                       },
                       {
-                        title: 'saler',
+                        title: language[currentLang].order.tableColumnSaler,
                         align: 'center',
                         dataIndex: 'salerName',
                         key: 'salerName',

@@ -1,18 +1,22 @@
 import { Space, Tag } from 'antd';
 
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 import Editor from './Editor';
 import Detail from './Detail';
 
 const columns = [
   {
-    title: 'user phone',
+    title: language[currentLang].member.tableColumnPhone,
     dataIndex: 'phone',
     key: 'phone',
     copyable: true,
     fixed: 'left',
   },
   {
-    title: 'user name',
+    title: language[currentLang].member.tableColumnName,
     dataIndex: 'name',
     key: 'name',
     render: (row, record) => {
@@ -34,7 +38,7 @@ const columns = [
     },
   },
   {
-    title: 'actual',
+    title: language[currentLang].member.tableColumnActual,
     align: 'center',
     dataIndex: 'actual',
     key: 'actual',
@@ -43,28 +47,28 @@ const columns = [
     },
   },
   {
-    title: 'points',
+    title: language[currentLang].member.tableColumnPoints,
     align: 'center',
     dataIndex: 'point',
     key: 'point',
     valueType: 'number',
   },
   {
-    title: 'balance',
+    title: language[currentLang].member.tableColumnBalance,
     align: 'center',
     key: 'balance',
     dataIndex: 'balance',
     valueType: 'number',
   },
   {
-    title: 'coupon',
+    title: language[currentLang].member.tableColumnCoupon,
     align: 'center',
     dataIndex: 'coupon',
     key: 'coupon',
     valueType: 'number',
   },
   {
-    title: 'createdAt',
+    title: language[currentLang].member.tableColumnCreatedAt,
     align: 'center',
     dataIndex: 'createdAt',
     key: 'createdAt',
@@ -74,7 +78,7 @@ const columns = [
     }
   },
   {
-    title: 'operation',
+    title: language[currentLang].member.tableColumnOperation,
     align: 'center',
     render: (row, record) => {
       return (

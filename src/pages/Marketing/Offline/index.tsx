@@ -1,7 +1,10 @@
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
 import type { PopconfirmProps } from 'antd';
 import { Button, Popconfirm, App } from 'antd';
+
 import request from '@/common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 type ComProps = {
   id: number;
@@ -10,6 +13,7 @@ type ComProps = {
 
 const OfflineMarketing: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
+  const { currentLang } = useContext(MainContext);
 
   const { id, status } = props;
 
@@ -34,19 +38,19 @@ const OfflineMarketing: React.FC<ComProps> = (props) => {
   };
 
   if (status !== 'active') {
-    return <Button type='link' disabled>offline</Button>;
+    return <Button type='link' disabled>{language[currentLang].marketing.offlineAction}</Button>;
   }
 
   return (
     <Popconfirm
-      title={`Offline Marketing`}
-      description={`Are you sure to offline this marketing?`}
+      title={`${language[currentLang].marketing.offlineMarketing}`}
+      description={`${language[currentLang].marketing.offlineMarketingDescription}`}
       onConfirm={confirm}
       onCancel={cancel}
-      okText={`Yes`}
-      cancelText={`No`}
+      okText={`${language[currentLang].common.yes}`}
+      cancelText={`${language[currentLang].common.no}`}
     >
-      <Button type='link'>offline</Button>
+      <Button type='link'>{language[currentLang].marketing.offlineAction}</Button>
     </Popconfirm>
   );
 

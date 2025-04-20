@@ -114,8 +114,8 @@ const Bill: React.FC<ComProps> = (props) => {
         <tbody>
           {
             orderItems.map((item) => (
-              <Fragment key={item.id}>
-                <tr key={item.id} style={{ fontSize: '12px', lineHeight: '1.5' }}>
+              <Fragment key={`${item.id}-${item.sku}`}>
+                <tr style={{ fontSize: '12px', lineHeight: '1.5' }}>
                   <td colSpan={4} style={{ textAlign: 'left' }}>{item.sku}/{item.name}</td>
                 </tr>
                 <tr style={{ fontSize: '12px', lineHeight: '1.5' }}>

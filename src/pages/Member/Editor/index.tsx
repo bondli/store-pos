@@ -1,9 +1,11 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState, useContext } from 'react';
 import { Button, Card, Drawer, Space, App } from 'antd';
 import FormRender, { useForm } from 'form-render';
 
 import { userLog } from '@/common/electron';
 import request from '@common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import { baseInfoSchema, pointSchema, balanceSchema } from './schema';
 
@@ -14,6 +16,7 @@ type ComProps = {
 
 const Editor: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
+  const { currentLang } = useContext(MainContext);
 
   const { userPhone, callback } = props;
   
@@ -129,59 +132,59 @@ const Editor: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        modify
+        {language[currentLang].member.modifyAction}
       </Button>
       <Drawer
-        title={`Member Modify`}
+        title={`${language[currentLang].member.modifyTitle}`}
         width={600}
         open={showPanel}
         onClose={() => setShowPanel(false)}
         destroyOnClose={true}
       >
         <Space direction={`vertical`} size={`middle`}>
-          <Card size='small' title={`Base Info`}>
+          <Card size='small' title={`${language[currentLang].member.modifyBaseInfo}`}>
             <FormRender
               form={formBaseInfo}
               schema={baseInfoSchema}
               onFinish={onBaseInfoFinish}
               footer={{
                 submit: {
-                  text: 'confirm',
+                  text: language[currentLang].common.confirm,
                 },
                 reset: {
-                  text: 'reset',
+                  text: language[currentLang].common.reset,
                   hide: true,
                 }
               }}
             />
           </Card>
-          <Card size='small' title={`Member Point`}>
+          <Card size='small' title={`${language[currentLang].member.modifyPoint}`}>
             <FormRender
               form={formPoint}
               schema={pointSchema}
               onFinish={onPointFinish}
               footer={{
                 submit: {
-                  text: 'confirm',
+                  text: language[currentLang].common.confirm,
                 },
                 reset: {
-                  text: 'reset',
+                  text: language[currentLang].common.reset,
                   hide: true,
                 }
               }}
             />
           </Card>
-          <Card size='small' title={`Member Balance`}>
+          <Card size='small' title={`${language[currentLang].member.modifyBalance}`}>
             <FormRender
               form={formBalance}
               schema={balanceSchema}
               onFinish={onBalanceFinish}
               footer={{
                 submit: {
-                  text: 'confirm',
+                  text: language[currentLang].common.confirm,
                 },
                 reset: {
-                  text: 'reset',
+                  text: language[currentLang].common.reset,
                   hide: true,
                 }
               }}

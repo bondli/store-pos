@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect, useContext } from 'react';
 import type { StatisticProps } from 'antd';
 import { Card, Col, Row, Statistic, Menu, DatePicker, Empty } from 'antd';
 import type { GetProps } from 'antd';
@@ -10,6 +10,8 @@ import dayjs from 'dayjs';
 import PageTitle from '@/components/PageTitle';
 import MenuItem from '@components/MenuItem';
 import request from '@/common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import style from './index.module.less';
 
@@ -21,6 +23,8 @@ type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 const { RangePicker } = DatePicker;
 
 const DataPage: React.FC = () => {
+  const { currentLang } = useContext(MainContext);
+  
   const [dateRange, setDateRange] = useState<RangePickerProps['value']>([
     dayjs().startOf('day').subtract(30, 'day'),
     dayjs().endOf('day')
@@ -93,7 +97,7 @@ const DataPage: React.FC = () => {
   return (
     <div className={style.container}>
       <PageTitle
-        text={`Dashboard`}
+        text={`${language[currentLang].data.title}`}
         extra={
           <RangePicker
             disabledDate={disabledDate}
@@ -106,7 +110,7 @@ const DataPage: React.FC = () => {
         <Col span={6}>
           <Card className={style.card}>
             <Statistic
-              title={`Order Amounts(CNY)`}
+              title={`${language[currentLang].data.orderAmount}`}
               value={statistics.orderAmount}
               precision={2}
               formatter={formatter}
@@ -116,7 +120,7 @@ const DataPage: React.FC = () => {
         <Col span={6}>
           <Card className={style.card}>
             <Statistic
-              title={`Order Counts`}
+              title={`${language[currentLang].data.orderCount}`}
               value={statistics.orderCount}
               formatter={formatter}
             />
@@ -125,7 +129,7 @@ const DataPage: React.FC = () => {
         <Col span={6}>
           <Card className={style.card}>
             <Statistic
-              title={`Inventory Counts`}
+              title={`${language[currentLang].data.itemCount}`}
               value={statistics.inventoryCount}
               formatter={formatter}
             />
@@ -134,7 +138,7 @@ const DataPage: React.FC = () => {
         <Col span={6}>
           <Card className={style.card}>
             <Statistic
-              title={`Member Counts`}
+              title={`${language[currentLang].data.memberCount}`}
               value={statistics.memberCount}
               formatter={formatter}
             />
@@ -143,7 +147,7 @@ const DataPage: React.FC = () => {
       </Row>
       <Row gutter={16}>
         <Col span={16}>
-          <Card title={`Overview`} className={style.card}>
+          <Card title={`${language[currentLang].data.overview}`} className={style.card}>
             {columnData.length > 0 ? (
               <Column xField={'month'} yField={'amounts'} data={columnData} />
             ) : (
@@ -152,7 +156,7 @@ const DataPage: React.FC = () => {
           </Card>
         </Col>
         <Col span={8}>
-          <Card title={`Recent Sales`} className={style.card}>
+          <Card title={`${language[currentLang].data.recentSales}`} className={style.card}>
             {recentSaleList.length > 0 ? (
               <Menu
                 defaultSelectedKeys={[]}

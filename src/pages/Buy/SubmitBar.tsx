@@ -3,11 +3,15 @@ import { Flex, Button, Row, Col, message, Drawer, Result } from 'antd';
 
 import { getStore, setStore, printStr } from '@common/electron';
 import request from '@common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import { BuyContext } from './context';
 import Bill from '@/components/Bill';
 
 const SubmitBar: React.FC = () => {
+  const { currentLang } = useContext(MainContext);
+  
   const {
     waitSales,
     buyer,
@@ -127,32 +131,34 @@ const SubmitBar: React.FC = () => {
     <Row gutter={16}>
       <Col span={12}>
         <Flex gap={'small'} wrap>
-          <Button type={'primary'} onClick={handleSubmit}>Submit</Button>
-          <Button onClick={handleReset}>Clear</Button>
+          <Button type={'primary'} onClick={handleSubmit}>{language[currentLang].buy.submit}</Button>
+          <Button onClick={handleReset}>{language[currentLang].buy.clear}</Button>
         </Flex>
       </Col>
       <Col span={12} style={{ textAlign: 'right' }}>
         {
           orderInCache?.waitSales?.list?.length ? (
-            <Button onClick={handleRestore}>Restore from handed</Button>
+            <Button onClick={handleRestore}>{language[currentLang].buy.restore}</Button>
           ) : null
         }
       </Col>
       <Drawer
-        title='下单成功'
+        title={language[currentLang].buy.success}
         width={368}
         open={showSuccessDrawer}
         onClose={() => setShowSuccessDrawer(false)}
       >
         <Result
           status='success'
-          title='下单成功'
-          subTitle='订单生成完毕，请确认顾客支付结果'
+          title={language[currentLang].buy.success}
+          subTitle={language[currentLang].buy.successSubtitle}
           extra={[
             <Button type='primary' key='print' onClick={handlePrint}>
-              打印小票
+              {language[currentLang].buy.print}
             </Button>,
-            <Button key='close' onClick={() => setShowSuccessDrawer(false)}>关闭</Button>,
+            <Button key='close' onClick={() => setShowSuccessDrawer(false)}>
+              {language[currentLang].buy.close}
+            </Button>,
           ]}
         />
         <div ref={printRef} style={{ display: 'block' }}>

@@ -4,12 +4,15 @@ import { UserOutlined } from '@ant-design/icons';
 
 import request from '@common/request';
 import { userLog } from '@/common/electron';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import { BuyContext } from './context';
 
 
 const PhoneInput: React.FC = () => {
   const { message, modal } = App.useApp();
+  const { currentLang } = useContext(MainContext);
 
   const { setBuyer } = useContext(BuyContext);
 
@@ -73,7 +76,7 @@ const PhoneInput: React.FC = () => {
   return (
     <Input.Search 
       size='middle' 
-      placeholder='input user phone' 
+      placeholder={language[currentLang].buy.inputUserPhone} 
       prefix={<UserOutlined />} 
       allowClear
       onSearch={handleMemberSearch}

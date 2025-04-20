@@ -1,12 +1,16 @@
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 const pointColumns = [
   {
-    title: 'change value',
+    title: language[currentLang].member.tableColumnChangeValue,
     dataIndex: 'point',
     key: 'point',
     fixed: 'left',
   },
   {
-    title: 'change type',
+    title: language[currentLang].member.tableColumnChangeType,
     dataIndex: 'type',
     key: 'type',
     enum: {
@@ -19,12 +23,12 @@ const pointColumns = [
     },
   },
   {
-    title: 'change reason',
+    title: language[currentLang].member.tableColumnChangeReason,
     dataIndex: 'reason',
     key: 'reason',
   },
   {
-    title: 'update time',
+    title: language[currentLang].member.tableColumnUpdateTime,
     key: 'updatedAt',
     dataIndex: 'updatedAt',
     valueType: 'dateTime',

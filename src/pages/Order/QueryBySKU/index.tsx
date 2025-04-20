@@ -1,13 +1,16 @@
-import React, { memo, useState, useRef } from 'react';
+import React, { memo, useState, useRef, useContext } from 'react';
 import { App, Button, Drawer, Input, Table } from 'antd';
 import { CopyOutlined, ScanOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 import request from '@/common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 import Box from '@/components/Box';
 
 const QueryBySKU: React.FC = () => {
   const { message } = App.useApp();
+  const { currentLang } = useContext(MainContext);
 
   const [showPanel, setShowPanel] = useState(false);
   const [dataList, setDataList] = useState([]);
@@ -59,7 +62,7 @@ const QueryBySKU: React.FC = () => {
 
   const columns = [
     {
-      title: 'order code',
+      title: language[currentLang].order.tableColumnOrderNo,
       dataIndex: 'orderSn',
       key: 'orderSn',
       fixed: 'left',
@@ -79,7 +82,7 @@ const QueryBySKU: React.FC = () => {
       },
     },
     {
-      title: 'order time',
+      title: language[currentLang].order.tableColumnOrderTime,
       align: 'center',
       dataIndex: 'createdAt',
       key: 'createdAt',
@@ -88,19 +91,19 @@ const QueryBySKU: React.FC = () => {
       },
     },
     {
-      title: 'actual',
+      title: language[currentLang].order.tableColumnActual,
       align: 'center',
       dataIndex: 'orderActualAmount',
       key: 'orderActualAmount',
     },
     {
-      title: 'user',
+      title: language[currentLang].order.tableColumnUser,
       align: 'center',
       dataIndex: 'userPhone',
       key: 'userPhone',
     },
     {
-      title: 'items',
+      title: language[currentLang].order.tableColumnItems,
       align: 'center',
       dataIndex: 'orderItems',
       key: 'orderItems',
@@ -113,10 +116,10 @@ const QueryBySKU: React.FC = () => {
         type='link'
         onClick={togglePanel}
       >
-        Query Order by Sku Code
+        {language[currentLang].order.queryBySkuCode}
       </Button>
       <Drawer
-        title='Query Order by Sku Code'
+        title={language[currentLang].order.queryBySkuCode}
         width={700}
         open={showPanel}
         onClose={closePanel}
@@ -124,7 +127,7 @@ const QueryBySKU: React.FC = () => {
       >
         <Input
           prefix={<ScanOutlined />} 
-          placeholder='scan sku code'
+          placeholder={language[currentLang].order.queryBySkuCodePlaceholder}
           onChange={handleChange}
           autoFocus
           value={scanSkuCode}
@@ -132,7 +135,7 @@ const QueryBySKU: React.FC = () => {
 
         <div style={{ marginTop: 24 }}>
           <Box
-            title={`Order List`}
+            title={language[currentLang].order.queryBySkuCodeTitle}
             content={
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '20px' }}>
                 <Table
@@ -152,7 +155,3 @@ const QueryBySKU: React.FC = () => {
 };
 
 export default memo(QueryBySKU);
-function setScanSkuCode(arg0: string) {
-  throw new Error('Function not implemented.');
-}
-

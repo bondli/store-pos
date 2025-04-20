@@ -1,7 +1,10 @@
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
 import type { PopconfirmProps } from 'antd';
 import { Button, Popconfirm, App } from 'antd';
+
 import request from '@/common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 type ComProps = {
   id: number;
@@ -9,7 +12,7 @@ type ComProps = {
 
 const RemoveMarketing: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
-
+  const { currentLang } = useContext(MainContext);
   const { id } = props;
 
   const confirm: PopconfirmProps['onConfirm'] = async (e) => {
@@ -34,14 +37,14 @@ const RemoveMarketing: React.FC<ComProps> = (props) => {
 
   return (
     <Popconfirm
-      title={`Delete Marketing`}
-      description={`Are you sure to delete this marketing?`}
+      title={`${language[currentLang].marketing.deleteMarketing}`}
+      description={`${language[currentLang].marketing.deleteMarketingDescription}`}
       onConfirm={confirm}
       onCancel={cancel}
-      okText={`Yes`}
-      cancelText={`No`}
+      okText={`${language[currentLang].common.yes}`}
+      cancelText={`${language[currentLang].common.no}`}
     >
-      <Button type='link'>delete</Button>
+      <Button type='link'>{language[currentLang].marketing.deleteMarketingAction}</Button>
     </Popconfirm>
   );
 

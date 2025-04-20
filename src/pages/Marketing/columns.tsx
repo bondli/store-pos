@@ -1,6 +1,10 @@
 import { Space, Tag } from 'antd';
 import dayjs from 'dayjs';
 
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 import Remove from './Remove';
 import Editor from './Editor';
 import Detail from './Detail';
@@ -8,19 +12,19 @@ import Offline from './Offline';
 
 const columns = [
   {
-    title: 'name',
+    title: language[currentLang].marketing.tableColumnName,
     dataIndex: 'marketingName',
     key: 'marketingName',
     fixed: 'left',
   },
   {
-    title: 'description',
+    title: language[currentLang].marketing.tableColumnDesc,
     dataIndex: 'marketingDesc',
     key: 'marketingDesc',
     ellipsis: true,
   },
   {
-    title: 'type',
+    title: language[currentLang].marketing.tableColumnType,
     align: 'center',
     dataIndex: 'marketingType',
     key: 'marketingType',
@@ -31,7 +35,7 @@ const columns = [
     }
   },
   {
-    title: 'start',
+    title: language[currentLang].marketing.tableColumnStartTime,
     align: 'center',
     dataIndex: 'startTime',
     key: 'startTime',
@@ -41,7 +45,7 @@ const columns = [
     }
   },
   {
-    title: 'end',
+    title: language[currentLang].marketing.tableColumnEndTime,
     align: 'center',
     key: 'endTime',
     dataIndex: 'endTime',
@@ -51,7 +55,7 @@ const columns = [
     }
   },
   {
-    title: 'status',
+    title: language[currentLang].marketing.tableColumnStatus,
     align: 'center',
     dataIndex: 'id',
     key: 'id',
@@ -70,7 +74,7 @@ const columns = [
     }
   },
   {
-    title: 'operation',
+    title: language[currentLang].marketing.tableColumnOperation,
     align: 'center',
     render: (row, record) => {
       let status = 'active';

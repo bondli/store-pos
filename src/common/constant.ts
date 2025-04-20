@@ -1,5 +1,3 @@
-import type { MenuProps } from 'antd';
-
 export const PAY_CHANNEL = {
   alipay: '支付宝',
   weixin: '微信',
@@ -9,26 +7,6 @@ export const PAY_CHANNEL = {
   balance: '余额',
   other: '其他',
 };
-
-export const mainMenuItems: MenuProps['items'] = [{
-  key: 'sales',
-  label: 'Sales',
-}, {
-  key: 'order',
-  label: 'Order Center',
-}, {
-  key: 'inventory',
-  label: 'Inventory Center',
-}, {
-  key: 'member',
-  label: 'Member Center',
-}, {
-  key: 'marketing',
-  label: 'Marketing Center',
-}, {
-  key: 'data',
-  label: 'Data Center',
-}];
 
 // 默认折扣率
 export const DEFAULT_DISCOUNT = 0.6;

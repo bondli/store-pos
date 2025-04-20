@@ -1,23 +1,27 @@
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 const schema = {
   type: 'object',
   labelWidth: 100,
   properties: {
     marketingTime: {
-      title: 'time',
+      title: language[currentLang].marketing.searchLabelMarketingTime,
       bind: ['startDate', 'endDate'],
       type: 'range',
       format: 'date',
     },
     marketingName: {
-      title: 'name',
+      title: language[currentLang].marketing.searchLabelMarketingName,
       type: 'string',
-      placeholder: 'input activity name',
+      placeholder: language[currentLang].marketing.searchPlaceholderMarketingName,
       props: {
         allowClear: true,
       },
     },
     marketingType: {
-      title: 'type',
+      title: language[currentLang].marketing.searchLabelMarketingType,
       type: 'string',
       widget: 'select',
       props: {
@@ -27,7 +31,7 @@ const schema = {
           { label: '满赠活动', value: 'full_gift' },
         ],
       },
-      placeholder: 'select activity type',
+      placeholder: language[currentLang].marketing.searchPlaceholderMarketingType,
     },
   }
 };
@@ -36,6 +40,6 @@ export default {
   schema,
   column: 3,
   layoutAuto: true,
-  searchText: 'search',
-  resetText: 'reset',
+  searchText: language[currentLang].common.search,
+  resetText: language[currentLang].common.reset,
 };

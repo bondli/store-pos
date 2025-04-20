@@ -1,6 +1,9 @@
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
 import { Dropdown, Space } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
+
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import Print from './Print';
 import Refund from './Refund';
@@ -12,6 +15,7 @@ type ComProps = {
 
 const MoreOperate: React.FC<ComProps> = (props) => {
   const { orderSn } = props;
+  const { currentLang } = useContext(MainContext);
 
   const items = [
     {
@@ -33,7 +37,7 @@ const MoreOperate: React.FC<ComProps> = (props) => {
       <Dropdown menu={{ items }}>
         <a onClick={(e) => e.preventDefault()}>
           <Space>
-            more
+            {language[currentLang].order.moreOperate}
             <DownOutlined />
           </Space>
         </a>

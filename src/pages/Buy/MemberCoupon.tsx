@@ -3,6 +3,8 @@ import { Card, Col, Row, Statistic, Button, Modal, Flex, Typography, Input, Sele
 import { CloseCircleFilled } from '@ant-design/icons';
 
 import request from '@/common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import { BuyContext } from './context';
 
@@ -10,7 +12,8 @@ import style from './index.module.less';
 
 const MemberCoupon: React.FC = () => {
   const { message } = App.useApp();
-
+  const { currentLang } = useContext(MainContext);
+  
   const { buyer, setBuyer } = useContext(BuyContext);
   const [isShowPointModal, setIsShowPointModal] = useState(false);
   const [isShowBalanceModal, setIsShowBalanceModal] = useState(false);
@@ -178,7 +181,7 @@ const MemberCoupon: React.FC = () => {
   const isSuperMember = buyer.level === 'super';
   const titleContent = (
     <div>
-      <span>User [{isSuperMember ? '超级会员' : ''}{buyer.phone}] Worth</span>
+      <span>{language[currentLang].buy.userWorth} [{isSuperMember ? '超级会员' : ''}{buyer.phone}]</span>
       <span><CloseCircleFilled style={{ marginLeft: 10, color: '#999', fontSize: 14 }} onClick={() => setBuyer(null)} /></span>
     </div>
   );

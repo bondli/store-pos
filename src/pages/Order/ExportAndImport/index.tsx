@@ -1,6 +1,9 @@
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
 import { Dropdown, Space, Button } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
+
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import ExportOrder from './ExportOrder';
 import ImportOrder from './ImportOrder';
@@ -12,6 +15,7 @@ type ComProps = {
 
 const ExportAndImport: React.FC<ComProps> = (props) => {
   const { dataList, callback } = props;
+  const { currentLang } = useContext(MainContext);
 
   const items = [
     {
@@ -29,7 +33,7 @@ const ExportAndImport: React.FC<ComProps> = (props) => {
       <Dropdown menu={{ items }}>
         <Button onClick={(e) => e.preventDefault()}>
           <Space>
-            more
+            {language[currentLang].order.exportAndImport}
             <DownOutlined />
           </Space>
         </Button>

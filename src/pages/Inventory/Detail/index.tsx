@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState, useContext } from 'react';
 import { Button, Drawer, Descriptions, App } from 'antd';
 
 import TableRender from 'table-render';
@@ -7,6 +7,8 @@ import type { ProColumnsType } from 'table-render';
 import { userLog } from '@/common/electron';
 import request from '@common/request';
 import Box from '@/components/Box';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import skuColumns from './sku';
 
@@ -27,6 +29,7 @@ const defaultItemInfo = {
 
 const Detail: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
+  const { currentLang } = useContext(MainContext);
 
   const { sku, sn } = props;
 
@@ -88,17 +91,17 @@ const Detail: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        detail
+        {language[currentLang].inventory.detail}
       </Button>
       <Drawer
-        title={`Inventory Detail`}
+        title={`${language[currentLang].inventory.detail}`}
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
         destroyOnClose={true}
       >
         <Descriptions
-          title={`Item Info`}
+          title={`${language[currentLang].inventory.itemInfo}`}
           bordered
           items={
             [{
@@ -143,7 +146,7 @@ const Detail: React.FC<ComProps> = (props) => {
         />
 
         <Box
-          title={`The ${sn}'s SKU List`}
+          title={`${language[currentLang].inventory.skuList}`}
           content={
             <TableRender
               request={getSkusByStyleNo as any}

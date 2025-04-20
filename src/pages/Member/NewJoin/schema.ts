@@ -2,6 +2,10 @@ import { DatePicker } from 'antd';
 import type { GetProps } from 'antd';
 import dayjs from 'dayjs';
 
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 
 const disabledDate: RangePickerProps['disabledDate'] = (current) => {
@@ -12,23 +16,22 @@ export default {
   type: 'object',
   properties: {
     phone: {
-      title: 'user phone',
+      title: language[currentLang].member.tableColumnPhone,
       type: 'string',
       required: true,
       max: 11,
       min: 11,
-      placeholder: 'input user phone',
+      placeholder: language[currentLang].member.searchPlaceholderPhone,
       widget: 'input'
     },
     name: {
-      title: 'user name',
-      placeholder: 'input user name',
+      title: language[currentLang].member.tableColumnName,
+      placeholder: language[currentLang].member.searchPlaceholderName,
       type: 'string',
       widget: 'input'
     },
     birthday: {
-      title: 'user birthday',
-      placeholder: 'input user birthday',
+      title: language[currentLang].member.tableColumnBirthday,
       type: 'string',
       widget: 'datePicker',
       props: {

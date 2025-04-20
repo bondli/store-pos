@@ -1,23 +1,27 @@
-import { InfoCircleFilled } from "@ant-design/icons";
-import { Tooltip } from "antd";
+import { InfoCircleFilled } from '@ant-design/icons';
+import { Tooltip } from 'antd';
+
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
 
 const orderColumns = [
   {
-    title: 'order',
+    title: language[currentLang].member.tableColumnOrder,
     align: 'left',
     dataIndex: 'orderSn',
     key: 'orderSn',
     fixed: 'left',
   },
   {
-    title: 'amount',
+    title: language[currentLang].member.tableColumnAmount,
     align: 'center',
     dataIndex: 'orderAmount',
     key: 'orderAmount',
     valueType: 'money',
   },
   {
-    title: 'actual',
+    title: language[currentLang].member.tableColumnActual,
     align: 'center',
     dataIndex: 'orderActualAmount',
     key: 'orderActualAmount',
@@ -37,13 +41,13 @@ const orderColumns = [
     }
   },
   {
-    title: 'items',
+    title: language[currentLang].member.tableColumnItems,
     align: 'center',
     key: 'orderItems',
     dataIndex: 'orderItems',
   },
   {
-    title: 'payment',
+    title: language[currentLang].member.tableColumnPayment,
     align: 'center',
     dataIndex: 'payType',
     key: 'payType',
@@ -56,7 +60,7 @@ const orderColumns = [
     },
   },
   {
-    title: 'createdAt',
+    title: language[currentLang].member.tableColumnCreatedAt,
     align: 'center',
     dataIndex: 'createdAt',
     key: 'createdAt',

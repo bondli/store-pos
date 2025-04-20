@@ -2,12 +2,15 @@ import React, { memo, useContext, useEffect, useState } from 'react';
 import { Card, Select } from 'antd';
 
 import request from '@/common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import { BuyContext } from './context';
 
 import style from './index.module.less';
 
 const StoreCoupon: React.FC = () => {
+  const { currentLang } = useContext(MainContext);
   const { setStoreCoupons, waitSales } = useContext(BuyContext);
   const [coupons, setCoupons] = useState([]);
 
@@ -49,7 +52,7 @@ const StoreCoupon: React.FC = () => {
   }
 
   return (
-    <Card title={`Store Coupon`} size='small' className={style.groupCard}>
+    <Card title={language[currentLang].buy.storeCoupon} size='small' className={style.groupCard}>
       <Select
         defaultValue={``}
         style={{ width: `100%` }}

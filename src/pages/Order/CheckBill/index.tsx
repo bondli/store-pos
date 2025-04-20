@@ -1,9 +1,11 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState, useContext } from 'react';
 import { Button, Drawer, Space, Table, App } from 'antd';
 import { InfoCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 
 import { PAY_CHANNEL } from '@/common/constant';
 import request from '@/common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 type OrderType = {
   orderSn: string;
@@ -19,6 +21,8 @@ type ComProps = {
 
 const CheckBill: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
+  const { currentLang } = useContext(MainContext);
+
   const { callback } = props;
   const [showPanel, setShowPanel] = useState(false);
   const [dataList, setDataList] = useState(props.dataList);
@@ -114,7 +118,7 @@ const CheckBill: React.FC<ComProps> = (props) => {
                 confirmOrder(record.orderSn);
               }}
             >
-              confirm
+              {language[currentLang].common.confirm}
             </Button>
           </Space>
         );
@@ -128,10 +132,10 @@ const CheckBill: React.FC<ComProps> = (props) => {
         type='default'
         onClick={togglePanel}
       >
-        check bill
+        {language[currentLang].order.checkBillAction}
       </Button>
       <Drawer
-        title="Check Bill"
+        title={language[currentLang].order.checkBill}
         width={700}
         open={showPanel}
         onClose={closePanel}

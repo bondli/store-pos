@@ -1,8 +1,10 @@
-import React, { memo, useState } from 'react';
-import { Button, Drawer, Upload, App, Flex, Table, Space, Tag } from 'antd';
+import React, { memo, useState, useContext } from 'react';
+import { Button, Drawer, Upload, App, Flex, Table, Space } from 'antd';
 import type { UploadProps } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 import request, { baseURL } from '@common/request';
 import Box from '@/components/Box';
 
@@ -14,6 +16,7 @@ type ComProps = {
 
 const Returns: React.FC<ComProps> = (props) => {
   const { message, modal } = App.useApp();
+  const { currentLang } = useContext(MainContext);
 
   const { callback } = props;
 
@@ -114,10 +117,10 @@ const Returns: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        批量退货
+        {language[currentLang].inventory.bitchStockReturnAction}
       </Button>
       <Drawer
-        title={`Returns`}
+        title={`${language[currentLang].inventory.bitchStockReturnTitle}`}
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
@@ -126,10 +129,10 @@ const Returns: React.FC<ComProps> = (props) => {
           <Flex justify='right'>
             <Space>
               <Button type='primary' key='submit' onClick={handleBitchStock}>
-                执行退货
+                {language[currentLang].inventory.bitchStockReturnSubmit}
               </Button>
               <Button type='default' key='clear' onClick={handleClear}>
-                取消
+                {language[currentLang].inventory.bitchStockReturnCancel}
               </Button>
             </Space>
           </Flex>

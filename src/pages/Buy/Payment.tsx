@@ -2,12 +2,15 @@ import React, { memo, useEffect, useState, useContext } from 'react';
 import { Flex, Radio, Input, Select, Card, Typography } from 'antd';
 
 import { getStore } from '@common/electron';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import { BuyContext } from './context';
 
 import style from './index.module.less';
 
-const Payment: React.FC = () => {
+const Payment: React.FC = () => { 
+  const { currentLang } = useContext(MainContext);
   const { waitSales, setWaitSales, setStoreSaler } = useContext(BuyContext);
   const [salers, setSalers] = useState([{ value: '', label: 'please select saler' }]);
 
@@ -77,10 +80,10 @@ const Payment: React.FC = () => {
     }));
   };
   return (
-    <Card title={`Payment`} size='small' className={style.groupCard}>
+    <Card title={language[currentLang].buy.payment} size='small' className={style.groupCard}>
       <Flex gap={`small`} vertical wrap>
         <Flex align="center" gap="small">
-          <Typography.Text style={{ width: '100px' }}>Pay Type</Typography.Text>
+          <Typography.Text style={{ width: '80px' }}>{language[currentLang].buy.payType}</Typography.Text>
           <Radio.Group 
             defaultValue={``} 
             buttonStyle={`solid`}
@@ -95,10 +98,10 @@ const Payment: React.FC = () => {
         </Flex>
 
         <Flex align="center" gap="small">
-          <Typography.Text style={{ width: '100px' }}>Actual</Typography.Text>
+          <Typography.Text style={{ width: '80px' }}>{language[currentLang].buy.actual}</Typography.Text>
           <Input 
             size='middle' 
-            placeholder='acutal amount' 
+            placeholder={language[currentLang].buy.actual} 
             style={{ width: `200px` }}
             onChange={handleChange}
             value={waitSales?.brief?.actualAmount || ''}
@@ -106,7 +109,7 @@ const Payment: React.FC = () => {
         </Flex>
 
         <Flex align="center" gap="small">
-          <Typography.Text style={{ width: '100px' }}>Saler</Typography.Text>
+          <Typography.Text style={{ width: '80px' }}>{language[currentLang].buy.saler}</Typography.Text>
           <Select
             defaultValue={``}
             style={{ width: `200px` }}
@@ -118,17 +121,17 @@ const Payment: React.FC = () => {
                 if (label) {
                   return label;
                 }
-                return <span>please select saler</span>;
+                return <span>{language[currentLang].buy.pleaseSelectSaler}</span>;
               }
             }
           />
         </Flex>
 
         <Flex align="center" gap="small">
-          <Typography.Text style={{ width: '100px' }}>Remark</Typography.Text>
+          <Typography.Text style={{ width: '80px' }}>{language[currentLang].buy.remark}</Typography.Text>
           <Input 
             size='middle' 
-            placeholder='order remark' 
+            placeholder={language[currentLang].buy.orderRemark} 
             style={{ width: `200px` }}
             onChange={handleRemarkChange}
           />

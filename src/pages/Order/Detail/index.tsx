@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState, useContext } from 'react';
 import { Button, Drawer, Descriptions, App } from 'antd';
 import dayjs from 'dayjs';
 
@@ -8,6 +8,8 @@ import type { ProColumnsType } from 'table-render';
 import { PAY_CHANNEL } from '@common/constant';
 import { userLog } from '@/common/electron';
 import request from '@common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import Box from '@/components/Box';
 
@@ -35,7 +37,7 @@ const defaultOrderInfo = {
 
 const Detail: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
-
+  const { currentLang } = useContext(MainContext);
   const { orderSn } = props;
 
   const [showPanel, setShowPanel] = useState(false);
@@ -112,66 +114,66 @@ const Detail: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        detail
+        {language[currentLang].order.orderDetailAction}
       </Button>
       <Drawer
-        title={`Order Detail`}
+        title={language[currentLang].order.orderDetail}
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
         destroyOnClose={true}
       >
         <Descriptions
-          title={`Order Info`}
+          title={language[currentLang].order.orderInfo}
           bordered
           items={
             [{
               key: '1',
-              label: 'Order Code',
+              label: language[currentLang].order.tableColumnOrderNo,
               children: orderInfo.orderSn,
             }, {
               key: '2',
-              label: 'Order Time',
+              label: language[currentLang].order.tableColumnOrderTime,
               children: dayjs(orderInfo.createdAt).format('YYYY-MM-DD HH:mm:ss'),
             }, {
               key: '3',
-              label: 'Order Amount',
+              label: language[currentLang].order.tableColumnAmount,
               children: orderInfo.orderAmount,
             }, {
               key: '4',
-              label: 'Order Actual',
+              label: language[currentLang].order.tableColumnActual,
               children: orderInfo.orderActualAmount,
             }, {
               key: '5',
-              label: 'Pay type',
+              label: language[currentLang].order.tableColumnPayment,
               children: PAY_CHANNEL[orderInfo.payType] || 'unknown',
             }, {
               key: '6',
-              label: 'Order items',
+              label: language[currentLang].order.tableColumnItems,
               children: orderInfo.orderItems,
             }, {
               key: '7',
-              label: 'User',
+              label: language[currentLang].order.tableColumnUser,
               children: orderInfo.userPhone,
             }, {
               key: '8',
-              label: 'Saler',
+              label: language[currentLang].order.tableColumnSaler,
               children: orderInfo.salerName,
             }, {
               key: '9',
-              label: 'use coupon',
+              label: language[currentLang].order.tableColumnUseCoupon,
               children: orderInfo.useCoupon || '--',
             }, {
               key: '10',
-              label: 'use point',
+              label: language[currentLang].order.tableColumnUsePoint,
               children: orderInfo.usePoint || '--',
             }, {
               key: '11',
-              label: 'use balance',
+              label: language[currentLang].order.tableColumnUseBalance,
               children: orderInfo.useBalance || '--',
             }, {
               key: '12',
-              label: 'Remark',
+              label: language[currentLang].order.tableColumnRemark,
               children: orderInfo.remark || '--',
             }]
           }
@@ -181,7 +183,7 @@ const Detail: React.FC<ComProps> = (props) => {
         />
 
         <Box
-          title={`Order Items`}
+          title={language[currentLang].order.orderItems}
           content={
             <TableRender
               request={getOrderItems as any}
@@ -192,7 +194,7 @@ const Detail: React.FC<ComProps> = (props) => {
           }
         />
         <Box
-          title={`Order Coupons`}
+          title={language[currentLang].order.orderCoupons}
           content={
             <TableRender
               request={getOrderCouponList as any}

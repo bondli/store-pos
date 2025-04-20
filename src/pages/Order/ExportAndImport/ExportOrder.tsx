@@ -1,7 +1,9 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useContext } from 'react';
 import { Button, Descriptions, Drawer, Flex, Table, App } from 'antd';
 import dayjs from 'dayjs';
 
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 import request from '@/common/request';
 import { PAY_CHANNEL, PaymentChannelStats } from '@common/constant';
 import Box from '@/components/Box';
@@ -13,6 +15,7 @@ type ComProps = {
 const ExportOrder: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
   const { dataList } = props;
+  const { currentLang } = useContext(MainContext);
 
   const [showPanel, setShowPanel] = useState(false);
   
@@ -66,69 +69,69 @@ const ExportOrder: React.FC<ComProps> = (props) => {
   const dataSource = [
     {
       key: '1',
-      label: 'Order Actual Amount',
+      label: language[currentLang].order.detailActual,
       children: orderActualAmount,
     },
     {
       key: '2',
-      label: 'Order Count',
+      label: language[currentLang].order.detailOrderCount,
       children: orderCount,
     },
     {
       key: '3',
-      label: 'Item Count',
+      label: language[currentLang].order.detailItemCount,
       children: itemCount,
     },
     {
       key: '4',
-      label: 'Pay Channel(alipay)',
+      label: language[currentLang].order.detailPayChannelAlipay,
       children: payChannel.alipay || '--',
     },
     {
       key: '5',
-      label: 'Pay Channel(weixin)',
+      label: language[currentLang].order.detailPayChannelWeixin,
       children: payChannel.weixin || '--',
     },
     {
       key: '6',
-      label: 'Pay Channel(cash)',
+      label: language[currentLang].order.detailPayChannelCash,
       children: payChannel.cash || '--',
     },
     {
       key: '7',
-      label: 'Pay Channel(card)',
+      label: language[currentLang].order.detailPayChannelCard,
       children: payChannel.card || '--',
     },
     {
       key: '8',
-      label: 'Pay Channel(other)',
+      label: language[currentLang].order.detailPayChannelOther,
       children: payChannel.other || '--',
     },
   ];
 
   const columns = [
     {
-      title: 'sn',
+      title: language[currentLang].order.tableColumnOrderNo,
       dataIndex: 'orderSn',
       key: 'orderSn',
       fixed: 'left',
     },
     {
-      title: 'items',
+      title: language[currentLang].order.tableColumnItems,
       align: 'center',
       key: 'orderItems',
       dataIndex: 'orderItems',
       fixed: 'left',
     },
     {
-      title: 'actual',
+      title: language[currentLang].order.tableColumnActual,
       align: 'center',
       dataIndex: 'orderActualAmount',
       key: 'orderActualAmount',
       fixed: 'left',
     },
     {
-      title: 'payment',
+      title: language[currentLang].order.tableColumnPayment,
       align: 'center',
       dataIndex: 'payType',
       key: 'payType',
@@ -137,7 +140,7 @@ const ExportOrder: React.FC<ComProps> = (props) => {
       }
     },
     {
-      title: 'user',
+      title: language[currentLang].order.tableColumnUser,
       align: 'center',
       dataIndex: 'userPhone',
       key: 'userPhone',
@@ -146,7 +149,7 @@ const ExportOrder: React.FC<ComProps> = (props) => {
       }
     },
     {
-      title: 'saler',
+      title: language[currentLang].order.tableColumnSaler,
       align: 'center',
       dataIndex: 'salerName',
       key: 'salerName',
@@ -162,24 +165,24 @@ const ExportOrder: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        导出订单
+        {language[currentLang].order.exportOrderBtn}
       </Button>
       <Drawer
-        title={`Export Order`}
+        title={language[currentLang].order.exportOrder}
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
         destroyOnClose={true}
         footer={
-          <Flex justify='center'>
+          <Flex justify='right'>
             <Button type='primary' key='export' onClick={handleExport}>
-              导出订单
+              {language[currentLang].order.exportOrderSubmit}
             </Button>
           </Flex>
         }
       >
         <Descriptions
-          title={`Order Summary`}
+          title={language[currentLang].order.orderSummary}
           size='small'
           bordered
           items={dataSource}
@@ -187,7 +190,7 @@ const ExportOrder: React.FC<ComProps> = (props) => {
         />
 
         <Box
-          title={`Order List`}
+          title={language[currentLang].order.orderList}
           content={
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '20px' }}>
               <Table

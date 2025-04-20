@@ -1,5 +1,9 @@
 import { Tag } from 'antd';
 
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 const couponColumns = [
   // {
   //   title: 'coupon id',
@@ -10,19 +14,19 @@ const couponColumns = [
   //   ellipsis: true,
   // },
   {
-    title: 'coupon desc',
+    title: language[currentLang].member.tableColumnCouponDesc,
     dataIndex: 'couponDesc',
     key: 'couponDesc',
     fixed: 'left',
   },
   {
-    title: 'coupon value',
+    title: language[currentLang].member.tableColumnCouponValue,
     dataIndex: 'couponValue',
     key: 'couponValue',
     align: 'center',
   },
   {
-    title: 'status',
+    title: language[currentLang].member.tableColumnCouponStatus,
     align: 'center',
     dataIndex: 'couponStatus',
     key: 'couponStatus',
@@ -38,7 +42,7 @@ const couponColumns = [
     },
   },
   {
-    title: 'expired time',
+    title: language[currentLang].member.tableColumnCouponExpiredTime,
     key: 'couponExpiredTime',
     dataIndex: 'couponExpiredTime',
     valueType: 'dateTime',
@@ -47,7 +51,7 @@ const couponColumns = [
     },
   },
   {
-    title: 'get time',
+    title: language[currentLang].member.tableColumnCouponGetTime,
     dataIndex: 'createdAt',
     key: 'createdAt',
     valueType: 'dateTime',

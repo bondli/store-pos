@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState, useContext } from 'react';
 import { Button, Drawer, Flex, App, Descriptions, Input, Table, TableProps } from 'antd';
 import dayjs from 'dayjs';
 
@@ -6,6 +6,8 @@ import { PAY_CHANNEL } from '@common/constant';
 import { userLog } from '@/common/electron';
 import request from '@common/request';
 import Box from '@/components/Box';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import itemColumns from './itemColumns';
 
@@ -30,7 +32,7 @@ const defaultOrderInfo = {
 
 const Refund: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
-
+  const { currentLang } = useContext(MainContext);
   const { orderSn } = props;
 
   const [showPanel, setShowPanel] = useState(false);
@@ -126,73 +128,73 @@ const Refund: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        订单退货
+        {language[currentLang].order.orderRefundBtn}
       </Button>
       <Drawer
-        title={`Order Refund`}
+        title={language[currentLang].order.orderRefund}
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
         destroyOnClose={true}
         footer={
-          <Flex justify='center'>
+          <Flex justify='right'>
             <Button type='primary' key='refund' onClick={handleRefund}>
-              执行退货
+              {language[currentLang].order.orderRefundSubmit}
             </Button>
           </Flex>
         }
       >
         <Descriptions
-          title={`Order Info`}
+          title={language[currentLang].order.orderInfo}
           bordered
           items={
             [{
               key: '1',
-              label: 'Order Code',
+              label: language[currentLang].order.tableColumnOrderNo,
               children: orderInfo.orderSn,
             }, {
               key: '2',
-              label: 'Order Time',
+              label: language[currentLang].order.tableColumnOrderTime,
               children: dayjs(orderInfo.createdAt).format('YYYY-MM-DD HH:mm:ss'),
             }, {
               key: '3',
-              label: 'Order Amount',
+              label: language[currentLang].order.tableColumnAmount,
               children: orderInfo.orderAmount,
             }, {
               key: '4',
-              label: 'Order Actual',
+              label: language[currentLang].order.tableColumnActual,
               children: <span style={{ color: 'red' }}>￥{orderInfo.orderActualAmount}</span>,
             }, {
               key: '5',
-              label: 'Pay type',
+              label: language[currentLang].order.tableColumnPayment,
               children: PAY_CHANNEL[orderInfo.payType] || 'unknown',
             }, {
               key: '6',
-              label: 'Order items',
+              label: language[currentLang].order.tableColumnItems,
               children: orderInfo.orderItems,
             }, {
               key: '7',
-              label: 'User',
+              label: language[currentLang].order.tableColumnUser,
               children: orderInfo.userPhone,
             }, {
               key: '8',
-              label: 'Saler',
+              label: language[currentLang].order.tableColumnSaler,
               children: orderInfo.salerName,
             }, {
               key: '9',
-              label: 'use coupon',
+              label: language[currentLang].order.tableColumnUseCoupon,
               children: orderInfo.useCoupon || '--',
             }, {
               key: '10',
-              label: 'use point',
+              label: language[currentLang].order.tableColumnUsePoint,
               children: orderInfo.usePoint || '--',
             }, {
               key: '11',
-              label: 'use balance',
+              label: language[currentLang].order.tableColumnUseBalance,
               children: orderInfo.useBalance || '--',
             }, {
               key: '12',
-              label: 'Remark',
+              label: language[currentLang].order.tableColumnRemark,
               children: orderInfo.remark || '--',
             }]
           }
@@ -201,7 +203,7 @@ const Refund: React.FC<ComProps> = (props) => {
           style={{ marginBottom: '24px' }}
         />
         <Box
-          title={`Choose Refund Items`}
+          title={language[currentLang].order.chooseRefundItems}
           content={
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '20px' }}>
               <Table
@@ -216,12 +218,12 @@ const Refund: React.FC<ComProps> = (props) => {
         />
 
         <Box
-          title={`Input Refund Amount`}
+          title={language[currentLang].order.inputRefundAmount}
           content={
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '20px' }}>
               <Input
                 type='number'
-                placeholder='请输入退款金额'
+                placeholder={language[currentLang].order.inputRefundAmountPlaceholder}
                 onChange={(e) => {
                   setRefundAmount(Number(e.target.value.trim()));
                 }}

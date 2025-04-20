@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect, useContext } from 'react';
 import { Button, Drawer, Descriptions, App } from 'antd';
 
 import TableRender from 'table-render';
@@ -6,6 +6,8 @@ import type { ProColumnsType } from 'table-render';
 
 import { userLog } from '@/common/electron';
 import request from '@common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import Box from '@/components/Box';
 
@@ -29,6 +31,7 @@ const defaultMemberInfo = {
 
 const Detail: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
+  const { currentLang } = useContext(MainContext);
 
   const { userPhone } = props;
 
@@ -151,46 +154,46 @@ const Detail: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        detail
+        {language[currentLang].member.detailAction}
       </Button>
       <Drawer
-        title={`Member Detail`}
+        title={`${language[currentLang].member.detailTitle}`}
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
         destroyOnClose={true}
       >
         <Descriptions
-          title={`User Info`}
+          title={`${language[currentLang].member.detailUserInfo}`}
           bordered
           items={
             [{
               key: '1',
-              label: 'Telephone',
+              label: language[currentLang].member.tableColumnPhone,
               children: userPhone,
             }, {
               key: '2',
-              label: 'user name',
+              label: language[currentLang].member.tableColumnName,
               children: memberInfo.name || '--',
             }, {
               key: '3',
-              label: 'birthday',
+              label: language[currentLang].member.tableColumnBirthday,
               children: memberInfo.birthday || '--',
             }, {
               key: '4',
-              label: 'order actual',
+              label: language[currentLang].member.tableColumnActual,
               children: memberInfo.actual,
             }, {
               key: '5',
-              label: 'points',
+              label: language[currentLang].member.tableColumnPoints,
               children: memberInfo.point,
             }, {
               key: '6',
-              label: 'balance',
+              label: language[currentLang].member.tableColumnBalance,
               children: memberInfo.balance,
             }, {
               key: '7',
-              label: 'coupon',
+              label: language[currentLang].member.tableColumnCoupon,
               children: memberInfo.coupon,
             },]
           }
@@ -200,7 +203,7 @@ const Detail: React.FC<ComProps> = (props) => {
         />
 
         <Box
-          title={`User Order`}
+          title={`${language[currentLang].member.detailUserOrder}`}
           content={
             <TableRender
               request={getUserOrders as any}
@@ -211,7 +214,7 @@ const Detail: React.FC<ComProps> = (props) => {
           }
         />
         <Box
-          title={`User Point`}
+          title={`${language[currentLang].member.detailUserPoint}`}
           content={
             <TableRender
               request={getPointRecords as any}
@@ -222,7 +225,7 @@ const Detail: React.FC<ComProps> = (props) => {
           }
         />
         <Box
-          title={`User Balance`}
+          title={`${language[currentLang].member.detailUserBalance}`}
           content={
             <TableRender
               request={getBalanceRecords as any}
@@ -234,7 +237,7 @@ const Detail: React.FC<ComProps> = (props) => {
         />
 
         <Box
-          title={`User Coupon`}
+          title={`${language[currentLang].member.detailUserCoupon}`}
           content={
             <TableRender
               request={getCouponRecords as any}

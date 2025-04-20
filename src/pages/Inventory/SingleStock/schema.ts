@@ -1,9 +1,13 @@
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 export default {
   type: 'object',
   properties: {
     sn: {
-      title: 'style no',
-      placeholder: 'input item style no',
+      title: language[currentLang].inventory.tableColumnStyleNo,
+      placeholder: language[currentLang].inventory.searchPlaceholderStyleNo,
       type: 'string',
       required: true,
       widget: 'input',
@@ -12,8 +16,8 @@ export default {
       },
     },
     name: {
-      title: 'item name',
-      placeholder: 'input item name',
+      title: language[currentLang].inventory.tableColumnName,
+      placeholder: language[currentLang].inventory.searchPlaceholderName,
       type: 'string',
       required: true,
       widget: 'input',
@@ -22,8 +26,8 @@ export default {
       },
     },
     brand: {
-      title: 'item brand',
-      placeholder: 'input item brand',
+      title: language[currentLang].inventory.tableColumnBrand,
+      placeholder: language[currentLang].inventory.searchPlaceholderBrand,
       type: 'string',
       required: true,
       widget: 'input',
@@ -32,8 +36,8 @@ export default {
       },
     },
     sku: {
-      title: 'sku code',
-      placeholder: 'input sku code',
+      title: language[currentLang].inventory.tableColumnSku,
+      placeholder: language[currentLang].inventory.searchPlaceholderSku,
       type: 'string',
       required: true,
       widget: 'input',
@@ -42,8 +46,8 @@ export default {
       },
     },
     color: {
-      title: 'item color',
-      placeholder: 'input item color',
+      title: language[currentLang].inventory.tableColumnColor,
+      placeholder: language[currentLang].inventory.searchPlaceholderColor,
       type: 'string',
       required: true,
       widget: 'input',
@@ -52,8 +56,8 @@ export default {
       },
     },
     size: {
-      title: 'item size',
-      placeholder: 'input item size',
+      title: language[currentLang].inventory.tableColumnSize,
+      placeholder: language[currentLang].inventory.searchPlaceholderSize,
       type: 'string',
       required: true,
       widget: 'input',
@@ -62,8 +66,8 @@ export default {
       },
     },
     originalPrice: {
-      title: 'item original price',
-      placeholder: 'input item original price',
+      title: language[currentLang].inventory.tableColumnOriginalPrice,
+      placeholder: language[currentLang].inventory.searchPlaceholderOriginalPrice,
       type: 'number',
       required: true,
       widget: 'input',
@@ -72,8 +76,8 @@ export default {
       },
     },
     costPrice: {
-      title: 'item cost price',
-      placeholder: 'input item cost price',
+      title: language[currentLang].inventory.tableColumnCostPrice,
+      placeholder: language[currentLang].inventory.searchPlaceholderCostPrice,
       type: 'number',
       required: true,
       widget: 'input',
@@ -82,8 +86,8 @@ export default {
       },
     },
     counts: {
-      title: 'item count',
-      placeholder: 'input item count',
+      title: language[currentLang].inventory.tableColumnCounts,
+      placeholder: language[currentLang].inventory.searchPlaceholderCounts,
       type: 'number',
       required: true,
       widget: 'input',

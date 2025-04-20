@@ -1,12 +1,16 @@
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 const itemColumns = [
   {
-    title: 'style no',
+    title: language[currentLang].order.tableColumnStyleNo,
     dataIndex: 'sn',
     key: 'sn',
     fixed: 'left',
   },
   {
-    title: 'sku code',
+    title: language[currentLang].order.tableColumnSkuCode,
     dataIndex: 'sku',
     key: 'sku',
     render: (text: string, record: any) => {
@@ -19,27 +23,27 @@ const itemColumns = [
     },
   },
   {
-    title: 'original',
+    title: language[currentLang].order.tableColumnOriginal,
     align: 'center',
     key: 'originalPrice',
     dataIndex: 'originalPrice',
     valueType: 'money',
   },
   {
-    title: 'actual',
+    title: language[currentLang].order.tableColumnActual,
     align: 'center',
     key: 'actualPrice',
     dataIndex: 'actualPrice',
     valueType: 'money',
   },
   {
-    title: 'discount',
+    title: language[currentLang].order.tableColumnDiscount,
     align: 'center',
     dataIndex: 'discount',
     key: 'discount',
   },
   {
-    title: 'counts',
+    title: language[currentLang].order.tableColumnCounts,
     align: 'center',
     dataIndex: 'counts',
     key: 'counts',

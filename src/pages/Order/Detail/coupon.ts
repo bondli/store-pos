@@ -1,18 +1,22 @@
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 const couponColumns = [
   {
-    title: 'coupon id',
+    title: language[currentLang].order.tableColumnCouponId,
     dataIndex: 'couponId',
     key: 'couponId',
     fixed: 'left',
     align: 'center',
   },
   {
-    title: 'coupon desc',
+    title: language[currentLang].order.tableColumnCouponDesc,
     dataIndex: 'couponDesc',
     key: 'couponDesc',
   },
   {
-    title: 'coupon type',
+    title: language[currentLang].order.tableColumnCouponType,
     key: 'couponType',
     dataIndex: 'couponType',
     align: 'center',
@@ -22,14 +26,14 @@ const couponColumns = [
     },
   },
   {
-    title: 'used value',
+    title: language[currentLang].order.tableColumnUsedValue,
     key: 'usedValue',
     dataIndex: 'usedValue',
     align: 'center',
     valueType: 'money',
   },
   {
-    title: 'used time',
+    title: language[currentLang].order.tableColumnUsedTime,
     dataIndex: 'usedTime',
     key: 'usedTime',
     align: 'center',

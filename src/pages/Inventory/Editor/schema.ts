@@ -1,8 +1,12 @@
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 export default {
   type: 'object',
   properties: {
     sku: {
-      title: 'sku',
+      title: language[currentLang].inventory.tableColumnSku,
       type: 'string',
       required: true,
       widget: 'input',
@@ -10,14 +14,14 @@ export default {
       disabled: true,
     },
     name: {
-      title: 'item name',
+      title: language[currentLang].inventory.tableColumnName,
       type: 'string',
       widget: 'input',
       readonly: true,
       disabled: true,
     },
     brand: {
-      title: 'brand',
+      title: language[currentLang].inventory.tableColumnBrand,
       type: 'string',
       required: true,
       widget: 'input',
@@ -25,7 +29,7 @@ export default {
       disabled: true,
     },
     color: {
-      title: 'color',
+      title: language[currentLang].inventory.tableColumnColor,
       type: 'string',
       required: true,
       widget: 'input',
@@ -33,7 +37,7 @@ export default {
       disabled: true,
     },
     size: {
-      title: 'color',
+      title: language[currentLang].inventory.tableColumnSize,
       type: 'string',
       required: true,
       widget: 'input',
@@ -41,7 +45,7 @@ export default {
       disabled: true,
     },
     counts: {
-      title: 'counts',
+      title: language[currentLang].inventory.tableColumnCounts,
       type: 'number',
       required: true,
       widget: 'input',

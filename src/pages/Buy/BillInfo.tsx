@@ -1,11 +1,15 @@
 import React, { memo, useContext, useEffect, useState } from 'react';
 import { List } from 'antd';
 
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
+
 import { BuyContext } from './context';
 
 import style from './index.module.less';
 
 const BillInfo: React.FC = () => {
+  const { currentLang } = useContext(MainContext);
   const { waitSales, storeCoupons, buyer } = useContext(BuyContext);
   const [list, setList] = useState([]);
 
@@ -78,7 +82,7 @@ const BillInfo: React.FC = () => {
       <List
         header={
           <div className={style.billTitle}>
-            Marketing Info
+            {language[currentLang].buy.marketingInfo}
           </div>
         }
         size='small'

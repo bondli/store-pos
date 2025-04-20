@@ -1,6 +1,9 @@
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
 import { Dropdown, Space } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import Returns from './Returns';
 import Purchase from './Purchase';
@@ -11,6 +14,7 @@ type ComProps = {
 
 const MoreOperate: React.FC<ComProps> = (props) => {
   const { callback } = props;
+  const { currentLang } = useContext(MainContext);
 
   const items = [
     {
@@ -29,7 +33,7 @@ const MoreOperate: React.FC<ComProps> = (props) => {
         <a onClick={(e) => e.preventDefault()}>
           <Space>
             <UploadOutlined />
-            bitch stock
+            {language[currentLang].inventory.bitchStock}
           </Space>
         </a>
       </Dropdown>

@@ -4,12 +4,15 @@ import { ScanOutlined, SignatureOutlined } from '@ant-design/icons';
 
 import request from '@common/request';
 import { userLog } from '@/common/electron';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 import { DEFAULT_DISCOUNT } from '@common/constant';
 
 import { BuyContext } from './context';
 
 
 const SkuInput: React.FC = () => {
+  const { currentLang } = useContext(MainContext);
   const { setWaitSales } = useContext(BuyContext);
 
   const [scanSkuCode, setScanSkuCode] = useState('');
@@ -117,7 +120,7 @@ const SkuInput: React.FC = () => {
     return (
       <Input 
         size='middle' 
-        placeholder='input barcode'
+        placeholder={language[currentLang].buy.inputBarcode}
         prefix={<SignatureOutlined onClick={ () => setInputType('scan') } />} 
         autoFocus 
         onChange={handleInput}
@@ -130,7 +133,7 @@ const SkuInput: React.FC = () => {
   return (
     <Input 
       size='middle' 
-      placeholder='scan barcode'
+      placeholder={language[currentLang].buy.scanBarcode}
       prefix={<ScanOutlined onClick={ () => setInputType('input') } />} 
       autoFocus 
       onChange={handleScan}

@@ -1,13 +1,17 @@
 import { Space, Popover, List, Tooltip } from 'antd';
 import { InfoCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 import Editor from './Editor';
 import Detail from './Detail';
 import MoreOperate from './MoreOperate';
 
 const columns = [
   {
-    title: 'order code',
+    title: language[currentLang].order.tableColumnOrderNo,
     dataIndex: 'orderSn',
     key: 'orderSn',
     fixed: 'left',
@@ -20,14 +24,14 @@ const columns = [
     },
   },
   {
-    title: 'items',
+    title: language[currentLang].order.tableColumnItems,
     align: 'center',
     key: 'orderItems',
     dataIndex: 'orderItems',
     fixed: 'left',
   },
   {
-    title: 'amount',
+    title: language[currentLang].order.tableColumnAmount,
     align: 'right',
     dataIndex: 'orderAmount',
     key: 'orderAmount',
@@ -40,7 +44,7 @@ const columns = [
     },
   },
   {
-    title: 'actual',
+    title: language[currentLang].order.tableColumnActual,
     align: 'right',
     dataIndex: 'orderActualAmount',
     key: 'orderActualAmount',
@@ -98,7 +102,7 @@ const columns = [
     }
   },
   {
-    title: 'payment',
+    title: language[currentLang].order.tableColumnPayment,
     align: 'center',
     dataIndex: 'payType',
     key: 'payType',
@@ -111,14 +115,14 @@ const columns = [
     },
   },
   {
-    title: 'user',
+    title: language[currentLang].order.tableColumnUser,
     align: 'center',
     dataIndex: 'userPhone',
     key: 'userPhone',
     copyable: true,
   },
   {
-    title: 'time',
+    title: language[currentLang].order.tableColumnTime,
     align: 'center',
     dataIndex: 'createdAt',
     key: 'createdAt',
@@ -128,7 +132,7 @@ const columns = [
     }
   },
   {
-    title: 'saler',
+    title: language[currentLang].order.tableColumnSaler,
     dataIndex: 'salerName',
     key: 'salerName',
     render: (row, record) => {
@@ -136,7 +140,7 @@ const columns = [
     },
   },
   {
-    title: 'status',
+    title: language[currentLang].order.tableColumnStatus,
     align: 'center',
     dataIndex: 'orderStatus',
     key: 'orderStatus',
@@ -155,7 +159,7 @@ const columns = [
     }
   },
   {
-    title: 'operation',
+    title: language[currentLang].order.tableColumnOperation,
     align: 'center',
     render: (row, record) => {
       return (

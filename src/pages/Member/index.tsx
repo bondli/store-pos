@@ -1,4 +1,4 @@
-import React, { memo, useRef } from 'react';
+import React, { memo, useRef, useContext } from 'react';
 import { Button, App } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import TableRender, { TableContext } from 'table-render';
@@ -7,6 +7,8 @@ import type { ProColumnsType } from 'table-render';
 import { userLog } from '@/common/electron';
 import request from '@common/request';
 import PageTitle from '@/components/PageTitle';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import search from './search';
 import columns from './columns';
@@ -16,6 +18,7 @@ import style from './index.module.less';
 
 const MemberPage: React.FC = () => {
   const { message } = App.useApp();
+  const { currentLang } = useContext(MainContext);
 
   const tableRef = useRef<TableContext>(null);
 
@@ -41,17 +44,17 @@ const MemberPage: React.FC = () => {
 
   return (
     <div className={style.container}>
-      <PageTitle text={`Members`} />
+      <PageTitle text={`${language[currentLang].member.title}`} />
       <TableRender
         ref={tableRef}
         search={search}
         request={getMemberList as any}
         columns={columns as ProColumnsType}
-        title={`Query Results of Members`}
+        title={`${language[currentLang].member.tableTitle}`}
         scroll={{ x: 'max-content' }}
         toolbarRender={
           <>
-            <Button onClick={refreshData}><RedoOutlined />Refresh</Button>
+            <Button onClick={refreshData}><RedoOutlined />{language[currentLang].member.refresh}</Button>
             <NewJoin callback={refreshData} />
           </>
         }

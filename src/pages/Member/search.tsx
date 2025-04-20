@@ -2,6 +2,10 @@ import { DatePicker } from 'antd';
 import type { GetProps } from 'antd';
 import dayjs from 'dayjs';
 
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 
 const disabledDate: RangePickerProps['disabledDate'] = (current) => {
@@ -13,7 +17,7 @@ const schema = {
   labelWidth: 100,
   properties: {
     createdAt: {
-      title: 'create time',
+      title: language[currentLang].member.searchLabelCreatedAt,
       bind: ['startDate', 'endDate'],
       type: 'range',
       format: 'date',
@@ -22,9 +26,9 @@ const schema = {
       },
     },
     phone: {
-      title: 'user phone',
+      title: language[currentLang].member.searchLabelPhone,
       type: 'string',
-      placeholder: 'input member phone',
+      placeholder: language[currentLang].member.searchPlaceholderPhone,
       props: {
         allowClear: true,
       },
@@ -36,6 +40,6 @@ export default {
   schema,
   column: 3,
   layoutAuto: true,
-  searchText: 'search',
-  resetText: 'reset',
+  searchText: language[currentLang].common.search,
+  resetText: language[currentLang].common.reset,
 };

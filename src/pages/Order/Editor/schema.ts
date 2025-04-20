@@ -1,5 +1,6 @@
 import { getStore } from '@common/electron';
-
+import language from '@/common/language';
+const currentLang = getStore('currentLang');
 const salerList = getStore('salerList') || [];
 const newSalers = [];
 salerList.forEach((item) => {
@@ -10,7 +11,7 @@ export default {
   type: 'object',
   properties: {
     payType: {
-      title: 'Pay Type',
+      title: language[currentLang].order.tableColumnPayment,
       type: 'string',
       required: true,
       placeholder: 'select pay type',
@@ -26,14 +27,14 @@ export default {
       },
     },
     orderActualAmount: {
-      title: 'Actual Mount',
+      title: language[currentLang].order.tableColumnActual,
       placeholder: 'input actual mount',
       type: 'number',
       required: true,
       widget: 'input',
     },
     salerId: {
-      title: 'Saler',
+      title: language[currentLang].order.tableColumnSaler,
       placeholder: 'select saler',
       type: 'number',
       required: true,
@@ -43,13 +44,13 @@ export default {
       },
     },
     userPhone: {
-      title: 'User',
+      title: language[currentLang].order.tableColumnUser,
       placeholder: 'input user phone',
       type: 'string',
       widget: 'input',
     },
     remark: {
-      title: 'Remark',
+      title: language[currentLang].order.tableColumnRemark,
       placeholder: 'input remark',
       type: 'string',
       widget: 'input',

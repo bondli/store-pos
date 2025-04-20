@@ -1,8 +1,12 @@
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 export const baseInfoSchema = {
   type: 'object',
   properties: {
     phone: {
-      title: 'user phone',
+      title: language[currentLang].member.tableColumnPhone,
       type: 'string',
       required: true,
       max: 11,
@@ -13,13 +17,13 @@ export const baseInfoSchema = {
       disabled: true,
     },
     name: {
-      title: 'user name',
+      title: language[currentLang].member.tableColumnName,
       placeholder: 'input user name',
       type: 'string',
       widget: 'input'
     },
     birthday: {
-      title: 'user brithday',
+      title: language[currentLang].member.tableColumnBirthday,
       placeholder: 'input user brithday',
       type: 'string',
       widget: 'datePicker'
@@ -31,7 +35,7 @@ export const pointSchema = {
   type: 'object',
   properties: {
     phone: {
-      title: 'user phone',
+      title: language[currentLang].member.tableColumnPhone,
       type: 'string',
       required: true,
       max: 11,
@@ -42,21 +46,21 @@ export const pointSchema = {
       disabled: true,
     },
     point: {
-      title: 'user point',
+      title: language[currentLang].member.tableColumnCurrentPoint,
       type: 'string',
       widget: 'input',
       readonly: true,
       disabled: true,
     },
     changePoint: {
-      title: 'change point',
+      title: language[currentLang].member.tableColumnChangePoint,
       placeholder: 'input change point',
       required: true,
       type: 'string',
       widget: 'input',
     },
     type: {
-      title: 'change type',
+      title: language[currentLang].member.tableColumnChangeType,
       placeholder: 'input change type',
       required: true,
       type: 'string',
@@ -69,7 +73,7 @@ export const pointSchema = {
       }
     },
     reason: {
-      title: 'change reason',
+      title: language[currentLang].member.tableColumnChangeReason,
       placeholder: 'input change reason',
       type: 'string',
       widget: 'input',
@@ -81,7 +85,7 @@ export const balanceSchema = {
   type: 'object',
   properties: {
     phone: {
-      title: 'user phone',
+      title: language[currentLang].member.tableColumnPhone,
       type: 'string',
       required: true,
       max: 11,
@@ -92,28 +96,28 @@ export const balanceSchema = {
       disabled: true,
     },
     balance: {
-      title: 'user balance',
+      title: language[currentLang].member.tableColumnBalance,
       type: 'string',
       widget: 'input',
       readonly: true,
       disabled: true,
     },
     inComeBalance: {
-      title: 'income balance',
+      title: language[currentLang].member.tableColumnInComeBalance,
       placeholder: 'input income balance',
       required: true,
       type: 'string',
       widget: 'input',
     },
     sendValue: {
-      title: 'send value',
+      title: language[currentLang].member.tableColumnSendValue,
       placeholder: 'input send value',
       required: true,
       type: 'string',
       widget: 'input',
     },
     reason: {
-      title: 'change reason',
+      title: language[currentLang].member.tableColumnChangeReason,
       placeholder: 'input change reason',
       type: 'string',
       widget: 'input',

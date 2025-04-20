@@ -1,9 +1,10 @@
 import React, { memo, useContext } from 'react';
-import { Layout, Menu, theme } from 'antd';
+import { Layout, Menu, theme, Tag } from 'antd';
 import type { MenuProps } from 'antd';
 
-import { mainMenuItems } from '@/common/constant';
+import { setStore } from '@common/electron';
 import { MainContext } from '@common/context';
+import language from '@common/language';
 
 import Logo from '@components/Logo';
 import User from '@components/User';
@@ -20,12 +21,38 @@ import style from './index.module.less';
 const { Header, Content } = Layout;
 
 const MainPage: React.FC = () => {
-  const { currentPage, setCurrentPage } = useContext(MainContext);
+  const { currentPage, setCurrentPage, currentLang, setCurrentLang } = useContext(MainContext);
 
   const { token: { colorBgContainer } } = theme.useToken();
 
   const onMenuClick: MenuProps['onClick'] = (e) => {
     setCurrentPage(e.key);
+  };
+
+  const mainMenuItems =  [{
+    key: 'sales',
+    label: language[currentLang].main.sales,
+  }, {
+    key: 'order',
+    label: language[currentLang].main.order,
+  }, {
+    key: 'inventory',
+    label: language[currentLang].main.inventory,
+  }, {
+    key: 'member',
+    label: language[currentLang].main.member,
+  }, {
+    key: 'marketing',
+    label: language[currentLang].main.marketing,
+  }, {
+    key: 'data',
+    label: language[currentLang].main.data,
+  }]
+
+  const onLangChange = () => {
+    const newLang = currentLang === 'zh' ? 'en' : 'zh';
+    setCurrentLang(newLang);
+    setStore('currentLang', newLang);
   };
 
   return (
@@ -36,7 +63,7 @@ const MainPage: React.FC = () => {
           background: colorBgContainer,
         }}
       >
-        <Logo mode={'dark'} />
+        <Logo mode={'dark'} title={language[currentLang].common.logo} />
         <Menu
           mode={`horizontal`}
           style={{ flex: 1 }}
@@ -44,7 +71,10 @@ const MainPage: React.FC = () => {
           items={mainMenuItems}
           onClick={onMenuClick}
         />
-        <User />
+        <div className={style.user}>
+          <Tag color="#000" onClick={onLangChange} style={{ cursor: 'pointer' }}>{currentLang === 'zh' ? '中' : '英'}</Tag>
+          <User />
+        </div>
       </Header>
       <Content className={style.content}>
         {

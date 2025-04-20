@@ -1,8 +1,10 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useContext } from 'react';
 import { Button, Drawer, App } from 'antd';
 import FormRender, { useForm } from 'form-render';
 
 import request from '@common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import schema from './schema';
 
@@ -12,6 +14,7 @@ type ComProps = {
 
 const NewJoin: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
+  const { currentLang } = useContext(MainContext);
 
   const { callback } = props;
   const form = useForm();
@@ -45,10 +48,10 @@ const NewJoin: React.FC<ComProps> = (props) => {
         type='primary'
         onClick={togglePanel}
       >
-        new member
+        {language[currentLang].member.newJoinAction}
       </Button>
       <Drawer
-        title={`Member Join`}
+        title={`${language[currentLang].member.newJoinTitle}`}
         width={410}
         open={showPanel}
         onClose={() => setShowPanel(false)}
@@ -60,10 +63,10 @@ const NewJoin: React.FC<ComProps> = (props) => {
           onFinish={onFinish}
           footer={{
             submit: {
-              text: 'confirm',
+              text: language[currentLang].common.confirm,
             },
             reset: {
-              text: 'reset',
+              text: language[currentLang].common.reset,
             }
           }}
         />

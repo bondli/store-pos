@@ -1,10 +1,12 @@
-import React, { memo, useEffect, useState, useRef } from 'react';
+import React, { memo, useEffect, useState, useRef, useContext } from 'react';
 import { Button, Drawer, Flex, App } from 'antd';
 
 import { userLog } from '@/common/electron';
 import request from '@common/request';
 import Bill from '@/components/Bill';
 import { printStr } from '@/common/electron';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 type ComProps = {
   orderSn: string;
@@ -27,7 +29,7 @@ const defaultOrderInfo = {
 
 const Print: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
-
+  const { currentLang } = useContext(MainContext);
   const { orderSn } = props;
 
   const [showPanel, setShowPanel] = useState(false);
@@ -95,18 +97,18 @@ const Print: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        打印小票
+        {language[currentLang].order.printBillAction}
       </Button>
       <Drawer
-        title={`Bill Info`}
+        title={language[currentLang].order.billInfo}
         width={368}
         open={showPanel}
         onClose={() => setShowPanel(false)}
         destroyOnClose={true}
         footer={
-          <Flex justify='center'>
+          <Flex justify='right'>
             <Button type='primary' key='print' onClick={handlePrint}>
-              打印小票
+              {language[currentLang].order.printBillAction}
             </Button>
           </Flex>
         }

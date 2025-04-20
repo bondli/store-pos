@@ -1,11 +1,16 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState, useContext } from 'react';
 import { Drawer, Col, Row, Statistic, Card } from 'antd';
 import { EyeFilled } from '@ant-design/icons';
 
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
+
 import { OrderListProps, OrderStatistics, PaymentChannelStats } from '@common/constant';
+
 import style from './index.module.less';
 
 const Summary: React.FC<OrderListProps> = (props) => {
+  const { currentLang } = useContext(MainContext);
   const { dataList } = props;
   const [showPanel, setShowPanel] = useState(false);
   const [statistics, setStatistics] = useState<OrderStatistics>({
@@ -51,7 +56,7 @@ const Summary: React.FC<OrderListProps> = (props) => {
         <EyeFilled />
       </span>
       <Drawer
-        title={`Query Result of Order's Summary`}
+        title={language[currentLang].order.summaryTitle}
         height={410}
         placement={`top`}
         open={showPanel}
@@ -61,7 +66,7 @@ const Summary: React.FC<OrderListProps> = (props) => {
           <Col span={8}>
             <Card className={style.card}>
               <Statistic
-                title={`Order amounts(CNY)`}
+                title={language[currentLang].order.summaryOrderAmount}
                 value={statistics.orderActualAmount}
                 precision={2}
               />
@@ -70,7 +75,7 @@ const Summary: React.FC<OrderListProps> = (props) => {
           <Col span={8}>
             <Card className={style.card}>
               <Statistic
-                title={`Order counts`}
+                title={language[currentLang].order.summaryOrderCount}
                 value={statistics.orderCount}
               />
             </Card>
@@ -78,7 +83,7 @@ const Summary: React.FC<OrderListProps> = (props) => {
           <Col span={8}>
             <Card className={style.card}>
               <Statistic
-                title={`Item counts`}
+                title={language[currentLang].order.summaryItemCount}
                 value={statistics.itemCount}
               />
             </Card>
@@ -86,13 +91,13 @@ const Summary: React.FC<OrderListProps> = (props) => {
         </Row>
         <Row gutter={16}>
           <Col span={24}>
-            <Card title={`order amount by pay channel`} className={style.card}>
+            <Card title={language[currentLang].order.summaryOrderAmountByPayChannel} className={style.card}>
               <div className={style.cardByPayChannel}>
-                <Statistic title={`alipay(CNY)`} precision={2} value={statistics.payChannelStats.alipay} />
-                <Statistic title={`weixin(CNY)`} precision={2} value={statistics.payChannelStats.weixin} />
-                <Statistic title={`cash(CNY)`} precision={2} value={statistics.payChannelStats.cash} />
-                <Statistic title={`card(CNY)`} precision={2} value={statistics.payChannelStats.card} />
-                <Statistic title={`other(CNY)`} precision={2} value={statistics.payChannelStats.other} />
+                <Statistic title={`${language[currentLang].order.summaryAlipay}(CNY)`} precision={2} value={statistics.payChannelStats.alipay} />
+                <Statistic title={`${language[currentLang].order.summaryWeixin}(CNY)`} precision={2} value={statistics.payChannelStats.weixin} />
+                <Statistic title={`${language[currentLang].order.summaryCash}(CNY)`} precision={2} value={statistics.payChannelStats.cash} />
+                <Statistic title={`${language[currentLang].order.summaryCard}(CNY)`} precision={2} value={statistics.payChannelStats.card} />
+                <Statistic title={`${language[currentLang].order.summaryOther}(CNY)`} precision={2} value={statistics.payChannelStats.other} />
               </div>
             </Card>
           </Col>

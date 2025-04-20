@@ -1,9 +1,11 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState, useContext } from 'react';
 import { Button, Drawer, App } from 'antd';
 import FormRender, { useForm } from 'form-render';
 
 import { userLog } from '@/common/electron';
 import request from '@common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import schema from './schema';
 
@@ -14,6 +16,7 @@ type ComProps = {
 
 const Editor: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
+  const { currentLang } = useContext(MainContext);
 
   const { orderSn, callback } = props;
   
@@ -78,10 +81,10 @@ const Editor: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        modify
+        {language[currentLang].order.orderModifyAction}
       </Button>
       <Drawer
-        title={`Order Modify`}
+        title={language[currentLang].order.orderModify}
         width={410}
         open={showPanel}
         onClose={() => setShowPanel(false)}

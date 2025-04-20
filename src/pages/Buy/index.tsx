@@ -4,6 +4,8 @@ import { Col, Row, Button } from 'antd';
 import { setStore } from '@/common/electron';
 import PageTitle from '@/components/PageTitle';
 import CustomCard from '@/components/CustomCard';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import { BuyProvider, BuyContext } from './context';
 
@@ -20,6 +22,8 @@ import SkuInput from './SkuInput';
 import style from './index.module.less';
 
 const BuyPageContainer: React.FC = () => {
+  const { currentLang } = useContext(MainContext);
+
   const {
     waitSales,
     setWaitSales,
@@ -51,9 +55,9 @@ const BuyPageContainer: React.FC = () => {
   return (
     <div className={style.container}>
       <PageTitle
-        text={`Sales and Payment`}
+        text={`${language[currentLang].buy.title}`}
         extra={
-          waitSales?.list?.length ? <Button type={`link`} onClick={handleHangUp}>hang up</Button> : null
+          waitSales?.list?.length ? <Button type={`link`} onClick={handleHangUp}>{language[currentLang].buy.hangUp}</Button> : null
         }
       />
 

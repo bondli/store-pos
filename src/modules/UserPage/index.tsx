@@ -1,10 +1,10 @@
 import React, { memo, useState, useContext } from 'react';
 import type { FormProps } from 'antd';
-import { Layout, Row, Col, Form, Input, Button, message, App } from 'antd';
+import { Layout, Row, Col, Form, Input, Button, App } from 'antd';
 import { userLog, setStore } from '@common/electron';
 import request from '@common/request';
 import { MainContext } from '@common/context';
-
+import language from '@common/language';
 import Logo from '@components/Logo';
 
 import style from './index.module.less';
@@ -26,7 +26,7 @@ const UserPage: React.FC = () => {
   const { message } = App.useApp();
 
   const [showLogin, setShowLogin] = useState(true);
-  const { setUserInfo } = useContext(MainContext);
+  const { setUserInfo, currentLang } = useContext(MainContext);
 
   // 登录和注册切换
   const handleSwitch = (type: string) => {
@@ -101,8 +101,8 @@ const UserPage: React.FC = () => {
   return (
     <Layout className={style.layout}>
       <Header className={style.header}>
-        <Logo mode={'light'} />
-        <div className={style.sologon}>线下实体店管理利器，快捷收银对账，商品出入库高效盘点，让你的店铺经营更简单</div>
+        <Logo mode={'light'} title={language[currentLang].common.logo} />
+        <div className={style.sologon}>{language[currentLang].common.sologon}</div>
       </Header>
       <Content className={style.content}>
         <Row style={{ width: '100%' }}>
@@ -122,7 +122,7 @@ const UserPage: React.FC = () => {
                     autoComplete="off"
                   >
                     <Form.Item<FieldType>
-                      label="用户名"
+                      label={language[currentLang].user.login.username}
                       name="username"
                       rules={[{ required: true, message: '用户名不能为空' }]}
                     >
@@ -130,7 +130,7 @@ const UserPage: React.FC = () => {
                     </Form.Item>
 
                     <Form.Item<FieldType>
-                      label="密码"
+                      label={language[currentLang].user.login.password}
                       name="password"
                       rules={[{ required: true, message: '密码不能为空' }]}
                     >
@@ -139,9 +139,9 @@ const UserPage: React.FC = () => {
 
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                       <Button type="primary" htmlType="submit">
-                        进入
+                        {language[currentLang].user.login.loginBtn}
                       </Button>
-                      <span className={style.userTips} onClick={() => handleSwitch('register') }>还没有账号，先注册一个</span>
+                      <span className={style.userTips} onClick={() => handleSwitch('register') }>{language[currentLang].user.login.goRegister}</span>
                     </Form.Item>
                   </Form>
                 </div>
@@ -156,7 +156,7 @@ const UserPage: React.FC = () => {
                     autoComplete="off"
                   >
                     <Form.Item<RegFieldType>
-                      label="用户名"
+                      label={language[currentLang].user.register.username}
                       name="regname"
                       rules={[{ required: true, message: '用户名不能为空' }]}
                     >
@@ -164,7 +164,7 @@ const UserPage: React.FC = () => {
                     </Form.Item>
 
                     <Form.Item<RegFieldType>
-                      label="密码"
+                      label={language[currentLang].user.register.password}
                       name="regpwd"
                       hasFeedback
                       rules={[{ required: true, message: '密码不能为空' }]}
@@ -173,7 +173,7 @@ const UserPage: React.FC = () => {
                     </Form.Item>
 
                     <Form.Item<RegFieldType>
-                      label="重复密码"
+                      label={language[currentLang].user.register.repeatPassword}
                       name="repregpwd"
                       dependencies={['regpwd']}
                       hasFeedback
@@ -194,9 +194,9 @@ const UserPage: React.FC = () => {
 
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                       <Button type="primary" htmlType="submit">
-                        注册
+                        {language[currentLang].user.register.registerBtn}
                       </Button>
-                      <span className={style.userTips} onClick={() => handleSwitch('login') }>已有账号，返回直接登录</span>
+                      <span className={style.userTips} onClick={() => handleSwitch('login') }>{language[currentLang].user.register.goLogin}</span>
                     </Form.Item>
                   </Form>
                 </div>

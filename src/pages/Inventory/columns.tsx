@@ -3,57 +3,61 @@ import { Space } from 'antd';
 import Editor from './Editor';
 import Detail from './Detail';
 
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
+
 const columns = [
   {
-    title: 'style',
+    title: language[currentLang].inventory.tableColumnStyleNo,
     dataIndex: 'sn',
     key: 'sn',
     fixed: 'left',
     copyable: true,
   },
   {
-    title: 'itemName',
+    title: language[currentLang].inventory.tableColumnName,
     dataIndex: 'name',
     key: 'name',
     fixed: 'left',
   },
   {
-    title: 'brand',
+    title: language[currentLang].inventory.tableColumnBrand,
     dataIndex: 'brand',
     key: 'brand',
     fixed: 'left',
   },
   {
-    title: 'sku',
+    title: language[currentLang].inventory.tableColumnSku,
     dataIndex: 'sku',
     key: 'sku',
     copyable: true,
   },
   {
-    title: 'color',
+    title: language[currentLang].inventory.tableColumnColor,
     dataIndex: 'color',
     key: 'color',
   },
   {
-    title: 'size',
+    title: language[currentLang].inventory.tableColumnSize,
     dataIndex: 'size',
     key: 'size',
   },
   {
-    title: 'original',
+    title: language[currentLang].inventory.tableColumnOriginalPrice,
     align: 'right',
     key: 'originalPrice',
     dataIndex: 'originalPrice',
     valueType: 'money',
   },
   {
-    title: 'counts',
+    title: language[currentLang].inventory.tableColumnCounts,
     align: 'center',
     dataIndex: 'counts',
     key: 'counts',
   },
   {
-    title: 'operation',
+    title: language[currentLang].inventory.tableColumnOperation,
     align: 'center',
     render: (row, record) => {
       return (

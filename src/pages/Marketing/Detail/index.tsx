@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState, useContext } from 'react';
 import { Button, Drawer, Descriptions, App } from 'antd';
 import dayjs from 'dayjs';
 
@@ -8,6 +8,8 @@ import type { ProColumnsType } from 'table-render';
 import { userLog } from '@/common/electron';
 import request from '@common/request';
 import Box from '@/components/Box';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import couponColumns from './coupon';
 
@@ -31,6 +33,7 @@ type ComProps = {
 
 const Detail: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
+  const { currentLang } = useContext(MainContext);
 
   const { id } = props;
 
@@ -91,42 +94,42 @@ const Detail: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        detail
+        {language[currentLang].marketing.detailAction}
       </Button>
       <Drawer
-        title={`Marketing Detail`}
+        title={`${language[currentLang].marketing.detailTitle}`}
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
         destroyOnClose={true}
       >
         <Descriptions
-          title={`Marketing Info`}
+          title={`${language[currentLang].marketing.marketingInfo}`}
           bordered
           items={
             [{
               key: '1',
-              label: 'name',
+              label: language[currentLang].marketing.marketingName,
               children: marketingInfo.marketingName,
             },
             {
               key: '2',
-              label: 'description',
+              label: language[currentLang].marketing.marketingDesc,
               children: marketingInfo.marketingDesc,
             },
             {
               key: '3',
-              label: 'type',
+              label: language[currentLang].marketing.marketingType,
               children: MARKETING_TYPE_MAP[marketingInfo.marketingType as keyof typeof MARKETING_TYPE_MAP] || marketingInfo.marketingType,
             },
             {
               key: '4',
-              label: 'start time',
+              label: language[currentLang].marketing.marketingStartTime,
               children: dayjs(marketingInfo.startTime).format('YYYY/MM/DD'),
             },
             {
               key: '5',
-              label: 'end time',
+              label: language[currentLang].marketing.marketingEndTime,
               children: dayjs(marketingInfo.endTime).format('YYYY/MM/DD'),
             }]
           }
@@ -136,7 +139,7 @@ const Detail: React.FC<ComProps> = (props) => {
         />
 
         <Box
-          title={`The Marketing's Coupon List`}  
+          title={`${language[currentLang].marketing.marketingCouponList}`}  
           content={
             <TableRender
               request={getCouponList as any}

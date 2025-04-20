@@ -1,4 +1,4 @@
-import React, { memo, useState, useRef } from 'react';
+import React, { memo, useState, useRef, useContext } from 'react';
 import { Button, App } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import TableRender, { TableContext } from 'table-render';
@@ -7,6 +7,8 @@ import type { ProColumnsType } from 'table-render';
 import { userLog } from '@/common/electron';
 import request from '@common/request';
 import PageTitle from '@/components/PageTitle';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import search from './search';
 import columns from './columns';
@@ -19,6 +21,7 @@ import style from './index.module.less';
 
 const OrderPage: React.FC = () => {
   const { message } = App.useApp();
+  const { currentLang } = useContext(MainContext);
 
   const tableRef = useRef<TableContext>(null);
   const [dataList, setDataList] = useState([]);
@@ -47,7 +50,7 @@ const OrderPage: React.FC = () => {
   return (
     <div className={style.container}>
       <PageTitle
-        text={`Orders`}
+        text={language[currentLang].order.title}
         extra={
           <QueryBySKU />
         }
@@ -59,14 +62,14 @@ const OrderPage: React.FC = () => {
         columns={columns as ProColumnsType}
         title={
           <div>
-            <span>Query Results of Orders</span>
+            <span>{language[currentLang].order.tableTitle}</span>
             <Summary dataList={dataList} />
           </div>
         }
         scroll={{ x: 'max-content' }}
         toolbarRender={ 
           <>
-            <Button onClick={refreshData}><RedoOutlined />Refresh</Button>
+            <Button onClick={refreshData}><RedoOutlined />{language[currentLang].order.refresh}</Button>
             <CheckBill dataList={dataList} callback={refreshData} />
             <ExportAndImport dataList={dataList} callback={refreshData} />
           </>

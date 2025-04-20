@@ -2,7 +2,9 @@ import { DatePicker } from 'antd';
 import type { GetProps } from 'antd';
 import dayjs from 'dayjs';
 
+import language from '@/common/language';
 import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang');
 
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 
@@ -21,7 +23,7 @@ const schema = {
   labelWidth: 100,
   properties: {
     createdAt: {
-      title: 'create time',
+      title: language[currentLang].order.searchLabelCreatedAt,
       bind: ['start', 'end'],
       type: 'range',
       format: 'date',
@@ -30,12 +32,12 @@ const schema = {
       },
     },
     userPhone: {
-      title: 'user phone',
+      title: language[currentLang].order.searchLabelUserPhone,
       type: 'string',
-      placeholder: 'input member phone',
+      placeholder: language[currentLang].order.searchPlaceholderUserPhone,
     },
     payType: {
-      title: 'pay channel',
+      title: language[currentLang].order.searchLabelPayType,
       type: 'string',
       widget: 'select',
       props: {
@@ -48,21 +50,21 @@ const schema = {
           { label: '其他', value: 'other' },
         ],
       },
-      placeholder: 'select pay channel',
+      placeholder: language[currentLang].order.searchPlaceholderPayType,
     },
     orderSn: {
-      title: 'order code',
+      title: language[currentLang].order.searchLabelOrderSn,
       type: 'string',
-      placeholder: 'input order code',
+      placeholder: language[currentLang].order.searchPlaceholderOrderSn,
     },
     salerId: {
-      title: 'saler name',
+      title: language[currentLang].order.searchLabelSalerName,
       type: 'string',
       widget: 'select',
       props: {
         options: newSalers,
       },
-      placeholder: 'select saler name',
+      placeholder: language[currentLang].order.searchPlaceholderSalerName,
     },
   }
 };
@@ -71,6 +73,6 @@ export default {
   schema,
   column: 3,
   layoutAuto: true,
-  searchText: 'search',
-  resetText: 'reset',
+  searchText: language[currentLang].common.search,
+  resetText: language[currentLang].common.reset,
 };

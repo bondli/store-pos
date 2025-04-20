@@ -1,9 +1,11 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState, useContext } from 'react';
 import { Button, Drawer, App } from 'antd';
 import FormRender, { useForm } from 'form-render';
 
 import { userLog } from '@/common/electron';
 import request from '@common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
 
 import schema from './schema';
 
@@ -16,7 +18,7 @@ type ComProps = {
 
 const Editor: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
-
+  const { currentLang } = useContext(MainContext);
   const { id, callback } = props;
   
   const form = useForm();
@@ -82,10 +84,10 @@ const Editor: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        modify
+        {language[currentLang].marketing.modifyAction}
       </Button>
       <Drawer
-        title={`Marketing Modify`}
+        title={`${language[currentLang].marketing.modifyTitle}`}
         width={410}
         open={showPanel}
         onClose={() => setShowPanel(false)}
@@ -100,10 +102,10 @@ const Editor: React.FC<ComProps> = (props) => {
           onFinish={onFinish}
           footer={{
             submit: {
-              text: 'confirm',
+              text: language[currentLang].common.confirm,
             },
             reset: {
-              text: 'reset',
+              text: language[currentLang].common.reset,
               hide: true,
             }
           }}
