@@ -1,6 +1,6 @@
 import { getStore } from '@common/electron';
 import language from '@/common/language';
-const currentLang = getStore('currentLang');
+const currentLang = getStore('currentLang') || 'en';
 const salerList = getStore('salerList') || [];
 const newSalers = [];
 salerList.forEach((item) => {

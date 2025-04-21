@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 
 import language from '@/common/language';
 import { getStore } from '@common/electron';
-const currentLang = getStore('currentLang');
+const currentLang = getStore('currentLang') || 'en';
 
 const orderColumns = [
   {

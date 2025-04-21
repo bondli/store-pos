@@ -1,6 +1,6 @@
 {
   "name": "store-pos",
-  "description": "An easy-to-use store point of sale system",
+  "description": "简易线下门店POS系统",
   "version": "0.0.1",
   "license": "MIT",
   "main": "dist/electron/main.js",
@@ -48,6 +48,7 @@
     "react-countup": "6.5.3",
     "react-dom": "^18.2.0",
     "sequelize": "^6.37.3",
+    "sql.js": "^1.8.0",
     "sqlite3": "5.1.6",
     "table-render": "latest",
     "uuid": "^10.0.0",
@@ -145,7 +146,13 @@
       "installerIcon": "dist/electron/icons/icon.ico",
       "uninstallerIcon": "dist/electron/icons/icon.ico",
       "installerHeaderIcon": "dist/electron/icons/icon.ico"
-    }
+    },
+    "extraResources": [
+      {
+        "from": "node_modules/sql.js/dist/sql-wasm.wasm",
+        "to": "sql.js/sql-wasm.wasm"
+      }
+    ]
   },
   "time": "3020291721072022"
 }

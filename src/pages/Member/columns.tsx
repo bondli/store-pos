@@ -2,7 +2,7 @@ import { Space, Tag } from 'antd';
 
 import language from '@/common/language';
 import { getStore } from '@common/electron';
-const currentLang = getStore('currentLang');
+const currentLang = getStore('currentLang') || 'en';
 
 import Editor from './Editor';
 import Detail from './Detail';

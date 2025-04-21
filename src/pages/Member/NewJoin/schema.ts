@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 
 import language from '@/common/language';
 import { getStore } from '@common/electron';
-const currentLang = getStore('currentLang');
+const currentLang = getStore('currentLang') || 'en';
 
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 
