@@ -216,7 +216,7 @@ export const updateMemberScore = async (req: Request, res: Response) => {
 
 // 会员充值
 export const memberIncomeBalance = async (req: Request, res: Response) => {
-  const { phone, inComeBalance, sendValue, reason } = req.body;
+  const { phone, inComeBalance, sendValue, sendValueType, reason } = req.body;
   try {
     const resultCheckExists = await Member.findOne({
       where: {
@@ -224,7 +224,7 @@ export const memberIncomeBalance = async (req: Request, res: Response) => {
       },
     });
     if (resultCheckExists) {
-      const justifyBalance = Number(inComeBalance) + Number(sendValue);
+      const justifyBalance = Number(inComeBalance) + (sendValueType === 'balance' ? Number(sendValue) : 0);
       // 更新用户余额
       await resultCheckExists.increment({
         balance: justifyBalance,
@@ -249,12 +249,32 @@ export const memberIncomeBalance = async (req: Request, res: Response) => {
         type: `income`,
         reason: `充值${inComeBalance}`,
       });
-      if (Number(sendValue)) {
+      // 如果是现金余额，则写入充值流水记录
+      if (sendValueType === 'balance' && Number(sendValue)) {
         balanceRecords.push({
           phone,
           value: Number(sendValue),
           type: `send`,
           reason: reason || `充值${inComeBalance}送${sendValue}`,
+        });
+      }
+      // 如果是商品吊牌价值，则写一个优惠券到用户表
+      if (sendValueType === 'goodsValue' && Number(sendValue)) {
+        await MemberCoupon.create({
+          phone,
+          couponId: uuidv4(),
+          couponCondition: 0, // 无门槛
+          couponDesc: `充值赠送吊牌金额${sendValue}`,
+          couponValue: Number(sendValue * 0.59), // 吊牌价值，减扣的只能是59折
+          couponCount: 1,
+          couponStatus: 'active',
+          couponExpiredTime: dayjs().add(1, 'year').toDate(), // 1年后过期
+        });
+        // 用户的基本信息表中更新优惠券数量
+        await Member.increment({
+          couponCount: 1,
+        }, {
+          where: { phone },
         });
       }
       // 批量写入充值流水记录
@@ -388,7 +408,7 @@ export const queryMemberBigdayCouponList = async (req: Request, res: Response) =
       if (birthday.month() === dayjs().month()) {
         couponList.push({
           id: 1, // 生日特价
-          couponDesc: '会员生日权益特价',
+          couponDesc: '会员生日月权益特价',
           couponValue: 1,
         });
       }
@@ -396,7 +416,15 @@ export const queryMemberBigdayCouponList = async (req: Request, res: Response) =
       if (dayjs().date() === 18) {
         couponList.push({
           id: 2, // 会员日特价
-          couponDesc: '会员日权益特价',
+          couponDesc: '会员日(18号)权益特价',
+          couponValue: 1,
+        });
+      }
+      // 如果是超级会员，则显示超级会员权益特价
+      if (memberData.level === 'super') {
+        couponList.push({
+          id: 3, // 超级会员特价
+          couponDesc: '超级会员权益特价(折上97折)',
           couponValue: 1,
         });
       }

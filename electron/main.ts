@@ -7,7 +7,9 @@ import logger from 'electron-log';
 import dayjs from 'dayjs';
 
 // file position on macOS: ~/Library/Logs/{app name}/main.log
+// file position on windows: C:\Users\Administrator\AppData\Roaming\store-pos\main.log
 // db file position on macOs:  ~/Library/Application Support/store-pos/sqlite3/storepos-database.db
+// db file position on windows: C:\Users\Administrator\AppData\Roaming\store-pos\sqlite3\storepos-database.db
 logger.transports.file.fileName = 'main.log';
 logger.transports.file.level = 'info';
 logger.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}]{scope} {text}';
@@ -143,7 +145,7 @@ const createWindow = () => {
     center: true,
     autoHideMenuBar: true,
     resizable: true,
-    width: 1200,
+    width: 1280,
     height: 800,
     minWidth: 1000,
     minHeight: 720,

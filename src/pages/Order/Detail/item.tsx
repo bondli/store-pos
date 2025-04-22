@@ -34,7 +34,9 @@ const itemColumns = [
     align: 'center',
     key: 'actualPrice',
     dataIndex: 'actualPrice',
-    valueType: 'money',
+    render: (row, record) => {
+      return record.actualPrice >= 0 ? <span>￥{record.actualPrice}</span> : '--';
+    },
   },
   {
     title: language[currentLang].order.tableColumnDiscount,

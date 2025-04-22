@@ -1,28 +1,33 @@
+import language from '@/common/language';
+import { getStore } from '@common/electron';
+const currentLang = getStore('currentLang') || 'en';
 const skuColumns = [
   {
-    title: 'sku code',
+    title: language[currentLang].inventory.tableColumnSku,
     dataIndex: 'sku',
     key: 'sku',
   },
   {
-    title: 'color',
+    title: language[currentLang].inventory.tableColumnColor,
+    align: 'center',
     dataIndex: 'color',
     key: 'color',
   },
   {
-    title: 'size',
+    title: language[currentLang].inventory.tableColumnSize,
+    align: 'center',
     dataIndex: 'size',
     key: 'size',
   },
   {
-    title: 'original',
-    align: 'right',
+    title: language[currentLang].inventory.tableColumnOriginalPrice,
+    align: 'center',
     key: 'originalPrice',
     dataIndex: 'originalPrice',
     valueType: 'money',
   },
   {
-    title: 'counts',
+    title: language[currentLang].inventory.tableColumnCounts,
     align: 'center',
     dataIndex: 'counts',
     key: 'counts',

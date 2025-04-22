@@ -6,6 +6,8 @@ import { MainContext } from '@common/context';
 import UserPage from '@/modules/UserPage';
 import MainPage from '@/modules/MainPage';
 
+import './styles/global.less';
+
 const AppContainer: React.FC = () => {
   const { userInfo, setUserInfo } = useContext(MainContext);
   const [loading, setLoading] = useState(true);

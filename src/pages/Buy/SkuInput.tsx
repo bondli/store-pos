@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useContext, useRef, useState } from 'react';
 import { Input } from 'antd';
 import { ScanOutlined, SignatureOutlined } from '@ant-design/icons';
+import Decimal from 'decimal.js';
 
 import request from '@common/request';
 import { userLog } from '@/common/electron';
@@ -57,15 +58,15 @@ const SkuInput: React.FC = () => {
             size: result.size,
             originalPrice: result.originalPrice,
             discount: DEFAULT_DISCOUNT,
-            salePrice: Number((result.originalPrice * DEFAULT_DISCOUNT).toFixed(2)),
+            salePrice: new Decimal(result.originalPrice).times(DEFAULT_DISCOUNT).toNumber(),
             counts: 1,
             isGived: false,
           });
         }
 
-        newBrief.totalAmount += result.originalPrice;
+        newBrief.totalAmount = new Decimal(newBrief.totalAmount).plus(result.originalPrice).toNumber();
         newBrief.counts += 1;
-        newBrief.payAmount += Number((result.originalPrice * DEFAULT_DISCOUNT).toFixed(2));
+        newBrief.payAmount = new Decimal(newBrief.payAmount).plus(new Decimal(result.originalPrice).times(DEFAULT_DISCOUNT)).toNumber();
 
         if (isNewSku) {
           newBrief.skuNum += 1;

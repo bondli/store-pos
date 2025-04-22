@@ -121,15 +121,16 @@ const ImportOrder: React.FC<ComProps> = (props) => {
             </Space>
           </Flex>
         }
+        extra={<span style={{ fontSize: '12px', color: '#999' }}>{language[currentLang].order.importOrderExtra}</span>}
       >
         <div style={{ height: '180px', marginBottom: '40px' }}>
           <Dragger {...uploadConfig}>
             <p className='ant-upload-drag-icon'>
               <InboxOutlined />
             </p>
-            <p className='ant-upload-text'>Click or drag file to this area to upload</p>
+            <p className='ant-upload-text'>{language[currentLang].common.uploadTips1}</p>
             <p className='ant-upload-hint'>
-              Support for a single excel file upload.
+              {language[currentLang].common.uploadTips2}
             </p>
           </Dragger>
         </div>

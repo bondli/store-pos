@@ -91,7 +91,7 @@ const Detail: React.FC<ComProps> = (props) => {
         type='link'
         onClick={togglePanel}
       >
-        {language[currentLang].inventory.detail}
+        {language[currentLang].inventory.detailAction}
       </Button>
       <Drawer
         title={`${language[currentLang].inventory.detail}`}
@@ -106,37 +106,37 @@ const Detail: React.FC<ComProps> = (props) => {
           items={
             [{
               key: '1',
-              label: 'name',
+              label: language[currentLang].inventory.tableColumnName,
               children: itemInfo.name,
             },
             {
               key: '2',
-              label: 'style no',
+              label: language[currentLang].inventory.tableColumnStyleNo,
               children: itemInfo.sn,
             },
             {
               key: '3',
-              label: 'sku',
+              label: language[currentLang].inventory.tableColumnSku,
               children: itemInfo.sku,
             },
             {
               key: '4',
-              label: 'color',
+              label: language[currentLang].inventory.tableColumnColor,
               children: itemInfo.color,
             },
             {
               key: '5',
-              label: 'size',
+              label: language[currentLang].inventory.tableColumnSize,
               children: itemInfo.size,
             },
             {
               key: '5',
-              label: 'original',
+              label: language[currentLang].inventory.tableColumnOriginalPrice,
               children: itemInfo.originalPrice,
             },
             {
               key: '5',
-              label: 'counts',
+              label: language[currentLang].inventory.tableColumnCounts,
               children: itemInfo.counts,
             }]
           }

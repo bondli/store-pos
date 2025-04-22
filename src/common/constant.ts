@@ -9,7 +9,7 @@ export const PAY_CHANNEL = {
 };
 
 // 默认折扣率
-export const DEFAULT_DISCOUNT = 0.6;
+export const DEFAULT_DISCOUNT = 0.59;
 
 // 支付渠道类型
 export type PaymentChannel = 'alipay' | 'weixin' | 'cash' | 'card' | 'other';

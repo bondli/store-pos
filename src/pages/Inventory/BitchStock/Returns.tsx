@@ -111,6 +111,37 @@ const Returns: React.FC<ComProps> = (props) => {
     setIsUploadFile(false);
   };
 
+  const handleDownloadTemplate = async () => {
+    try {
+      // 发送请求给后台去导出
+      const response = await request.post('/inventory/template', {
+        type: 'returns',
+      }, {
+        responseType: 'blob' // 指定响应类型为 blob
+      });
+      
+      // 创建 Blob 对象
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      
+      // 创建下载链接
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `退库单.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      
+      // 清理
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+      
+      message.success('下载成功');
+    } catch (error) {
+      message.error('下载失败');
+      console.error('Download error:', error);
+    }
+  };
+
   return (
     <>
       <Button
@@ -137,15 +168,16 @@ const Returns: React.FC<ComProps> = (props) => {
             </Space>
           </Flex>
         }
+        extra={<Button type='link' onClick={handleDownloadTemplate}>{language[currentLang].inventory.bitchStockDownloadTemplate}</Button>}
       >
         <div style={{ height: '180px', marginBottom: '40px' }}>
           <Dragger {...uploadConfig}>
             <p className='ant-upload-drag-icon'>
               <InboxOutlined />
             </p>
-            <p className='ant-upload-text'>Click or drag file to this area to upload</p>
+            <p className='ant-upload-text'>{language[currentLang].common.uploadTips1}</p>
             <p className='ant-upload-hint'>
-              Support for a single excel file upload.
+              {language[currentLang].common.uploadTips2}
             </p>
           </Dragger>
         </div>

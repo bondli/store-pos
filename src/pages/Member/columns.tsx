@@ -24,14 +24,14 @@ const columns = [
         return (
           <>
             <Tag color='green'>超级会员</Tag>
-            {row && <span>{row}</span>}
+            <span>{row || 'un set'}</span>
           </>
         );
       } else {
         return (
           <>
             <Tag color='blue'>普通会员</Tag>
-            {row && <span>{row}</span>}
+            <span>{row || 'un set'}</span>
           </>
         );
       }

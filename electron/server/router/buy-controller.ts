@@ -212,6 +212,12 @@ export const submitOrder = async (req: Request, res: Response) => {
         }, {
           where: { id: buyer.useCouponId }
         });
+        // 用户的基本信息表中更新优惠券数量
+        await Member.increment({
+          couponCount: -1,
+        }, {
+          where: { phone: buyer.phone }
+        });
         // 将这个优惠券的信息写到订单优惠券表
         await OrderCoupons.create({
           orderSn: orderData.orderSn,
@@ -517,6 +523,12 @@ export const importOrder = async (req: Request, res: Response) => {
             couponStatus: 'used',
           }, {
             where: { id: buyer.useCouponId }
+          });
+          // 用户的基本信息表中更新优惠券数量
+          await Member.increment({
+            couponCount: -1,
+          }, {
+            where: { phone: buyer.phone }
           });
           // 将这个优惠券的信息写到订单优惠券表
           await OrderCoupons.create({

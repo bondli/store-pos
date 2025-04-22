@@ -133,27 +133,27 @@ const Bill: React.FC<ComProps> = (props) => {
   };
 
   return (
-    <div style={{ width: '320px', height: '100%', backgroundColor: '#fff' }}>
+    <div style={{ width: '100%', height: '100%', backgroundColor: '#fff' }}>
       <StoreLogo />
       <div style={{ textAlign: 'center', fontSize: '16px', padding: '10px 0 30px' }}>
         <span>戴维贝拉世纪金源店</span>
       </div>
       {
         dataSource.map((item) => (
-          <div key={item.key} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #f0f0f0' }}>
-            <span style={{ fontSize: '12px', color: '#666' }}>{item.label}</span>
-            <span style={{ fontSize: '12px', color: '#333' }}>{item.value}</span>
+          <div key={item.key} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #cccccc' }}>
+            <span style={{ fontSize: '12px' }}>{item.label}</span>
+            <span style={{ fontSize: '12px' }}>{item.value}</span>
           </div>
         ))
       }
       {
         getItemsContent()
       }
-      <div style={{ textAlign: 'center', fontSize: '12px', color: '#999', padding: '10px 0', lineHeight: '1.5' }}>
-        如需换货，请确保吊牌完好<br />商品不影响二次销售，携带小票到店换货
+      <div style={{ textAlign: 'center', fontSize: '12px', padding: '10px 0', lineHeight: '1.5' }}>
+        如需换货，请确保吊牌完好<br />不影响二次销售，携带小票到店换货
       </div>
-      <div style={{ textAlign: 'center', fontSize: '12px', color: '#333', padding: '10px 0', lineHeight: '1.5' }}>
-        店长微信：17757058183（可加好友）
+      <div style={{ textAlign: 'center', fontSize: '12px', padding: '10px 0', lineHeight: '1.5' }}>
+        店长微信：17757058183
       </div>
       <div style={{ textAlign: 'center', fontSize: '16px', padding: '10px 0 30px' }}>
         <span>谢谢惠顾</span>

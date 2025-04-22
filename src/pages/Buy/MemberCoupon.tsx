@@ -48,12 +48,12 @@ const MemberCoupon: React.FC = () => {
       setCouponList(result.data);
     });
 
-  // 查询会员权益:生日月一次特价折扣，会员日一次特价折扣
-  request.get('/member/queryBigdayCouponList', {
-    params: {
-      phone: buyer.phone,
-    },
-  }).then((res) => {
+    // 查询会员权益:生日月一次特价折扣，会员日一次特价折扣
+    request.get('/member/queryBigdayCouponList', {
+      params: {
+        phone: buyer.phone,
+      },
+    }).then((res) => {
       // console.log('query bigday coupon list', res.data);
       const result = res.data;
       setBigdayCouponList(result.data);
@@ -78,25 +78,25 @@ const MemberCoupon: React.FC = () => {
 
   // 使用积分
   const handleUsePoint = () => {
-    console.log('use point');
+    // console.log('use point');
     setIsShowPointModal(true);
   };
 
   // 使用余额
   const handleUseBalance = () => {
-    console.log('use balance');
+    // console.log('use balance');
     setIsShowBalanceModal(true);
   };
 
   // 使用优惠券
   const handleUseCoupon = () => {
-    console.log('use coupon');
+    // console.log('use coupon');
     setIsShowCouponModal(true);
   };
 
   // 使用生日优惠券
   const handleUseBigdayCoupon = () => {
-    console.log('use bigday coupon');
+    // console.log('use bigday coupon');
     setIsShowBigdayCouponModal(true);
   };
 
@@ -287,7 +287,7 @@ const MemberCoupon: React.FC = () => {
             <Select
               size='middle'
               placeholder='选择优惠券'
-              style={{ width: `200px` }}
+              style={{ width: `300px` }}
               onChange={handleCouponSelectChange}
               value={useCoupon?.id}
             >
@@ -317,7 +317,7 @@ const MemberCoupon: React.FC = () => {
             <Select
               size='middle'
               placeholder='选择权益'
-              style={{ width: `200px` }}
+              style={{ width: `300px` }}
               onChange={handleBigdayCouponSelectChange}
               value={useBigdayCoupon?.id}
             >

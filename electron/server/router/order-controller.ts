@@ -395,7 +395,7 @@ export const modifyOrder = async (req: Request, res: Response) => {
     }
 
     // 更新订单基本信息（支付方式、实收金额、导购员[id, name]、会员、备注）
-    let salerName = null;
+    let salerName = '';
     if (salerId) {
       const saler = await User.findOne({
         where: { id: salerId },
@@ -403,6 +403,9 @@ export const modifyOrder = async (req: Request, res: Response) => {
       if (saler) {
         const salerData = saler.toJSON();
         salerName = salerData.name;
+      } else {
+        logger.error('Error getting saler:');
+        console.log(saler);
       }
     }
     await result.update({ payType, orderActualAmount, salerId, salerName, userPhone, remark });

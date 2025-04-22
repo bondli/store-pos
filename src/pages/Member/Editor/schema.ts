@@ -11,20 +11,20 @@ export const baseInfoSchema = {
       required: true,
       max: 11,
       min: 11,
-      placeholder: 'input user phone',
+      placeholder: language[currentLang].member.searchPlaceholderPhone,
       widget: 'input',
       readonly: true,
       disabled: true,
     },
     name: {
       title: language[currentLang].member.tableColumnName,
-      placeholder: 'input user name',
+      placeholder: language[currentLang].member.searchPlaceholderName,
       type: 'string',
       widget: 'input'
     },
     birthday: {
       title: language[currentLang].member.tableColumnBirthday,
-      placeholder: 'input user brithday',
+      placeholder: language[currentLang].member.searchPlaceholderBirthday,
       type: 'string',
       widget: 'datePicker'
     },
@@ -54,14 +54,14 @@ export const pointSchema = {
     },
     changePoint: {
       title: language[currentLang].member.tableColumnChangePoint,
-      placeholder: 'input change point',
+      placeholder: language[currentLang].member.searchPlaceholderChangePoint,
       required: true,
       type: 'string',
       widget: 'input',
     },
     type: {
       title: language[currentLang].member.tableColumnChangeType,
-      placeholder: 'input change type',
+      placeholder: language[currentLang].member.searchPlaceholderChangeType,
       required: true,
       type: 'string',
       widget: 'select',
@@ -74,7 +74,7 @@ export const pointSchema = {
     },
     reason: {
       title: language[currentLang].member.tableColumnChangeReason,
-      placeholder: 'input change reason',
+      placeholder: language[currentLang].member.searchPlaceholderChangeReason,
       type: 'string',
       widget: 'input',
     },
@@ -90,7 +90,7 @@ export const balanceSchema = {
       required: true,
       max: 11,
       min: 11,
-      placeholder: 'input user phone',
+      placeholder: language[currentLang].member.searchPlaceholderPhone,
       widget: 'input',
       readonly: true,
       disabled: true,
@@ -104,21 +104,34 @@ export const balanceSchema = {
     },
     inComeBalance: {
       title: language[currentLang].member.tableColumnInComeBalance,
-      placeholder: 'input income balance',
+      placeholder: language[currentLang].member.searchPlaceholderIncomeBalance,
       required: true,
       type: 'string',
       widget: 'input',
     },
     sendValue: {
       title: language[currentLang].member.tableColumnSendValue,
-      placeholder: 'input send value',
+      placeholder: language[currentLang].member.searchPlaceholderSendValue,
       required: true,
       type: 'string',
       widget: 'input',
     },
+    sendValueType: {
+      title: language[currentLang].member.tableColumnSendValueType,
+      placeholder: language[currentLang].member.searchPlaceholderSendValueType,
+      required: true,
+      type: 'string',
+      widget: 'select',
+      props: {
+        options: [
+          { label: '现金余额', value: 'balance' },
+          { label: '商品吊牌价值', value: 'goodsValue' },
+        ]
+      }
+    },
     reason: {
       title: language[currentLang].member.tableColumnChangeReason,
-      placeholder: 'input change reason',
+      placeholder: language[currentLang].member.searchPlaceholderChangeReason,
       type: 'string',
       widget: 'input',
     },

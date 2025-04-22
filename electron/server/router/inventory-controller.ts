@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Op } from 'sequelize';
 import logger from 'electron-log';
+import ExcelJS from 'exceljs';
 import { Inventory } from '../model/inventory';
 
 // 查询所有库存的总量
@@ -371,4 +372,34 @@ export const batchReturnsInventory = async (req: Request, res: Response) => {
     errorCount,
     totalCount,
   });
+};
+
+// 下载模板
+export const downloadTemplate = async (req: Request, res: Response) => {
+  const { type } = req.body;
+  let fileName = '';
+
+  // 将结果写入excel文件
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('default');
+
+  try {
+    if (type === 'purchase') {
+      fileName = 'purchase.xlsx';
+      worksheet.addRow(['品名', '品牌', '货号', 'SKU', '尺码', '颜色', '吊牌价', '进货价', '数量']);
+    }
+    else {
+      fileName = 'returns.xlsx';
+      worksheet.addRow(['SKU', '数量']);
+    }
+    
+    // 将文件写入响应
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
+    workbook.xlsx.write(res);
+  } catch (error) {
+    logger.error('Error downloading template:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 };

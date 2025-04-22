@@ -100,7 +100,7 @@ const Purchase: React.FC<ComProps> = (props) => {
       // 通过modal的方式提示用户操作成功的数量和失败的数量
       modal.success({
         title: '入库成功',
-        content: `成功入库 ${result.totalCount-result.errorCount} 条数据，失败 ${result.errorCount} 条数据`,
+        content: `成功入库 ${result.totalCount-result.errorCount} 个商品，失败 ${result.errorCount} 个商品`,
         onOk: () => {
           callback && callback();
           setShowPanel(false);
@@ -117,6 +117,37 @@ const Purchase: React.FC<ComProps> = (props) => {
     setDataList([]);
     setShowPanel(false);
     setIsUploadFile(false);
+  };
+
+  const handleDownloadTemplate = async () => {
+    try {
+      // 发送请求给后台去导出
+      const response = await request.post('/inventory/template', {
+        type: 'purchase',
+      }, {
+        responseType: 'blob' // 指定响应类型为 blob
+      });
+      
+      // 创建 Blob 对象
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      
+      // 创建下载链接
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `入库单.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      
+      // 清理
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+      
+      message.success('下载成功');
+    } catch (error) {
+      message.error('下载失败');
+      console.error('Download error:', error);
+    }
   };
 
   return (
@@ -145,15 +176,16 @@ const Purchase: React.FC<ComProps> = (props) => {
             </Space>
           </Flex>
         }
+        extra={<Button type='link' onClick={handleDownloadTemplate}>{language[currentLang].inventory.bitchStockDownloadTemplate}</Button>}
       >
         <div style={{ height: '180px', marginBottom: '40px' }}>
           <Dragger {...uploadConfig}>
             <p className='ant-upload-drag-icon'>
               <InboxOutlined />
             </p>
-            <p className='ant-upload-text'>Click or drag file to this area to upload</p>
+            <p className='ant-upload-text'>{language[currentLang].common.uploadTips1}</p>
             <p className='ant-upload-hint'>
-              Support for a single excel file upload.
+              {language[currentLang].common.uploadTips2}
             </p>
           </Dragger>
         </div>

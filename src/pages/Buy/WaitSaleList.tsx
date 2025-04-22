@@ -1,6 +1,7 @@
 import React, { ChangeEvent, memo, useContext, useState } from 'react';
 import { Avatar, List, Tag, Modal, Input, Flex, Typography, Radio, RadioChangeEvent } from 'antd';
 import { DeleteFilled, MoneyCollectFilled } from '@ant-design/icons';
+import Decimal from 'decimal.js';
 
 import { DEFAULT_DISCOUNT } from '@/common/constant';
 
@@ -9,16 +10,11 @@ import { BuyContext } from './context';
 import style from './index.module.less';
 
 const WaitSaleList: React.FC = () => {
-  const { waitSales, setWaitSales, buyer, storeSaler, storeCoupons } = useContext(BuyContext);
+  const { waitSales, setWaitSales } = useContext(BuyContext);
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
   const [currentSku, setCurrentSku] = useState('');
   // 设置临时的折扣
   const [changeDiscount, setChangeDiscount] = useState(DEFAULT_DISCOUNT);
-
-  // console.log('WaitSaleList Component waitSales:', waitSales);
-  // console.log('WaitSaleList Component buyer:', buyer);
-  // console.log('WaitSaleList Component storeSaler:', storeSaler);
-  // console.log('WaitSaleList Component storeCoupons:', storeCoupons);
 
   // 删除商品
   const handleDelete = (sku) => {
@@ -42,8 +38,8 @@ const WaitSaleList: React.FC = () => {
         newList.forEach((item) => {
           newBrief.skuNum += 1;
           newBrief.counts += item.counts;
-          newBrief.totalAmount += item.originalPrice;
-          newBrief.payAmount += Number((item.originalPrice * 0.6).toFixed(2));
+          newBrief.totalAmount = new Decimal(newBrief.totalAmount).plus(item.originalPrice).toNumber();
+          newBrief.payAmount = new Decimal(newBrief.payAmount).plus(new Decimal(item.originalPrice).times(item.discount)).toNumber();
         });
       }
 
@@ -78,8 +74,10 @@ const WaitSaleList: React.FC = () => {
       newList.forEach((item) => {
         newBrief.skuNum += 1;
         newBrief.counts += item.counts;
-        newBrief.totalAmount += (item.isGived) ? 0 : (item.originalPrice * item.counts);
-        newBrief.payAmount += (item.isGived) ? 0 : Number((item.originalPrice * item.counts * 0.6).toFixed(2));
+        if (!item.isGived) {
+          newBrief.totalAmount = new Decimal(newBrief.totalAmount).plus(new Decimal(item.originalPrice).times(item.counts)).toNumber();
+          newBrief.payAmount = new Decimal(newBrief.payAmount).plus(new Decimal(item.originalPrice).times(item.counts).times(item.discount)).toNumber();
+        }
       });
 
       return {
@@ -113,15 +111,17 @@ const WaitSaleList: React.FC = () => {
         newList[existingItemIndex] = {
           ...newList[existingItemIndex],
           discount: changeDiscount,
-          salePrice: Number((newList[existingItemIndex].originalPrice * changeDiscount).toFixed(2))
+          salePrice: new Decimal(newList[existingItemIndex].originalPrice).times(changeDiscount).toNumber()
         };
       }
 
       newList.forEach((item) => {
         newBrief.skuNum += 1;
         newBrief.counts += item.counts;
-        newBrief.totalAmount += (item.isGived) ? 0 : (item.originalPrice * item.counts);
-        newBrief.payAmount += (item.isGived) ? 0 : Number((item.salePrice * item.counts).toFixed(2));
+        if (!item.isGived) {
+          newBrief.totalAmount = new Decimal(newBrief.totalAmount).plus(new Decimal(item.originalPrice).times(item.counts)).toNumber();
+          newBrief.payAmount = new Decimal(newBrief.payAmount).plus(new Decimal(item.salePrice).times(item.counts)).toNumber();
+        }
       });
 
       return {
@@ -139,12 +139,12 @@ const WaitSaleList: React.FC = () => {
   
   // 选择的折扣
   function handleDiscountSelect(e: RadioChangeEvent): void {
-    setChangeDiscount(Number((Number(e.target.value) / 10).toFixed(2)));
+    setChangeDiscount(new Decimal(e.target.value).dividedBy(10).toNumber());
   }
 
   // 自定义折扣
   function handleDiscountChange(event: ChangeEvent<HTMLInputElement>): void {
-    setChangeDiscount(Number((Number(event.target.value) / 10).toFixed(2)));
+    setChangeDiscount(new Decimal(event.target.value).dividedBy(10).toNumber());
   }
 
   if (!waitSales?.list || waitSales?.list.length === 0) {
@@ -175,7 +175,7 @@ const WaitSaleList: React.FC = () => {
                 <div>
                   {`${item.color} / ${item.size} / ¥${item.originalPrice}`}
                   <Tag color='#f50' onClick={() => handleChangeDiscount(item.sku)} style={{ marginLeft: `10px`, cursor: `pointer` }}>
-                    {`${Number(item.discount * 10).toFixed(1)}折`}
+                    {`${new Decimal(item.discount).times(10).toFixed(1)}折`}
                   </Tag>
                 </div>
               }

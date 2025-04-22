@@ -38,7 +38,7 @@ const columns = [
     fixed: 'left',
     render: (row, record) => {
       if (record.orderAmount <= 0 && record.orderItems <= 0) {
-        return <span>会员充值</span>;
+        return <span style={{ color: '#ccc' }}>会员充值</span>;
       }
       return record.orderAmount > 0 ? <span>￥{record.orderAmount}</span> : '--';
     },

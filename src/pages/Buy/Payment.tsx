@@ -12,7 +12,7 @@ import style from './index.module.less';
 const Payment: React.FC = () => { 
   const { currentLang } = useContext(MainContext);
   const { waitSales, setWaitSales, setStoreSaler } = useContext(BuyContext);
-  const [salers, setSalers] = useState([{ value: '', label: 'please select saler' }]);
+  const [salers, setSalers] = useState([{ value: '', label: language[currentLang].buy.pleaseSelectSaler }]);
 
   useEffect(() => {
     const salerList = getStore('salerList') || [];
@@ -29,8 +29,8 @@ const Payment: React.FC = () => {
 
   // 输入实收处理函数
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.trim();
-    if (!value) {
+    const value = e.target.value;
+    if (value === '') {
       setWaitSales(prev => ({ 
         list: prev.list, brief: { ...prev.brief, actualAmount: 0 }
       }));
@@ -104,7 +104,7 @@ const Payment: React.FC = () => {
             placeholder={language[currentLang].buy.actual} 
             style={{ width: `200px` }}
             onChange={handleChange}
-            value={waitSales?.brief?.actualAmount || ''}
+            value={waitSales?.brief?.actualAmount !== undefined ? waitSales.brief.actualAmount : ''}
           />
         </Flex>
 

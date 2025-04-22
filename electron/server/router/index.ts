@@ -31,6 +31,7 @@ import {
   batchProcessReturnsData,
   batchCreateInventory,
   batchReturnsInventory,
+  downloadTemplate,
 } from './inventory-controller';
 
 import {
@@ -101,6 +102,7 @@ router.post('/inventory/batchProcessPurchaseData', batchProcessPurchaseData); //
 router.post('/inventory/batchProcessReturnsData', batchProcessReturnsData); // 批量处理预处理数据(退库)
 router.post('/inventory/batchCreate', batchCreateInventory); // 批量入库
 router.post('/inventory/batchReturns', batchReturnsInventory); // 批量退库
+router.post('/inventory/template', downloadTemplate); // 下载模板
 
 // 会员相关接口
 router.get('/member/list', getMemberList); // 会员列表

@@ -18,7 +18,12 @@ const orderColumns = [
     align: 'center',
     dataIndex: 'orderAmount',
     key: 'orderAmount',
-    valueType: 'money',
+    render: (row, record) => {
+      if (record.orderAmount <= 0 && record.orderItems <= 0) {
+        return <span>会员充值</span>;
+      }
+      return record.orderAmount > 0 ? <span>￥{record.orderAmount}</span> : '--';
+    },
   },
   {
     title: language[currentLang].member.tableColumnActual,

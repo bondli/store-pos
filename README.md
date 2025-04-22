@@ -46,7 +46,34 @@ yarn run dev
 yarn run pack:mac
 yarn run pack:win
 
-edit by 2025-03-12 by init project
+### windows下开发需要注意：
 
-edit by 2025-04-10 by complete
+```shell
+# 安装 windows-build-tools（需要管理员权限运行 PowerShell）
+npm install --global --production windows-build-tools
 
+# 安装 node-gyp
+npm install --global node-gyp
+
+# 设置 Python 版本
+npm config set python python3
+
+# 设置 Visual Studio 版本
+npm config set msvs_version 2019
+```
+
+如果还是出错，可以执行
+```shell
+# 1. 清理之前的安装
+rm -rf node_modules
+rm yarn.lock
+
+# 2. 清理 npm 缓存
+npm cache clean --force
+
+# 3. 安装依赖
+yarn install
+
+# 4. 如果还有问题，可以尝试单独安装 sqlite3
+yarn add sqlite3@5.1.6 --build-from-source
+```
