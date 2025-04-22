@@ -20,7 +20,7 @@
     "update-x-dev": "npm i js-xcmd -D",
     "clean": "xcmd clean",
     "time": "xcmd update-time",
-    "rebuild-sqlite3": "electron-rebuild -f -w sqlite3 --arch=x64 --version=35.1.5"
+    "rebuild-sqlite3": "electron-rebuild -f -w sqlite3"
   },
   "husky": {
     "hooks": {
