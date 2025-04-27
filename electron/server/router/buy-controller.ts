@@ -119,7 +119,7 @@ export const submitOrder = async (req: Request, res: Response) => {
     }
 
     // 4.更新用户信息（消费金额更新，积分更新，余额更新）
-    if (buyer.phone) {
+    if (buyer?.phone) {
       const member = await Member.findOne({
         where: { phone: buyer.phone }
       });
@@ -252,7 +252,7 @@ export const submitOrder = async (req: Request, res: Response) => {
       },
     });
     // 如有符合上述条件的活动，则给用户优惠券表发券
-    if (storeActivity && buyer.phone) {
+    if (storeActivity && buyer?.phone) {
       const storeActivityData = storeActivity.toJSON();
       // 根据这个storeActivityData.id，去店铺优惠券表中查询优惠券列表
       const storeActivityCoupons = await StoreCoupon.findAll({

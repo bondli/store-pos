@@ -91,9 +91,18 @@ export const BuyProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       remark: '',
     },
   });
-  const [buyer, setBuyer] = useState<Buyer>(null);
+  const [buyer, setBuyer] = useState<Buyer>({
+    phone: '',
+    point: 0,
+    balance: 0,
+    coupon: 0,
+    bigdayCoupon: 0,
+  });
   const [storeCoupons, setStoreCoupons] = useState<StoreCoupon[]>([]);
-  const [storeSaler, setStoreSaler] = useState<StoreSaler>(null);
+  const [storeSaler, setStoreSaler] = useState<StoreSaler>({
+    id: 0,
+    name: '',
+  });
 
   return (
     <BuyContext.Provider
