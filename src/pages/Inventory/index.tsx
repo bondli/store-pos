@@ -1,4 +1,4 @@
-import React, { memo, useRef, useContext } from 'react';
+import React, { memo, useRef, useContext, useState } from 'react';
 import { Button, App } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 
@@ -21,6 +21,7 @@ import style from './index.module.less';
 const InventroyPage: React.FC = () => {
   const { message } = App.useApp();
   const { currentLang } = useContext(MainContext);
+  const [total, setTotal] = useState(0);
 
   const tableRef = useRef<TableContext>(null);
 
@@ -31,6 +32,7 @@ const InventroyPage: React.FC = () => {
         params: t,
       });
       const result = response.data;
+      setTotal(result.count);
       return {
         data: result.data,
         total: result.count,
@@ -59,6 +61,10 @@ const InventroyPage: React.FC = () => {
         columns={columns as ProColumnsType}
         title={`${language[currentLang].inventory.tableTitle}`}
         scroll={{ x: 'max-content' }}
+        pagination={{
+          total,
+          showTotal: (total, range) => `${language[currentLang].common.total}: ${total}`,
+        }}
         toolbarRender={ 
           <>
             <Button onClick={refreshData}><RedoOutlined />{language[currentLang].inventory.refresh}</Button>

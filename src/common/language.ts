@@ -11,6 +11,7 @@ const language = {
       no: 'No',
       uploadTips1: 'Click or drag file to this area to upload',
       uploadTips2: 'Support for a single excel file upload.',
+      total: 'Total',
     },
     main: {
       sales: 'Sales',
@@ -328,6 +329,7 @@ const language = {
       no: '否',
       uploadTips1: '点击或拖拽文件到此区域上传',
       uploadTips2: '支持单个excel文件上传',
+      total: '总数',
     },
     main: {
       sales: '买单',

@@ -50,6 +50,40 @@ const Purchase: React.FC<ComProps> = (props) => {
           console.log(`成功解析 ${total} 条数据:`, data);
           // setDataList(data);
           // setTotalCount(total);
+          // 判断excel的表头是否设置正确
+          const headers = data[0];
+          if (!headers.品名) {
+            message.error('表头设置缺少字段“品名”，请检查');
+            return;
+          }
+          if (!headers.货号) {
+            message.error('表头设置缺少字段“货号”，请检查');
+            return;
+          }
+          if (!headers.条码) {
+            message.error('表头设置缺少字段“条码”，请检查');
+            return;
+          }
+          if (!headers.尺码) {
+            message.error('表头设置缺少字段“尺码”，请检查');
+            return;
+          }
+          if (!headers.颜色) {
+            message.error('表头设置缺少字段“颜色”，请检查');
+            return;
+          }
+          if (!headers.吊牌价) {
+            message.error('表头设置缺少字段“吊牌价”，请检查');
+            return;
+          }
+          if (!headers.数量) {
+            message.error('表头设置缺少字段“数量”，请检查');
+            return;
+          }
+          if (!headers.进货价) {
+            message.error('表头设置缺少字段“进货价”，请检查');
+            return;
+          }
           // 发请求取预处理数据
           request.post('/inventory/batchProcessPurchaseData', {
             dataList: data,
@@ -85,7 +119,7 @@ const Purchase: React.FC<ComProps> = (props) => {
     }
     // 需要对 dataList 进行去重
     const uniqueDataList = dataList.filter((item, index, self) =>
-      index === self.findIndex((t) => t.SKU === item.SKU)
+      index === self.findIndex((t) => t.条码 === item.条码)
     );
     if (uniqueDataList.length !== dataList.length) {
       message.error('数据存在重复，请检查');
@@ -160,7 +194,7 @@ const Purchase: React.FC<ComProps> = (props) => {
       </Button>
       <Drawer
         title={`${language[currentLang].inventory.bitchStockPurchaseTitle}`}
-        width={800}
+        width={1000}
         open={showPanel}
         onClose={() => setShowPanel(false)}
         destroyOnClose={true}
@@ -196,7 +230,7 @@ const Purchase: React.FC<ComProps> = (props) => {
               content={
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '20px' }}>
                   <Table
-                    rowKey='SKU'
+                    rowKey='条码'
                     columns={[
                       {
                         title: '品名',
@@ -211,8 +245,8 @@ const Purchase: React.FC<ComProps> = (props) => {
                         dataIndex: '品牌',
                       },
                       {
-                        title: 'SKU',
-                        dataIndex: 'SKU',
+                        title: '条码',
+                        dataIndex: '条码',
                       },
                       {
                         title: '尺码',

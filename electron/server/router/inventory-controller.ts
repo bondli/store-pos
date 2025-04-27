@@ -162,14 +162,19 @@ export const batchProcessPurchaseData = async (req: Request, res: Response) => {
     const inventoryData = {
       name: item.品名,
       sn: item.货号,
-      brand: item.品牌,
-      sku: item.SKU,
+      brand: item.品牌 || '戴维贝拉',
+      sku: item.条码,
       size: item.尺码,
       color: item.颜色,
       originalPrice: item.吊牌价,
-      costPrice: item.进货价,
-      counts: Number(item.数量)
+      costPrice: item.进货价 || 0,
+      counts: Number(item.数量),
     };
+
+    // 如果品牌为空，则赋值为戴维贝拉
+    if (!item.品牌) {
+      item.品牌 = '戴维贝拉';
+    }
 
     totalCount += Number(inventoryData.counts);
 
@@ -222,12 +227,12 @@ export const batchCreateInventory = async (req: Request, res: Response) => {
         const inventoryData = {
           name: item.品名,
           sn: item.货号,
-          brand: item.品牌,
-          sku: item.SKU,
+          brand: item.品牌 || '戴维贝拉',
+          sku: item.条码,
           size: item.尺码,
           color: item.颜色,
           originalPrice: item.吊牌价,
-          costPrice: item.进货价,
+          costPrice: item.进货价 || 0,
           counts: Number(item.数量)
         };
 
@@ -261,7 +266,7 @@ export const batchCreateInventory = async (req: Request, res: Response) => {
       } catch (itemError) {
         errorCount += Number(item['数量']);
         errors.push({
-          sku: item.SKU,
+          sku: item.条码,
           error: itemError instanceof Error ? itemError.message : String(itemError)
         });
       }
@@ -295,7 +300,7 @@ export const batchProcessReturnsData = async (req: Request, res: Response) => {
   const newDataList: ReturnItem[] = [];
   const map = new Map<string, ReturnItem>();
   for (const item of dataList) {
-    const sku = item.SKU;
+    const sku = item.条码;
     if (map.has(sku)) {
       const data = map.get(sku)!;
       data.returnCounts = Number(data.returnCounts) + Number(item.数量);
@@ -361,10 +366,10 @@ export const batchReturnsInventory = async (req: Request, res: Response) => {
     if (result) {
       const updatedItem = await result.decrement('counts', { by: Number(item.returnCounts) });
       if (!updatedItem) {
-        errorCount += 1;
+        errorCount += Number(item.returnCounts);
       }
     } else {
-      errorCount += 1;
+      errorCount += Number(item.returnCounts);
     }
   }
   res.json({
@@ -386,11 +391,11 @@ export const downloadTemplate = async (req: Request, res: Response) => {
   try {
     if (type === 'purchase') {
       fileName = 'purchase.xlsx';
-      worksheet.addRow(['品名', '品牌', '货号', 'SKU', '尺码', '颜色', '吊牌价', '进货价', '数量']);
+      worksheet.addRow(['品名', '货号', '条码', '尺码', '颜色', '吊牌价', '进货价', '数量', '品牌']);
     }
     else {
       fileName = 'returns.xlsx';
-      worksheet.addRow(['SKU', '数量']);
+      worksheet.addRow(['条码', '数量']);
     }
     
     // 将文件写入响应

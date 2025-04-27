@@ -92,7 +92,7 @@ const Returns: React.FC<ComProps> = (props) => {
       // 通过modal的方式提示用户操作成功的数量和失败的数量
       modal.success({
         title: '退货成功',
-        content: `成功退货 ${result.totalCount-result.errorCount} 个商品，失败 ${result.errorCount} 条数据`,
+        content: `成功退货 ${result.totalCount-result.errorCount} 个商品，失败 ${result.errorCount} 个商品`,
         onOk: () => {
           callback && callback();
           setShowPanel(false);
