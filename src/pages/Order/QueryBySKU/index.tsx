@@ -1,6 +1,6 @@
-import React, { memo, useState, useRef, useContext } from 'react';
+import React, { memo, useState, useRef, useContext, useCallback } from 'react';
 import { App, Button, Drawer, Input, Table } from 'antd';
-import { CopyOutlined, ScanOutlined } from '@ant-design/icons';
+import { CopyOutlined, ScanOutlined, SignatureOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 import request from '@/common/request';
@@ -14,6 +14,8 @@ const QueryBySKU: React.FC = () => {
 
   const [showPanel, setShowPanel] = useState(false);
   const [dataList, setDataList] = useState([]);
+
+  const [inputType, setInputType] = useState<'scan' | 'input'>('scan');
   const [scanSkuCode, setScanSkuCode] = useState('');
 
   const togglePanel = () => {
@@ -24,9 +26,36 @@ const QueryBySKU: React.FC = () => {
     setShowPanel(false);
   };
 
+  // 处理条码提交
+  const processBarCode = (value: string) => {
+    request.get('/order/queryBySku', {
+      params: {
+        sku: value,
+      },
+    }).then((response: any) => {
+      const result = response.data;
+      if (result.error) {
+        message.error(result.error);
+      } else {
+        setDataList(result.data);
+        // 如果没有返回结果给个错误提示
+        if (!result.data?.length) {
+          message.error(`该商品还没有任何订单`);
+        }
+        // 如果是扫码模式，需要清除输入框结果
+        if (inputType === 'scan') {
+          setScanSkuCode('');
+        }
+      }
+    }).catch((error: any) => {
+      message.error('查询失败');
+    });
+  };
+
   const debounceTimer = useRef<number>();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // 处理扫码枪的输入
+  const handleScan = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim();
 
     // 更新输入框的值
@@ -41,24 +70,21 @@ const QueryBySKU: React.FC = () => {
     }
 
     debounceTimer.current = window.setTimeout(() => {
-      request.get('/order/queryBySku', {
-        params: {
-          sku: value,
-        },
-      }).then((response: any) => {
-        const result = response.data;
-        if (result.error) {
-          message.error(result.error);
-        } else {
-          setDataList(result.data);
-        }
-        // 清除输入框的值
-        setScanSkuCode('');
-      }).catch((error: any) => {
-        message.error('查询失败');
-      });
+      processBarCode(value);
     }, 300);
   };
+
+  // 处理输入框的输入
+  const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.trim();
+    // 更新输入框的值
+    setScanSkuCode(value);
+  }, [scanSkuCode]);
+
+  // 处理输入框的回车
+  const handleInputSearch = useCallback(() => {
+    processBarCode(scanSkuCode);
+  }, [scanSkuCode]);
 
   const columns = [
     {
@@ -125,13 +151,26 @@ const QueryBySKU: React.FC = () => {
         onClose={closePanel}
         destroyOnClose={true}
       >
-        <Input
-          prefix={<ScanOutlined />} 
-          placeholder={language[currentLang].order.queryBySkuCodePlaceholder}
-          onChange={handleChange}
-          autoFocus
-          value={scanSkuCode}
-        />
+        {
+          inputType === 'input' ? (
+            <Input 
+              size='middle' 
+              placeholder={language[currentLang].order.queryBySkuCodePlaceholder}
+              prefix={<SignatureOutlined onClick={ () => setInputType('scan') } />}  
+              onChange={handleInput}
+              onPressEnter={handleInputSearch}
+              value={scanSkuCode}
+            />
+          ) : (
+            <Input
+              prefix={<ScanOutlined onClick={ () => setInputType('input') } />} 
+              placeholder={language[currentLang].order.queryBySkuCodePlaceholder}
+              onChange={handleScan}
+              autoFocus
+              value={scanSkuCode}
+            />
+          )
+        }
 
         <div style={{ marginTop: 24 }}>
           <Box

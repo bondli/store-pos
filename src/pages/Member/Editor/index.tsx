@@ -2,12 +2,12 @@ import React, { memo, useEffect, useState, useContext } from 'react';
 import { Button, Card, Drawer, Space, App } from 'antd';
 import FormRender, { useForm } from 'form-render';
 
-import { userLog } from '@/common/electron';
+import { userLog, getStore } from '@/common/electron';
 import request from '@common/request';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import { baseInfoSchema, pointSchema, balanceSchema } from './schema';
+import { baseInfoSchema, pointSchema } from './schema';
 
 type ComProps = {
   userPhone: string;
@@ -17,6 +17,8 @@ type ComProps = {
 const Editor: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
   const { currentLang } = useContext(MainContext);
+
+  const userInfo = getStore('loginData') || {};
 
   const { userPhone, callback } = props;
   
@@ -62,26 +64,6 @@ const Editor: React.FC<ComProps> = (props) => {
     }
   };
 
-  // 修改会员余额
-  const onBalanceFinish = async (formData) => {
-    console.log('formData onn balance submit:', formData);
-    try {
-      const response = await request.post('/member/incomeBalance', formData);
-
-      if (response.data?.error) {
-        message.error(response.data?.error || '会员充值失败');
-      } else {
-        message.success('会员充值成功');
-        setShowPanel(false);
-        // todo:待实现
-        callback && callback();
-      }
-    } catch (error) {
-      message.error('会员充值失败');
-    }
-  };
-
-
   const [showPanel, setShowPanel] = useState(false);
   
   const togglePanel = () => {
@@ -109,10 +91,6 @@ const Editor: React.FC<ComProps> = (props) => {
         phone: result.phone,
         point: result.point,
       });
-      formBalance.setValues({
-        phone: result.phone,
-        balance: result.balance,
-      });
     } catch (error) {
       message.error('查询对应的会员失败');
     }
@@ -124,7 +102,7 @@ const Editor: React.FC<ComProps> = (props) => {
         phone: userPhone,
       });
     }
-  }, [formBaseInfo, formPoint, formBalance, userPhone, showPanel]);
+  }, [formBaseInfo, formPoint, userPhone, showPanel]);
 
   return (
     <>
@@ -158,38 +136,27 @@ const Editor: React.FC<ComProps> = (props) => {
               }}
             />
           </Card>
-          <Card size='small' title={`${language[currentLang].member.modifyPoint}`}>
-            <FormRender
-              form={formPoint}
-              schema={pointSchema}
-              onFinish={onPointFinish}
-              footer={{
-                submit: {
-                  text: language[currentLang].common.confirm,
-                },
-                reset: {
-                  text: language[currentLang].common.reset,
-                  hide: true,
-                }
-              }}
-            />
-          </Card>
-          <Card size='small' title={`${language[currentLang].member.modifyBalance}`}>
-            <FormRender
-              form={formBalance}
-              schema={balanceSchema}
-              onFinish={onBalanceFinish}
-              footer={{
-                submit: {
-                  text: language[currentLang].common.confirm,
-                },
-                reset: {
-                  text: language[currentLang].common.reset,
-                  hide: true,
-                }
-              }}
-            />
-          </Card>
+
+          {
+            userInfo?.id === 1 ? (
+              <Card size='small' title={`${language[currentLang].member.modifyPoint}`}>
+                <FormRender
+                  form={formPoint}
+                  schema={pointSchema}
+                  onFinish={onPointFinish}
+                  footer={{
+                    submit: {
+                      text: language[currentLang].common.confirm,
+                    },
+                    reset: {
+                      text: language[currentLang].common.reset,
+                      hide: true,
+                    }
+                  }}
+                />
+              </Card>
+            ) : null
+          }
         </Space>
       </Drawer>
     </>

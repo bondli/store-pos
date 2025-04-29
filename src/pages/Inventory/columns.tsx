@@ -6,6 +6,7 @@ import Detail from './Detail';
 import language from '@/common/language';
 import { getStore } from '@common/electron';
 const currentLang = getStore('currentLang') || 'en';
+const userInfo = getStore('loginData') || {};
 
 const columns = [
   {
@@ -45,7 +46,7 @@ const columns = [
   },
   {
     title: language[currentLang].inventory.tableColumnOriginalPrice,
-    align: 'right',
+    align: 'center',
     key: 'originalPrice',
     dataIndex: 'originalPrice',
     valueType: 'money',
@@ -63,7 +64,11 @@ const columns = [
       return (
         <Space>
           <Detail sku={record.sku} sn={record.sn} />
-          <Editor sku={record.sku} sn={record.sn} />
+          {
+            userInfo?.id === 1 ? (
+              <Editor sku={record.sku} sn={record.sn} />
+            ) : null
+          }
         </Space>
       );
     }

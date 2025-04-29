@@ -3,11 +3,12 @@ import { Button, Drawer, Flex, Upload, App, Space, Table } from 'antd';
 import type { UploadProps } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 
+import { PAY_CHANNEL } from '@/common/constant';
+import { getStore } from '@/common/electron';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 import request, { baseURL } from '@common/request';
 import Box from '@/components/Box';
-import { PAY_CHANNEL } from '@/common/constant';
 
 const { Dragger } = Upload;
 
@@ -27,6 +28,12 @@ const ImportOrder: React.FC<ComProps> = (props) => {
   const [dataList, setDataList] = useState([]);
   
   const togglePanel = () => {
+    const userInfo = getStore('loginData') || {};
+    // 只有管理员才有权限导入订单
+    if (userInfo?.id !== 1) {
+      message.error(`你没有权限执行订单的导入`);
+      return;
+    }
     setShowPanel(!showPanel);
   };
 

@@ -3,7 +3,7 @@ import { GithubFilled, CloudDownloadOutlined, CloudUploadOutlined, UserSwitchOut
 import type { MenuProps } from 'antd';
 import { Dropdown, Space, App } from 'antd';
 
-import ElectronBridge from '@common/electron';
+import ElectronBridge, { getStore } from '@common/electron';
 import { deleteStore } from '@common/electron';
 import { MainContext } from '@common/context';
 
@@ -78,7 +78,13 @@ const User: React.FC = () => {
     }
     // 本地恢复数据
     else if (key === '3') {
-      ElectronBridge.importData();
+      // 只有管理员有权限执行
+      const userInfo = getStore('loginData') || {};
+      if (userInfo?.id === 1) {
+        ElectronBridge.importData();
+      } else {
+        message.error(`你没有权限执行数据恢复`);
+      }
     }
     // 退出登录
     else if (key === '5') {

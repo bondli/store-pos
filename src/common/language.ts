@@ -12,6 +12,8 @@ const language = {
       uploadTips1: 'Click or drag file to this area to upload',
       uploadTips2: 'Support for a single excel file upload.',
       total: 'Total',
+      operate: 'Operate',
+      operateRemove: 'Remove',
     },
     main: {
       sales: 'Sales',
@@ -190,6 +192,8 @@ const language = {
       tableColumnChangePoint: 'Point Change',
       newJoinTitle: 'New Member',
       newJoinAction: 'New Member',
+      incomeBalanceTitle: 'Income Balance',
+      incomeBalanceAction: 'Income Balance',
     },
     buy: {
       title: 'Sale and Payment',
@@ -218,6 +222,10 @@ const language = {
       items: 'items',
       originAmount: 'origin amount',
       shouldPay: 'should pay',
+      userPoint: 'Points',
+      userBalance: 'Balance',
+      userCoupon: 'Coupons',
+      userBigdayCoupon: 'BigDay',
     },
     order: {
       title: 'Order Center',
@@ -330,6 +338,8 @@ const language = {
       uploadTips1: '点击或拖拽文件到此区域上传',
       uploadTips2: '支持单个excel文件上传',
       total: '总数',
+      operate: '操作',
+      operateRemove: '移除',
     },
     main: {
       sales: '买单',
@@ -513,6 +523,8 @@ const language = {
       tableColumnChangePoint: '变动积分',
       newJoinTitle: '新增会员',
       newJoinAction: '新增',
+      incomeBalanceTitle: '会员充值',
+      incomeBalanceAction: '充值',
     },
     buy: {
       title: '买单',
@@ -541,6 +553,10 @@ const language = {
       items: '件',
       originAmount: '原价',
       shouldPay: '应付',
+      userPoint: '积分',
+      userBalance: '余额',
+      userCoupon: '优惠券',
+      userBigdayCoupon: '会员权益',
     },
     order: {
       title: '订单中心',

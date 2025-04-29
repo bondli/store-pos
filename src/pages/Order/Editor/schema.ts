@@ -1,5 +1,6 @@
 import { getStore } from '@common/electron';
 import language from '@/common/language';
+const userInfo = getStore('loginData') || {};
 const currentLang = getStore('currentLang') || 'en';
 const salerList = getStore('salerList') || [];
 const newSalers = [];
@@ -42,6 +43,7 @@ export default {
       props: {
         options: newSalers,
       },
+      disabled: userInfo?.id !== 1,
     },
     userPhone: {
       title: language[currentLang].order.tableColumnUser,

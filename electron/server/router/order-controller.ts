@@ -162,7 +162,7 @@ export const changeOrderItem = async (req: Request, res: Response) => {
       },
     });
     const rate = new Decimal(finalAmount).div(orderData.orderAmount); // 这个地方别做toFixed，否则会丢失精度
-    const defaultDiscount = 0.6;
+    const defaultDiscount = 0.59;
     await OrderItems.bulkCreate(
       exchangeItems.map(item => ({
         orderSn: orderData.orderSn,
@@ -174,28 +174,38 @@ export const changeOrderItem = async (req: Request, res: Response) => {
         size: item.size,
         originalPrice: item.originalPrice,
         discount: defaultDiscount, // item.discount,先是默认值后续开放可以设置
-        counts: 1, // 先写死1个，后续开放设置
+        counts: item.counts,
         // todo: 这个地方需要根据传入的折扣计算
         actualPrice: new Decimal(item.originalPrice*defaultDiscount).mul(rate).toDecimalPlaces(2),
       }))
     );
     // 3.扣减库存，退回的商品增加库存，换货的商品减少库存
     for (const item of returnItems) {
-      await Inventory.update({
-        counts: Sequelize.literal(`counts + ${item.counts || 1}`),
-      }, {
-        where: { sku: item.sku },
+      // 先获取当前库存
+      const inventory = await Inventory.findOne({
+        where: { sku: item.sku }
       });
+      if (inventory) {
+        const inventoryData = inventory.toJSON();
+        await inventory.update({
+          counts: inventoryData.counts + item.counts
+        });
+      }
     }
     for (const item of exchangeItems) {
-      await Inventory.update({
-        counts: Sequelize.literal(`counts - ${item.counts || 1}`),
-      }, {
-        where: { sku: item.sku },
+      // 先获取当前库存
+      const inventory = await Inventory.findOne({
+        where: { sku: item.sku }
       });
+      if (inventory) {
+        const inventoryData = inventory.toJSON();
+        await inventory.update({
+          counts: inventoryData.counts - item.counts
+        });
+      }
     }
     // 4.更新会员表，因实付金额的变动，需要更新会员表中的实付金额和积分
-    if (orderData.userPhone) {
+    if (orderData.userPhone && finnalChangeAmount !== 0) {
       const member = await Member.findOne({
         where: { phone: orderData.userPhone },
       });

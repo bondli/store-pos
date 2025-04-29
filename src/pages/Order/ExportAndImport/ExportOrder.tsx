@@ -6,6 +6,7 @@ import language from '@/common/language';
 import { MainContext } from '@/common/context';
 import request from '@/common/request';
 import { PAY_CHANNEL, PaymentChannelStats } from '@common/constant';
+import { getStore } from '@common/electron';
 import Box from '@/components/Box';
 
 type ComProps = {
@@ -20,6 +21,12 @@ const ExportOrder: React.FC<ComProps> = (props) => {
   const [showPanel, setShowPanel] = useState(false);
   
   const togglePanel = () => {
+    const userInfo = getStore('loginData') || {};
+    // 只有管理员才有权限导入订单
+    if (userInfo?.id !== 1) {
+      message.error(`你没有权限执行订单的导入`);
+      return;
+    }
     setShowPanel(!showPanel);
   };
 

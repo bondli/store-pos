@@ -4,7 +4,7 @@ import { RedoOutlined } from '@ant-design/icons';
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
-import { userLog } from '@/common/electron';
+import { userLog, getStore } from '@/common/electron';
 import request from '@common/request';
 import PageTitle from '@/components/PageTitle';
 import language from '@/common/language';
@@ -22,7 +22,7 @@ import style from './index.module.less';
 const OrderPage: React.FC = () => {
   const { message } = App.useApp();
   const { currentLang } = useContext(MainContext);
-
+  const userInfo = getStore('loginData') || {};
   const tableRef = useRef<TableContext>(null);
   const [dataList, setDataList] = useState([]);
 
@@ -71,7 +71,11 @@ const OrderPage: React.FC = () => {
           <>
             <Button onClick={refreshData}><RedoOutlined />{language[currentLang].order.refresh}</Button>
             <CheckBill dataList={dataList} callback={refreshData} />
-            <ExportAndImport dataList={dataList} callback={refreshData} />
+            {
+              userInfo?.id === 1 && (
+                <ExportAndImport dataList={dataList} callback={refreshData} />
+              )
+            }
           </>
         }
       />

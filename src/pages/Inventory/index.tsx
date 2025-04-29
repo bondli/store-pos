@@ -5,7 +5,7 @@ import { RedoOutlined } from '@ant-design/icons';
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
-import { userLog } from '@/common/electron';
+import { userLog, getStore } from '@/common/electron';
 import request from '@common/request';
 import PageTitle from '@/components/PageTitle';
 import language from '@/common/language';
@@ -22,6 +22,8 @@ const InventroyPage: React.FC = () => {
   const { message } = App.useApp();
   const { currentLang } = useContext(MainContext);
   const [total, setTotal] = useState(0);
+
+  const userInfo = getStore('loginData') || {};
 
   const tableRef = useRef<TableContext>(null);
 
@@ -51,7 +53,7 @@ const InventroyPage: React.FC = () => {
       <PageTitle
         text={`${language[currentLang].inventory.title}`}
         extra={
-          <BitchStock callback={refreshData} />
+          userInfo?.id === 1 ? <BitchStock callback={refreshData} /> : null
         }
       />
       <TableRender
@@ -68,7 +70,9 @@ const InventroyPage: React.FC = () => {
         toolbarRender={ 
           <>
             <Button onClick={refreshData}><RedoOutlined />{language[currentLang].inventory.refresh}</Button>
-            <SingleStock callback={refreshData} />
+            {
+              userInfo?.id === 1 ? <SingleStock callback={refreshData} /> : null
+            }
           </>
         }
       />

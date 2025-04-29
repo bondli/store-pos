@@ -5,7 +5,7 @@ import { RedoOutlined } from '@ant-design/icons';
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
-import { userLog } from '@/common/electron';
+import { userLog, getStore } from '@/common/electron';
 import request from '@common/request';
 import PageTitle from '@/components/PageTitle';
 import language from '@/common/language';
@@ -20,6 +20,8 @@ import style from './index.module.less';
 const MarketingPage: React.FC = () => {
   const { message } = App.useApp();
   const { currentLang } = useContext(MainContext);
+
+  const userInfo = getStore('loginData') || {};
 
   const tableRef = useRef<TableContext>(null);
 
@@ -56,7 +58,9 @@ const MarketingPage: React.FC = () => {
         toolbarRender={
           <>
             <Button onClick={refreshData}><RedoOutlined />{language[currentLang].marketing.refresh}</Button>
-            <NewMarketing callback={refreshData} />
+            {
+              userInfo?.id === 1 ? <NewMarketing callback={refreshData} /> : null
+            }
           </>
         }
       />

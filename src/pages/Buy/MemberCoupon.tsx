@@ -191,7 +191,7 @@ const MemberCoupon: React.FC = () => {
       <Row gutter={16}>
         <Col span={6}>
           <Statistic
-            title='Points'
+            title={language[currentLang].buy.userPoint}
             value={buyer.point}
             suffix={<span style={{ fontSize: 12, color: '#999' }}>{usePoint > 0 ? `-${usePoint}` : ''}</span>}
           />
@@ -199,7 +199,7 @@ const MemberCoupon: React.FC = () => {
         </Col>
         <Col span={6}>
           <Statistic
-            title='Balance'
+            title={language[currentLang].buy.userBalance}
             value={buyer.balance}
             precision={2}
             suffix={<span style={{ fontSize: 12, color: '#999' }}>{useBalance > 0 ? `-${useBalance}` : ''}</span>}
@@ -208,7 +208,7 @@ const MemberCoupon: React.FC = () => {
         </Col>
         <Col span={6}>
           <Statistic
-            title='Coupons'
+            title={language[currentLang].buy.userCoupon}
             value={couponList.length}
             suffix={<span style={{ fontSize: 12, color: '#999' }}>{useCoupon?.couponValue > 0 ? `-${useCoupon.couponValue}` : ''}</span>}
           />
@@ -216,7 +216,7 @@ const MemberCoupon: React.FC = () => {
         </Col>
         <Col span={6}>
           <Statistic
-            title='BigDay'
+            title={language[currentLang].buy.userBigdayCoupon}
             value={bigdayCouponList.length}
           />
           <Button size='small' style={{ marginTop: 16 }} disabled={bigdayCouponList.length === 0} onClick={handleUseBigdayCoupon}>use</Button>

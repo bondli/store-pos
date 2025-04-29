@@ -1,6 +1,6 @@
-import React, { memo, useEffect, useState, useRef, ChangeEvent, useContext } from 'react';
+import React, { memo, useEffect, useState, useRef, ChangeEvent, useContext, useCallback } from 'react';
 import { Button, Drawer, Flex, App, Descriptions, Table, Input, TableProps, Radio } from 'antd';
-import { BarcodeOutlined } from '@ant-design/icons';
+import { SignatureOutlined, ScanOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 import { userLog } from '@/common/electron';
@@ -39,6 +39,8 @@ const Exchange: React.FC<ComProps> = (props) => {
   const [showPanel, setShowPanel] = useState(false);
   const [orderInfo, setOrderInfo] = useState(defaultOrderInfo);
   const [orderItems, setOrderItems] = useState([]);
+
+  const [inputType, setInputType] = useState<'scan' | 'input'>('scan');
 
   // 扫描条形码
   const [scanSkuCode, setScanSkuCode] = useState('');
@@ -142,6 +144,29 @@ const Exchange: React.FC<ComProps> = (props) => {
     setAmountType(e.target.value);
   };
 
+  // 处理条码提交
+  const processBarCode = (value: string) => {
+    request.get('/inventory/queryDetailBySku', {
+      params: {
+        sku: value
+      }
+    }).then((response: any) => {
+      const result = response.data;
+      if (result.error || !result.sku) {
+        message.error(`没有找到对应的商品`);
+        return;
+      }
+      // 如果是扫码模式，需要清除输入框结果
+      if (inputType === 'scan') {
+        setScanSkuCode('');
+      }
+      // 如果商品存在，需要添加到用户想要换取的商品数组中，这个地方强制写死了counts:1，后续需要设置才行
+      setExchangeItems(prev => [...prev, { ...result, counts: 1 }]);
+    }).catch((error: any) => {  
+      message.error('查询失败');
+    });
+  };
+
   // 扫描条形码
   function handleScan(e: ChangeEvent<HTMLInputElement>): void {
     const value = e.target.value.trim();
@@ -159,25 +184,21 @@ const Exchange: React.FC<ComProps> = (props) => {
     
     // 设置新的定时器，300ms 后执行查询
     debounceTimer.current = window.setTimeout(() => {
-      request.get('/inventory/queryDetailBySku', {
-        params: {
-          sku: value
-        }
-      }).then((response: any) => {
-        const result = response.data;
-        if (result.error || !result.sku) {
-          message.error(`没有找到对应的商品`);
-          return;
-        }
-        // 如果商品存在，需要添加到用户想要换取的商品数组中
-        setExchangeItems(prev => [...prev, result]);
-      }).catch((error: any) => {  
-        message.error('查询失败');
-      });
-      // 清除输入框的值
-      setScanSkuCode('');
+      processBarCode(value);
     }, 300);
   }
+
+  // 处理输入框的输入
+  const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.trim();
+    // 更新输入框的值
+    setScanSkuCode(value);
+  }, [scanSkuCode]);
+
+  // 处理输入框的回车
+  const handleInputSearch = useCallback(() => {
+    processBarCode(scanSkuCode);
+  }, [scanSkuCode]);
 
   // 删除换货商品
   const deleteExchangeItem = (record: any) => {
@@ -187,7 +208,7 @@ const Exchange: React.FC<ComProps> = (props) => {
   // 换货商品列表
   const exchangeItemColumns = [
     {
-      title: 'sku code',
+      title: language[currentLang].order.tableColumnSkuCode,
       dataIndex: 'sku',
       key: 'sku',
       render: (text: string, record: any) => {
@@ -200,14 +221,14 @@ const Exchange: React.FC<ComProps> = (props) => {
       },
     },
     {
-      title: 'original',
+      title: language[currentLang].order.tableColumnOriginal,
       align: 'center',
       key: 'originalPrice',
       dataIndex: 'originalPrice',
       valueType: 'money',
     },
     {
-      title: 'sale price',
+      title: language[currentLang].order.tableColumnSalePrice,
       align: 'center',
       key: 'salePrice',
       dataIndex: 'salePrice',
@@ -216,7 +237,7 @@ const Exchange: React.FC<ComProps> = (props) => {
       },
     },
     {
-      title: 'discount',
+      title: language[currentLang].order.tableColumnDiscount,
       align: 'center',
       dataIndex: 'discount',
       key: 'discount',
@@ -225,18 +246,18 @@ const Exchange: React.FC<ComProps> = (props) => {
       },
     },
     {
-      title: 'stock',
+      title: language[currentLang].order.tableColumnCounts,
       align: 'center',
       dataIndex: 'counts',
       key: 'counts',
     },
     {
-      title: 'operate',
+      title: language[currentLang].common.operate,
       align: 'center',
       key: 'operate',
       dataIndex: 'operate',
       render: (text: string, record: any) => {
-        return <Button type='link' onClick={() => deleteExchangeItem(record)}>移除</Button>;
+        return <Button type='link' onClick={() => deleteExchangeItem(record)}>{language[currentLang].common.operateRemove}</Button>;
       },
     },
   ];
@@ -341,12 +362,26 @@ const Exchange: React.FC<ComProps> = (props) => {
           title={language[currentLang].order.queryExchangeItems}
           content={
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '20px' }}>
-              <Input 
-                placeholder={language[currentLang].order.queryExchangeItemsPlaceholder} 
-                prefix={<BarcodeOutlined />}
-                onChange={handleScan}
-                value={scanSkuCode}
-              />
+              {
+                inputType === 'input' ? (
+                  <Input 
+                    size='middle' 
+                    placeholder={language[currentLang].order.queryExchangeItemsPlaceholder}
+                    prefix={<SignatureOutlined onClick={ () => setInputType('scan') } />}  
+                    onChange={handleInput}
+                    onPressEnter={handleInputSearch}
+                    value={scanSkuCode}
+                  />
+                ) : (
+                  <Input
+                    prefix={<ScanOutlined onClick={ () => setInputType('input') } />} 
+                    placeholder={language[currentLang].order.queryExchangeItemsPlaceholder}
+                    onChange={handleScan}
+                    autoFocus
+                    value={scanSkuCode}
+                  />
+                )
+              }
               <Table
                 rowKey='id'
                 columns={exchangeItemColumns as any}

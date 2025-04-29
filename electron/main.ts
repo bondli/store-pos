@@ -153,9 +153,24 @@ const createWindow = () => {
       webSecurity: false,
       // eslint-disable-next-line no-undef
       preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true, // 解决无法使用 require 加载的 bug
+      nodeIntegration: false, // 禁用 nodeIntegration 以配合 contextIsolation
+      contextIsolation: true, // 启用上下文隔离
     },
   });
+
+  // 启用默认的右键菜单
+  mainWindow.webContents.on('context-menu', (_, props) => {
+    const { Menu } = require('electron');
+    const menu = Menu.buildFromTemplate([
+      { label: '剪切', role: 'cut' },
+      { label: '复制', role: 'copy' },
+      { label: '粘贴', role: 'paste' },
+      { type: 'separator' },
+      { label: '全选', role: 'selectAll' },
+    ]);
+    menu.popup();
+  });
+
   const openWin = () => {
     if (!app.isPackaged) {
       mainWindow.loadURL('http://localhost:3000/');

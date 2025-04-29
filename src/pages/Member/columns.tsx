@@ -6,6 +6,7 @@ const currentLang = getStore('currentLang') || 'en';
 
 import Editor from './Editor';
 import Detail from './Detail';
+import IncomeBalance from './IncomeBalance';
 
 const columns = [
   {
@@ -85,6 +86,7 @@ const columns = [
         <Space>
           <Detail userPhone={record.phone} />
           <Editor userPhone={record.phone} />
+          <IncomeBalance userPhone={record.phone} />
         </Space>
       );
     }

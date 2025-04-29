@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import language from '@/common/language';
 import { getStore } from '@common/electron';
 const currentLang = getStore('currentLang') || 'en';
+const userInfo = getStore('loginData') || {};
 
 import Remove from './Remove';
 import Editor from './Editor';
@@ -87,9 +88,15 @@ const columns = [
       return (
         <Space>
           <Detail id={record.id} />
-          <Editor id={record.id} />
-          <Offline id={record.id} status={status} />
-          <Remove id={record.id} />
+          {
+            userInfo?.id === 1 ? <Editor id={record.id} /> : null
+          }
+          {
+            userInfo?.id === 1 ? <Offline id={record.id} status={status} /> : null
+          }
+          {
+            userInfo?.id === 1 ? <Remove id={record.id} /> : null
+          }
         </Space>
       );
     }

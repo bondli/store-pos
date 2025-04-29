@@ -107,7 +107,7 @@ const UserPage: React.FC = () => {
       <Content className={style.content}>
         <Row style={{ width: '100%' }}>
           <Col span={12} className={style.left}>
-            <img src="https://todoist.b-cdn.net/assets/images/44245fc51c3e2ab05ee6d92c13e2e08a.png" style={{ width: '450px', height: '232px' }} />
+            <img src="https://w2.eckwai.com/kos/nlav12333/backend-assets/todoist.172057bfeba2887f.png" style={{ width: '450px', height: '232px' }} />
           </Col>
           <Col span={12} className={style.right}>
             {

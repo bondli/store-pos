@@ -132,27 +132,17 @@ export const printStr = (html: string) => {
             body { 
               margin: 0; 
               padding: 10px; 
-              width: 52mm; /* 实际可用宽度 */
+              width: 58mm; /* 实际可用宽度 */
               font-size: 12px; /* 适合小票打印的字体大小 */
             }
             @media print {
-              body { 
-                padding: 0; 
+              body {
                 margin: 0;
+                padding: 10px;
                 size: 58mm auto; /* 打印机宽度 */
-                width: 52mm; /* 实际可用宽度 */
+                width: 58mm; /* 实际可用宽度 */
+                font-size: 12px; /* 适合小票打印的字体大小 */
               }
-            }
-            ul, ol, li {
-              list-style: none;
-              margin: 0;
-              padding: 0;
-            }
-            /* 确保文字不会换行 */
-            .no-wrap {
-              white-space: nowrap;
-              overflow: hidden;
-              text-overflow: ellipsis;
             }
           </style>
         </head>
