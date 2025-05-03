@@ -129,19 +129,29 @@ export const printStr = (html: string) => {
         <head>
           <title>Print</title>
           <style>
+            @page {
+              margin: 0;
+              padding: 0;
+              size: 52mm auto;
+            }
             body { 
               margin: 0; 
               padding: 10px; 
-              width: 58mm; /* 实际可用宽度 */
-              font-size: 12px; /* 适合小票打印的字体大小 */
+              width: 52mm;
+              font-size: 12px;
+              -webkit-print-color-adjust: exact;
             }
             @media print {
               body {
                 margin: 0;
-                padding: 10px;
-                size: 58mm auto; /* 打印机宽度 */
-                width: 58mm; /* 实际可用宽度 */
-                font-size: 12px; /* 适合小票打印的字体大小 */
+                padding: 0 20px 0 0;
+                width: 48mm;
+                size: 48mm auto;
+                font-size: 12px;
+              }
+              * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
               }
             }
           </style>

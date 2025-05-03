@@ -1,5 +1,5 @@
 import React, { memo, useRef, useContext, useState } from 'react';
-import { Button, App } from 'antd';
+import { Button, App, Drawer } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 
 import TableRender, { TableContext } from 'table-render';
@@ -15,13 +15,20 @@ import search from './search';
 import columns from './columns';
 import BitchStock from './BitchStock';
 import SingleStock from './SingleStock';
+import NoStockList from './NoStockList';
+
+import SkuList from './SkuList';
 
 import style from './index.module.less';
 
 const InventroyPage: React.FC = () => {
   const { message } = App.useApp();
   const { currentLang } = useContext(MainContext);
-  const [total, setTotal] = useState(0);
+
+  // 是否展示详情抽屉
+  const [sku, setSku] = useState('');
+  const [sn, setSn] = useState('');
+  const [showDetail, setShowDetail] = useState(false);
 
   const userInfo = getStore('loginData') || {};
 
@@ -34,7 +41,12 @@ const InventroyPage: React.FC = () => {
         params: t,
       });
       const result = response.data;
-      setTotal(result.count);
+      // 如果有SKU，并且查询到了结果，执行自己打开详情的组件
+      if (t.sku && result.count) {
+        setSku(t.sku);
+        setSn(result.data[0].sn);
+        setShowDetail(true);
+      }
       return {
         data: result.data,
         total: result.count,
@@ -64,18 +76,31 @@ const InventroyPage: React.FC = () => {
         title={`${language[currentLang].inventory.tableTitle}`}
         scroll={{ x: 'max-content' }}
         pagination={{
-          total,
+          showSizeChanger: true,
           showTotal: (total, range) => `${language[currentLang].common.total}: ${total}`,
         }}
         toolbarRender={ 
           <>
             <Button onClick={refreshData}><RedoOutlined />{language[currentLang].inventory.refresh}</Button>
+            <NoStockList />
             {
               userInfo?.id === 1 ? <SingleStock callback={refreshData} /> : null
             }
           </>
         }
       />
+      {
+        showDetail ? (
+          <Drawer
+            title={`${language[currentLang].inventory.detail}`}
+            width={800}
+            open={showDetail}
+            onClose={() => setShowDetail(false)}
+          >
+            <SkuList sku={sku} sn={sn} />
+          </Drawer>
+        ) : null
+      }
     </div>
   );
 

@@ -1,11 +1,19 @@
 import language from '@/common/language';
 import { getStore } from '@common/electron';
 const currentLang = getStore('currentLang') || 'en';
-const skuColumns = [
+
+const columns = [
   {
     title: language[currentLang].inventory.tableColumnSku,
     dataIndex: 'sku',
     key: 'sku',
+    copyable: true,
+  },
+  {
+    title: language[currentLang].inventory.tableColumnStyleNo,
+    dataIndex: 'sn',
+    key: 'sn',
+    copyable: true,
   },
   {
     title: language[currentLang].inventory.tableColumnColor,
@@ -34,4 +42,4 @@ const skuColumns = [
   },
 ];
 
-export default skuColumns;
+export default columns;

@@ -197,7 +197,7 @@ const Detail: React.FC<ComProps> = (props) => {
               children: memberInfo.coupon,
             },]
           }
-          column={1}
+          column={2}
           size='small'
           style={{ marginBottom: '24px' }}
         />

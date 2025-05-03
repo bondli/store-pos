@@ -7,6 +7,7 @@ import { PAY_CHANNEL } from '@/common/constant';
 type ComProps = {
   orderInfo: any;
   orderItems?: any[];
+  memberInfo?: any;
 };
 
 // 格式化手机号，中间四位用*代替
@@ -21,7 +22,7 @@ const formatPrice = (price: number) => {
 };
 
 const Bill: React.FC<ComProps> = (props) => {
-  const { orderInfo = {}, orderItems = [] } = props;
+  const { orderInfo = {}, orderItems = [], memberInfo = {} } = props;
 
   if (!orderInfo) {
     return null;
@@ -107,7 +108,7 @@ const Bill: React.FC<ComProps> = (props) => {
           <tr style={{ fontSize: '12px', lineHeight: '1.5' }}>
             <th style={{ textAlign: 'left' }}>款式/品名</th>
             <th style={{ textAlign: 'center' }}>数量</th>
-            <th style={{ textAlign: 'center' }}>单价</th>
+            <th style={{ textAlign: 'center' }}>吊牌价</th>
             <th style={{ textAlign: 'center' }}>实收</th>
           </tr>
         </thead>
@@ -121,7 +122,7 @@ const Bill: React.FC<ComProps> = (props) => {
                 <tr style={{ fontSize: '12px', lineHeight: '1.5' }}>
                   <td></td>
                   <td style={{ textAlign: 'center' }}>{item.counts}</td>
-                  <td style={{ textAlign: 'center' }}>{formatPrice(item.originalPrice * item.discount)}</td>
+                  <td style={{ textAlign: 'center' }}>{formatPrice(item.originalPrice)}</td>
                   <td style={{ textAlign: 'center' }}>{formatPrice(item.actualPrice)}</td>
                 </tr>
               </Fragment>
@@ -132,15 +133,39 @@ const Bill: React.FC<ComProps> = (props) => {
     );
   };
 
+  const getMemberContent = () => {
+    if (!orderInfo.userPhone) {
+      return null;
+    }
+    return (
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ textAlign: 'center', fontSize: '14px', padding: '30px 0 10px' }}>
+          <span>会员信息</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #999' }}>
+          <span style={{ fontSize: '12px' }}>会员积分</span>
+          <span style={{ fontSize: '12px' }}>{memberInfo.point}</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #999' }}>
+          <span style={{ fontSize: '12px' }}>优惠券</span>
+          <span style={{ fontSize: '12px' }}>{memberInfo.coupon}</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #999' }}>
+          <span style={{ fontSize: '12px' }}>会员余额</span>
+          <span style={{ fontSize: '12px' }}>{memberInfo.balance}</span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div style={{ width: '100%', height: '100%', backgroundColor: '#fff' }}>
-      <StoreLogo />
       <div style={{ textAlign: 'center', fontSize: '16px', padding: '10px 0 30px' }}>
         <span>戴维贝拉世纪金源店</span>
       </div>
       {
         dataSource.map((item) => (
-          <div key={item.key} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #cccccc' }}>
+          <div key={item.key} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #999' }}>
             <span style={{ fontSize: '12px' }}>{item.label}</span>
             <span style={{ fontSize: '12px' }}>{item.value}</span>
           </div>
@@ -149,8 +174,11 @@ const Bill: React.FC<ComProps> = (props) => {
       {
         getItemsContent()
       }
+      {
+        getMemberContent()
+      }
       <div style={{ textAlign: 'center', fontSize: '12px', padding: '10px 0', lineHeight: '1.5' }}>
-        如需换货，请确保吊牌完好<br />不影响二次销售，携带小票到店换货
+        如需换货，请确保吊牌完好<br />不影响二次销售的情况下<br />携带小票到店换货
       </div>
       <div style={{ textAlign: 'center', fontSize: '12px', padding: '10px 0', lineHeight: '1.5' }}>
         店长微信：17757058183
@@ -158,6 +186,7 @@ const Bill: React.FC<ComProps> = (props) => {
       <div style={{ textAlign: 'center', fontSize: '16px', padding: '10px 0 30px' }}>
         <span>谢谢惠顾</span>
       </div>
+      <StoreLogo />
     </div>
   );
 };

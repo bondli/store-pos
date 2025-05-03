@@ -188,7 +188,8 @@ export const changeOrderItem = async (req: Request, res: Response) => {
       if (inventory) {
         const inventoryData = inventory.toJSON();
         await inventory.update({
-          counts: inventoryData.counts + item.counts
+          counts: inventoryData.counts + item.counts,
+          saleCounts: inventoryData.saleCounts - item.counts
         });
       }
     }
@@ -200,7 +201,8 @@ export const changeOrderItem = async (req: Request, res: Response) => {
       if (inventory) {
         const inventoryData = inventory.toJSON();
         await inventory.update({
-          counts: inventoryData.counts - item.counts
+          counts: inventoryData.counts - item.counts,
+          saleCounts: inventoryData.saleCounts + item.counts
         });
       }
     }
@@ -269,6 +271,7 @@ export const refundOrderItem = async (req: Request, res: Response) => {
     for (const item of refundItems) {
       await Inventory.update({
         counts: Sequelize.literal(`counts + ${item.counts || 1}`),
+        saleCounts: Sequelize.literal(`saleCounts - ${item.counts || 1}`),
       }, {
         where: {
           sku: item.sku,
@@ -418,7 +421,12 @@ export const modifyOrder = async (req: Request, res: Response) => {
         console.log(saler);
       }
     }
-    await result.update({ payType, orderActualAmount, salerId, salerName, userPhone, remark });
+    const updateData = { payType, salerId, salerName, userPhone, remark, orderActualAmount: orderData.orderActualAmount };
+    // 订单没有完成对账才能修改实付金额，否则不能修改，防止导购员修改实付金额
+    if (orderData.orderStatus !== 'checked') {
+      updateData.orderActualAmount = orderActualAmount;
+    }
+    await result.update(updateData);
     res.json(result.toJSON());
   } catch (error) {
     logger.error('Error modify Order:');
@@ -495,3 +503,40 @@ export const exportOrder = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+// 查询订单下的商品列表
+export const queryOrderItemListByDate = async (req: Request, res: Response) => {
+  const { start, end, pageSize, current } = req.query;
+  const limit = Number(pageSize);
+  const offset = (Number(current) - 1) * limit;
+
+  const where = {};
+
+  if (start && end) {
+    const startTime = dayjs(start as string).startOf('day').toDate();
+    const endTime = dayjs(end as string).endOf('day').toDate();
+
+    where['createdAt'] = {
+      [Op.gte]: startTime,
+      [Op.lte]: endTime,
+    };
+  }
+
+  try {
+    const { count, rows } = await OrderItems.findAndCountAll({
+      where,
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    });
+    res.json({
+      count: count || 0,
+      data: rows || [],
+    });
+  } catch (error) {
+    logger.error('Error getting Order items by date:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+
+}

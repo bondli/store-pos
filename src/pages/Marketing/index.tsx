@@ -1,4 +1,4 @@
-import React, { memo, useRef, useContext } from 'react';
+import React, { memo, useRef, useContext, useState } from 'react';
 import { Button, App } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 
@@ -55,6 +55,10 @@ const MarketingPage: React.FC = () => {
         columns={columns as ProColumnsType}
         title={`${language[currentLang].marketing.tableTitle}`}
         scroll={{ x: 'max-content' }}
+        pagination={{
+          showSizeChanger: true,
+          showTotal: (total, range) => `${language[currentLang].common.total}: ${total}`,
+        }}
         toolbarRender={
           <>
             <Button onClick={refreshData}><RedoOutlined />{language[currentLang].marketing.refresh}</Button>

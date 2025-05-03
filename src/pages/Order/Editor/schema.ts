@@ -29,14 +29,13 @@ export default {
     },
     orderActualAmount: {
       title: language[currentLang].order.tableColumnActual,
-      placeholder: 'input actual mount',
       type: 'number',
       required: true,
       widget: 'input',
     },
     salerId: {
       title: language[currentLang].order.tableColumnSaler,
-      placeholder: 'select saler',
+      placeholder: language[currentLang].order.searchPlaceholderSalerName,
       type: 'number',
       required: true,
       widget: 'select',
@@ -47,13 +46,12 @@ export default {
     },
     userPhone: {
       title: language[currentLang].order.tableColumnUser,
-      placeholder: 'input user phone',
+      placeholder: language[currentLang].order.searchPlaceholderUserPhone,
       type: 'string',
       widget: 'input',
     },
     remark: {
       title: language[currentLang].order.tableColumnRemark,
-      placeholder: 'input remark',
       type: 'string',
       widget: 'input',
     },

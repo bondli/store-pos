@@ -37,6 +37,7 @@ const DataPage: React.FC = () => {
     orderAmount: 0,
     orderCount: 0,
     inventoryCount: 0,
+    saledItemCount: 0,
     memberCount: 0
   });
 
@@ -131,6 +132,7 @@ const DataPage: React.FC = () => {
             <Statistic
               title={`${language[currentLang].data.itemCount}`}
               value={statistics.inventoryCount}
+              suffix={`/ ${statistics.saledItemCount}`}
               formatter={formatter}
             />
           </Card>

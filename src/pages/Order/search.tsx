@@ -29,6 +29,7 @@ const schema = {
       format: 'date',
       props: {
         disabledDate,
+        defaultValue: [dayjs(), dayjs()],
       },
     },
     userPhone: {

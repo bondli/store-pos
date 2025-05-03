@@ -18,6 +18,7 @@ import {
   modifyOrder,
   queryOrderCouponList,
   exportOrder,
+  queryOrderItemListByDate,
 } from './order-controller';
 
 import {
@@ -32,6 +33,7 @@ import {
   batchCreateInventory,
   batchReturnsInventory,
   downloadTemplate,
+  queryNoStockList,
 } from './inventory-controller';
 
 import {
@@ -90,6 +92,7 @@ router.post('/order/checkBill', checkOrderBill); // 确认订单
 router.post('/order/modify', modifyOrder); // 修改订单
 router.get('/order/queryCouponList', queryOrderCouponList); // 查询订单中的优惠券列表
 router.post('/order/export', exportOrder); // 导出订单
+router.get('/order/queryOrderItemListByDate', queryOrderItemListByDate); // 根据日期查询订单商品列表
 
 // 商品相关接口
 router.get('/inventory/queryTotal', queryInventoryTotal); // 库存总量
@@ -103,6 +106,7 @@ router.post('/inventory/batchProcessReturnsData', batchProcessReturnsData); // �
 router.post('/inventory/batchCreate', batchCreateInventory); // 批量入库
 router.post('/inventory/batchReturns', batchReturnsInventory); // 批量退库
 router.post('/inventory/template', downloadTemplate); // 下载模板
+router.get('/inventory/getNoStockList', queryNoStockList); // 查询断码商品列表
 
 // 会员相关接口
 router.get('/member/list', getMemberList); // 会员列表

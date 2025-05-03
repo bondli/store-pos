@@ -51,6 +51,12 @@ const Inventory = sequelize.define('Inventory', {
     allowNull: false,
     defaultValue: 0,
   },
+  saleCounts: {
+    comment: '销售数量',
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
   counts: {
     comment: '库存数量',
     type: DataTypes.INTEGER,

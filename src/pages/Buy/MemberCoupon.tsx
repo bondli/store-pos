@@ -195,7 +195,7 @@ const MemberCoupon: React.FC = () => {
             value={buyer.point}
             suffix={<span style={{ fontSize: 12, color: '#999' }}>{usePoint > 0 ? `-${usePoint}` : ''}</span>}
           />
-          <Button size='small' style={{ marginTop: 16 }} disabled={buyer.point <= 0} onClick={handleUsePoint}>use</Button>
+          <Button size='small' style={{ marginTop: 16 }} disabled={buyer.point <= 0} onClick={handleUsePoint}>{language[currentLang].buy.use}</Button>
         </Col>
         <Col span={6}>
           <Statistic
@@ -204,7 +204,7 @@ const MemberCoupon: React.FC = () => {
             precision={2}
             suffix={<span style={{ fontSize: 12, color: '#999' }}>{useBalance > 0 ? `-${useBalance}` : ''}</span>}
           />
-          <Button size='small' style={{ marginTop: 16 }} disabled={buyer.balance <= 0} onClick={handleUseBalance}>use</Button>
+          <Button size='small' style={{ marginTop: 16 }} disabled={buyer.balance <= 0} onClick={handleUseBalance}>{language[currentLang].buy.use}</Button>
         </Col>
         <Col span={6}>
           <Statistic
@@ -212,14 +212,14 @@ const MemberCoupon: React.FC = () => {
             value={couponList.length}
             suffix={<span style={{ fontSize: 12, color: '#999' }}>{useCoupon?.couponValue > 0 ? `-${useCoupon.couponValue}` : ''}</span>}
           />
-          <Button size='small' style={{ marginTop: 16 }} disabled={couponList.length === 0} onClick={handleUseCoupon}>use</Button>
+          <Button size='small' style={{ marginTop: 16 }} disabled={couponList.length === 0} onClick={handleUseCoupon}>{language[currentLang].buy.use}</Button>
         </Col>
         <Col span={6}>
           <Statistic
             title={language[currentLang].buy.userBigdayCoupon}
             value={bigdayCouponList.length}
           />
-          <Button size='small' style={{ marginTop: 16 }} disabled={bigdayCouponList.length === 0} onClick={handleUseBigdayCoupon}>use</Button>
+          <Button size='small' style={{ marginTop: 16 }} disabled={bigdayCouponList.length === 0} onClick={handleUseBigdayCoupon}>{language[currentLang].buy.use}</Button>
         </Col>
       </Row>
       <Modal

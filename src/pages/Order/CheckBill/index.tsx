@@ -64,13 +64,13 @@ const CheckBill: React.FC<ComProps> = (props) => {
 
   const columns = [
     {
-      title: 'sn',
+      title: language[currentLang].order.tableColumnOrderNo,
       dataIndex: 'orderSn',
       key: 'orderSn',
       fixed: 'left',
     },
     {
-      title: 'actual',
+      title: language[currentLang].order.tableColumnActual,
       align: 'center',
       dataIndex: 'orderActualAmount',
       key: 'orderActualAmount',
@@ -78,7 +78,7 @@ const CheckBill: React.FC<ComProps> = (props) => {
       fixed: 'left',
     },
     {
-      title: 'payment',
+      title: language[currentLang].order.tableColumnPayment,
       align: 'center',
       dataIndex: 'payType',
       key: 'payType',
@@ -87,13 +87,13 @@ const CheckBill: React.FC<ComProps> = (props) => {
       }
     },
     {
-      title: 'user',
+      title: language[currentLang].order.tableColumnUser,
       align: 'center',
       dataIndex: 'userPhone',
       key: 'userPhone',
     },
     {
-      title: 'status',
+      title: language[currentLang].order.tableColumnStatus,
       align: 'center',
       dataIndex: 'orderStatus',
       key: 'orderStatus',
@@ -106,7 +106,7 @@ const CheckBill: React.FC<ComProps> = (props) => {
       }
     },
     {
-      title: 'operation',
+      title: language[currentLang].order.tableColumnOperation,
       align: 'center',
       render: (row, record) => {
         return (

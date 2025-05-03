@@ -23,6 +23,7 @@ type ComProps = {
 const defaultOrderInfo = {
   orderSn: '',
   createdAt: '',
+  originalAmount: 0,
   orderAmount: 0,
   orderActualAmount: 0,
   orderItems: 0,
@@ -128,51 +129,51 @@ const Detail: React.FC<ComProps> = (props) => {
           bordered
           items={
             [{
-              key: '1',
+              key: 'orderSn',
               label: language[currentLang].order.tableColumnOrderNo,
               children: orderInfo.orderSn,
             }, {
-              key: '2',
+              key: 'createdAt',
               label: language[currentLang].order.tableColumnOrderTime,
               children: dayjs(orderInfo.createdAt).format('YYYY-MM-DD HH:mm:ss'),
             }, {
-              key: '3',
+              key: 'originalAmount',
+              label: language[currentLang].order.tableColumnOriginal,
+              children: orderInfo.originalAmount,
+            }, {
+              key: 'orderAmount',
               label: language[currentLang].order.tableColumnAmount,
               children: orderInfo.orderAmount,
             }, {
-              key: '4',
+              key: 'orderActualAmount',
               label: language[currentLang].order.tableColumnActual,
               children: orderInfo.orderActualAmount,
             }, {
-              key: '5',
+              key: 'payType',
               label: language[currentLang].order.tableColumnPayment,
               children: PAY_CHANNEL[orderInfo.payType] || 'unknown',
             }, {
-              key: '6',
+              key: 'orderItems',
               label: language[currentLang].order.tableColumnItems,
               children: orderInfo.orderItems,
             }, {
-              key: '7',
+              key: 'userPhone',
               label: language[currentLang].order.tableColumnUser,
-              children: orderInfo.userPhone,
+              children: orderInfo.userPhone || '--',
             }, {
-              key: '8',
+              key: 'salerName',
               label: language[currentLang].order.tableColumnSaler,
               children: orderInfo.salerName,
             }, {
-              key: '9',
-              label: language[currentLang].order.tableColumnUseCoupon,
-              children: orderInfo.useCoupon || '--',
-            }, {
-              key: '10',
+              key: 'usePoint',
               label: language[currentLang].order.tableColumnUsePoint,
               children: orderInfo.usePoint || '--',
             }, {
-              key: '11',
+              key: 'useBalance',
               label: language[currentLang].order.tableColumnUseBalance,
               children: orderInfo.useBalance || '--',
             }, {
-              key: '12',
+              key: 'remark',
               label: language[currentLang].order.tableColumnRemark,
               children: orderInfo.remark || '--',
             }]

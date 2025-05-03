@@ -123,6 +123,35 @@ export const queryDetailBySku = async (req: Request, res: Response) => {
   }
 };
 
+// 查询断码商品列表
+export const queryNoStockList = async (req: Request, res: Response) => {
+  const { pageSize, current } = req.query;
+  const limit = Number(pageSize);
+  const offset = (Number(current) - 1) * limit;
+  const where = {
+    counts: {
+      [Op.lte]: 0,
+    },
+  };
+
+  try {
+    const { count, rows } = await Inventory.findAndCountAll({
+      where,
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    });
+    res.json({
+      count: count || 0,
+      data: rows || [],
+    });
+  } catch (error) {
+    logger.error('Error getting no stock list:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 // 单个入库
 export const createInventory = async (req: Request, res: Response) => {
   const { sn, sku, name, brand, color, size, originalPrice, costPrice, counts } = req.body;

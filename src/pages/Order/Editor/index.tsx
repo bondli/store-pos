@@ -96,10 +96,10 @@ const Editor: React.FC<ComProps> = (props) => {
           onFinish={onFinish}
           footer={{
             submit: {
-              text: 'confirm',
+              text: language[currentLang].common.confirm,
             },
             reset: {
-              text: 'reset',
+              text: language[currentLang].common.reset,
               hide: true,
             }
           }}

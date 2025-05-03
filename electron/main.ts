@@ -162,7 +162,6 @@ const createWindow = () => {
   mainWindow.webContents.on('context-menu', (_, props) => {
     const { Menu } = require('electron');
     const menu = Menu.buildFromTemplate([
-      { label: '剪切', role: 'cut' },
       { label: '复制', role: 'copy' },
       { label: '粘贴', role: 'paste' },
       { type: 'separator' },

@@ -25,7 +25,8 @@ const SubmitBar: React.FC = () => {
 
   const [orderInCache, setOrderInCache] = useState(null);
   const [showSuccessDrawer, setShowSuccessDrawer] = useState(false);
-  
+  const [memberInfo, setMemberInfo] = useState({});
+
   // 打印小票用
   const printRef = useRef<HTMLDivElement>(null);
   const [orderInfo, setOrderInfo] = useState(null);
@@ -37,6 +38,25 @@ const SubmitBar: React.FC = () => {
       setOrderInCache(orderCache);
     }
   }, []);
+
+  // 获取会员信息
+  const getMemberInfo = async (phone: string) => {
+    const response = await request.get('/member/detail', {
+      params: {
+        phone,
+      },
+    });
+    const result = response.data;
+    if (!result.error) {
+      setMemberInfo(result);
+    }
+  };
+
+  useEffect(() => {
+    if (showSuccessDrawer && orderInfo?.userPhone) {
+      getMemberInfo(orderInfo.userPhone);
+    }
+  }, [showSuccessDrawer, orderInfo]);
 
   // 取消下单
   const handleReset = () => {
@@ -161,7 +181,7 @@ const SubmitBar: React.FC = () => {
           ]}
         />
         <div ref={printRef} style={{ display: 'block' }}>
-          <Bill orderInfo={orderInfo} orderItems={orderItems} />
+          <Bill orderInfo={orderInfo} orderItems={orderItems} memberInfo={memberInfo} />
         </div>
       </Drawer>
     </Row>

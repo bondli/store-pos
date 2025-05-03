@@ -10,6 +10,12 @@ const userInfo = getStore('loginData') || {};
 
 const columns = [
   {
+    title: language[currentLang].inventory.tableColumnSku,
+    dataIndex: 'sku',
+    key: 'sku',
+    copyable: true,
+  },
+  {
     title: language[currentLang].inventory.tableColumnStyleNo,
     dataIndex: 'sn',
     key: 'sn',
@@ -27,12 +33,6 @@ const columns = [
     dataIndex: 'brand',
     key: 'brand',
     fixed: 'left',
-  },
-  {
-    title: language[currentLang].inventory.tableColumnSku,
-    dataIndex: 'sku',
-    key: 'sku',
-    copyable: true,
   },
   {
     title: language[currentLang].inventory.tableColumnColor,
@@ -56,6 +56,12 @@ const columns = [
     align: 'center',
     dataIndex: 'counts',
     key: 'counts',
+  },
+  {
+    title: language[currentLang].inventory.tableColumnSaleCounts,
+    align: 'center',
+    dataIndex: 'saleCounts',
+    key: 'saleCounts',
   },
   {
     title: language[currentLang].inventory.tableColumnOperation,

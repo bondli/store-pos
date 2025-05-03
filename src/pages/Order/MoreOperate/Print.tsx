@@ -35,6 +35,8 @@ const Print: React.FC<ComProps> = (props) => {
   const [showPanel, setShowPanel] = useState(false);
   const [orderInfo, setOrderInfo] = useState(defaultOrderInfo);
   const [orderItems, setOrderItems] = useState([]);
+  const [memberInfo, setMemberInfo] = useState({});
+
   const printRef = useRef<HTMLDivElement>(null);
   
   const togglePanel = () => {
@@ -53,6 +55,9 @@ const Print: React.FC<ComProps> = (props) => {
       const result = response.data;
       if (!result.error) {
         setOrderInfo(result);
+        if (result.userPhone) {
+          getMemberInfo(result.userPhone);
+        }
       }
 
     } catch (error) {
@@ -72,6 +77,19 @@ const Print: React.FC<ComProps> = (props) => {
       setOrderItems(result.data);
     } catch (error) {
       message.error('查询订单商品失败');
+    }
+  };
+
+  // 获取会员信息
+  const getMemberInfo = async (phone: string) => {
+    const response = await request.get('/member/detail', {
+      params: {
+        phone,
+      },
+    });
+    const result = response.data;
+    if (!result.error) {
+      setMemberInfo(result);
     }
   };
 
@@ -113,7 +131,7 @@ const Print: React.FC<ComProps> = (props) => {
         }
       >
         <div ref={printRef}>
-          <Bill orderInfo={orderInfo} orderItems={orderItems} />
+          <Bill orderInfo={orderInfo} orderItems={orderItems} memberInfo={memberInfo} />
         </div>
       </Drawer>
     </>

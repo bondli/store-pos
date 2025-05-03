@@ -228,13 +228,21 @@ export const memberIncomeBalance = async (req: Request, res: Response) => {
       // 更新用户余额
       await resultCheckExists.increment({
         balance: justifyBalance,
+        // 充值了多少钱就直接加多少积分给用户
+        point: Number(inComeBalance),
       });
-      // 充值后自动升级为超级会员
-      if (justifyBalance >= 1000) {
-        await resultCheckExists.update({
-          level: 'super',
-        });
-      }
+      // 充值大于1000的自动升级为超级会员
+      await resultCheckExists.update({
+        level: justifyBalance >= 1000 ? 'super' : 'normal',
+      });
+      // 写入积分流水表
+      await MemberScore.create({
+        phone,
+        point: inComeBalance,
+        type: 'income',
+        reason: `充值${inComeBalance}获得${inComeBalance}积分`,
+      });
+
       // 插入记录到用户余额记录表
       const balanceRecords: Array<{
         phone: string;
@@ -271,10 +279,8 @@ export const memberIncomeBalance = async (req: Request, res: Response) => {
           couponExpiredTime: dayjs().add(1, 'year').toDate(), // 1年后过期
         });
         // 用户的基本信息表中更新优惠券数量
-        await Member.increment({
-          couponCount: 1,
-        }, {
-          where: { phone },
+        await resultCheckExists.increment({
+          coupon: 1,
         });
       }
       // 批量写入充值流水记录

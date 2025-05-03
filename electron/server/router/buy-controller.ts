@@ -113,8 +113,10 @@ export const submitOrder = async (req: Request, res: Response) => {
         logger.error(`Insufficient inventory for SKU: ${item.sku}`);
       }
 
+      // 扣减库存的同时增加销量
       await inventory.update({
-        counts: inventoryData.counts - item.counts
+        counts: inventoryData.counts - item.counts,
+        saleCounts: inventoryData.saleCounts + item.counts
       });
     }
 
@@ -425,8 +427,10 @@ export const importOrder = async (req: Request, res: Response) => {
           logger.error(`Insufficient inventory for SKU: ${item.sku}`);
         }
 
+        // 扣减库存的同时增加销量
         await inventory.update({
-          counts: inventoryData.counts - item.counts
+          counts: inventoryData.counts - item.counts,
+          saleCounts: inventoryData.saleCounts + item.counts
         });
       }
 

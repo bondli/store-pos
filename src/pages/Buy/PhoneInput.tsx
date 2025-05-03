@@ -18,6 +18,14 @@ const PhoneInput: React.FC = () => {
 
   const [memberPhone, setMemberPhone] = useState('');
 
+  // 处理用户输入手机号，如果长度达到11位，则自动查询会员信息
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setMemberPhone(value);
+    if (value.length === 11) {
+      handleMemberSearch(value);
+    }
+  };
   // 处理会员手机号查询
   const handleMemberSearch = async (value: string) => {
     if (!value) {
@@ -81,7 +89,7 @@ const PhoneInput: React.FC = () => {
       allowClear
       onSearch={handleMemberSearch}
       value={memberPhone}
-      onChange={(e) => setMemberPhone(e.target.value)}
+      onChange={handleChange}
     />
   );
 

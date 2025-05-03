@@ -1,6 +1,7 @@
 import React, { memo, useState, useRef, useContext } from 'react';
 import { Button, App } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
@@ -13,6 +14,7 @@ import { MainContext } from '@/common/context';
 import search from './search';
 import columns from './columns';
 import Summary from './Summary';
+import OrderItemList from './OrderItemList';
 import CheckBill from './CheckBill';
 import QueryBySKU from './QueryBySKU';
 import ExportAndImport from './ExportAndImport';
@@ -29,6 +31,10 @@ const OrderPage: React.FC = () => {
   const getOrderList = async (t) => {
     userLog('request order list params:', t);
     try {
+      if (!t.start || !t.end) {
+        t.start = dayjs().format('YYYY-MM-DD');
+        t.end = dayjs().format('YYYY-MM-DD');
+      }
       const response = await request.get('/order/queryList', {
         params: t,
       });
@@ -67,9 +73,15 @@ const OrderPage: React.FC = () => {
           </div>
         }
         scroll={{ x: 'max-content' }}
+        pagination={{
+          pageSize: 100,
+          showSizeChanger: true,
+          showTotal: (total, range) => `${language[currentLang].common.total}: ${total}`,
+        }}
         toolbarRender={ 
           <>
             <Button onClick={refreshData}><RedoOutlined />{language[currentLang].order.refresh}</Button>
+            <OrderItemList />
             <CheckBill dataList={dataList} callback={refreshData} />
             {
               userInfo?.id === 1 && (

@@ -7,6 +7,7 @@ import { sequelize } from '../model/index';
 import { Order } from '../model/order';
 import { Inventory } from '../model/inventory';
 import { Member } from '../model/member';
+import { OrderItems } from '../model/orderItems'; 
 
 // 查询系统核心的统计数据
 export const getCoreData = async (req: Request, res: Response) => {
@@ -25,7 +26,7 @@ export const getCoreData = async (req: Request, res: Response) => {
     }
 
     // 并行查询所有统计数据
-    const [orderStats, inventoryCount, memberCount] = await Promise.all([
+    const [orderStats, inventoryCount, saledItemCount, memberCount] = await Promise.all([
       // 查询订单统计
       Order.findAll({
         where: {
@@ -41,6 +42,8 @@ export const getCoreData = async (req: Request, res: Response) => {
       }),
       // 查询库存总量
       Inventory.sum('counts'),
+      // 销售的商品数量
+      OrderItems.sum('counts'),
       // 查询会员总量
       Member.count()
     ]);
@@ -53,7 +56,8 @@ export const getCoreData = async (req: Request, res: Response) => {
       orderCount: Number(orderCount),
       orderAmount: Number(totalAmount),
       inventoryCount: Number(inventoryCount || 0),
-      memberCount: Number(memberCount || 0)
+      memberCount: Number(memberCount || 0),
+      saledItemCount: Number(saledItemCount || 0)
     });
   } catch (error) {
     logger.error('Error getting core data:');
