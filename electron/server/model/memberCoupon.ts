@@ -15,7 +15,7 @@ const MemberCoupon = sequelize.define('MemberCoupon', {
   },
   couponId: {
     comment: '优惠券ID', // 发券的时候通过uuid来生成
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   couponCondition: {

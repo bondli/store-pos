@@ -216,7 +216,7 @@ export const submitOrder = async (req: Request, res: Response) => {
         });
         // 用户的基本信息表中更新优惠券数量
         await Member.increment({
-          couponCount: -1,
+          coupon: -1,
         }, {
           where: { phone: buyer.phone }
         });
@@ -530,7 +530,7 @@ export const importOrder = async (req: Request, res: Response) => {
           });
           // 用户的基本信息表中更新优惠券数量
           await Member.increment({
-            couponCount: -1,
+            coupon: -1,
           }, {
             where: { phone: buyer.phone }
           });
