@@ -33,6 +33,12 @@ const skuColumns = [
     dataIndex: 'counts',
     key: 'counts',
   },
+  {
+    title: language[currentLang].inventory.tableColumnSaleCounts,
+    align: 'center',
+    dataIndex: 'saleCounts',
+    key: 'saleCounts',
+  },
 ];
 
 export default skuColumns;

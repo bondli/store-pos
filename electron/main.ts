@@ -13,6 +13,7 @@ import dayjs from 'dayjs';
 logger.transports.file.fileName = 'main.log';
 logger.transports.file.level = 'info';
 logger.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}]{scope} {text}';
+logger.transports.file.maxSize = 10 * 1024 * 1024; // 10MB，超过后自动归档
 
 // 数据持久化
 const store = new Store();

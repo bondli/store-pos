@@ -249,9 +249,19 @@ export const refundOrderItem = async (req: Request, res: Response) => {
       return res.json({ error: 'Order not found' });
     }
     const orderData = order.toJSON();
+    // 使用Decimal处理金额相关的计算，避免精度问题
+    const decOrderActualAmount = new Decimal(orderData.orderActualAmount).minus(refundAmount);
+    const decOriginalAmount = new Decimal(orderData.originalAmount).minus(
+      refundItems.reduce((sum, item) => new Decimal(sum).plus(new Decimal(item.originalPrice || 0).mul(item.counts || 1)), new Decimal(0))
+    );
+    const decOrderAmount = new Decimal(orderData.orderAmount).minus(
+      refundItems.reduce((sum, item) => new Decimal(sum).plus(new Decimal(item.originalPrice || 0).mul(0.59).mul(item.counts || 1)), new Decimal(0))
+    );
     await order.update({
       orderStatus: 'refund', // 退货后，订单状态为退货
-      orderActualAmount: orderData.orderActualAmount - refundAmount, // 退货后，订单实收金额减少
+      orderActualAmount: decOrderActualAmount.toNumber(), // 退货后，订单实收金额减少
+      originalAmount: decOriginalAmount.toNumber(), // 退货后，订单中吊牌总价也需要减少
+      orderAmount: decOrderAmount.toNumber(), // 退货后，订单中应付金额也需要减少
       orderItems: orderData.orderItems - refundItems.reduce((sum, item) => sum + (item.counts || 1), 0), // 退货后，订单中的商品数量减少
     });
 

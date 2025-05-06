@@ -20,6 +20,7 @@ const pointColumns = [
       exchange: `换货退补`,
       manualAdd: `手动增加`,
       manualReduce: `手动减少`,
+      income: `充值获得`,
     },
   },
   {
