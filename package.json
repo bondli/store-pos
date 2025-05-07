@@ -1,7 +1,7 @@
 {
   "name": "store-pos",
   "description": "简易线下门店POS系统",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "main": "dist/electron/main.js",
   "scripts": {

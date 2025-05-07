@@ -53,6 +53,8 @@ const Returns: React.FC<ComProps> = (props) => {
           // 发请求取预处理数据
           request.post('/inventory/batchProcessReturnsData', {
             dataList: data,
+          }, {
+            timeout: 30000, // 设置30秒超时，因为这是批量处理数据，需要更长的处理时间
           }).then((res) => {  
             const result = res.data;
             if (result.success) {
@@ -85,6 +87,8 @@ const Returns: React.FC<ComProps> = (props) => {
     }
     const response = await request.post('/inventory/batchReturns', {
       dataList,
+    }, {
+      timeout: 30000, // 设置30秒超时，因为这是批量处理数据，需要更长的处理时间
     });
     const result = response.data;
     if (!result.error) {

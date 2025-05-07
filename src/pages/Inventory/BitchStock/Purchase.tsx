@@ -53,40 +53,42 @@ const Purchase: React.FC<ComProps> = (props) => {
           // 判断excel的表头是否设置正确
           const headers = data[0];
           if (!headers.品名) {
-            message.error('表头设置缺少字段“品名”，请检查');
+            message.error('表头设置缺少字段"品名"，请检查');
             return;
           }
           if (!headers.货号) {
-            message.error('表头设置缺少字段“货号”，请检查');
+            message.error('表头设置缺少字段"货号"，请检查');
             return;
           }
           if (!headers.条码) {
-            message.error('表头设置缺少字段“条码”，请检查');
+            message.error('表头设置缺少字段"条码"，请检查');
             return;
           }
           if (!headers.尺码) {
-            message.error('表头设置缺少字段“尺码”，请检查');
+            message.error('表头设置缺少字段"尺码"，请检查');
             return;
           }
           if (!headers.颜色) {
-            message.error('表头设置缺少字段“颜色”，请检查');
+            message.error('表头设置缺少字段"颜色"，请检查');
             return;
           }
           if (!headers.吊牌价) {
-            message.error('表头设置缺少字段“吊牌价”，请检查');
+            message.error('表头设置缺少字段"吊牌价"，请检查');
             return;
           }
           if (!headers.数量) {
-            message.error('表头设置缺少字段“数量”，请检查');
+            message.error('表头设置缺少字段"数量"，请检查');
             return;
           }
           if (!headers.进货价) {
-            message.error('表头设置缺少字段“进货价”，请检查');
+            message.error('表头设置缺少字段"进货价"，请检查');
             return;
           }
           // 发请求取预处理数据
           request.post('/inventory/batchProcessPurchaseData', {
             dataList: data,
+          }, {
+            timeout: 30000, // 设置30秒超时，因为这是批量处理数据，需要更长的处理时间
           }).then((res) => {  
             const result = res.data;
             if (result.success) {
@@ -127,6 +129,8 @@ const Purchase: React.FC<ComProps> = (props) => {
     }
     const response = await request.post('/inventory/batchCreate', {
       dataList: uniqueDataList,
+    }, {
+      timeout: 30000, // 设置30秒超时，因为这是批量处理数据，需要更长的处理时间
     });
     const result = response.data;
     if (!result.error) {

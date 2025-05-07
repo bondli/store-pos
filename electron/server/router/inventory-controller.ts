@@ -203,14 +203,13 @@ export const batchProcessPurchaseData = async (req: Request, res: Response) => {
   const { dataList } = req.body;
 
   let totalCount = 0;
-  // 对传入的数据进行遍历，目的是根据styleNo和sku字段来判断入库方式
-  // 新增一个叫type的字段，值为addSku、addStyle、newStyle
-  // 如果通过styleNo，没有查询到数据，则type赋值newStyle
-  // 如果通过sku没有查询到数据，则type赋值addSku
-  // 如果通过sku查询到了数据，则type赋值addNum
-  // 最后将记录返回
+  
+  // 收集所有需要查询的 sn 和 sku
+  const sns = new Set<string>();
+  const skus = new Set<string>();
+  
+  // 预处理数据，收集所有需要查询的 sn 和 sku
   for (const item of dataList) {
-    // 将中文字段名映射到数据库字段名
     const inventoryData = {
       name: item.品名,
       sn: item.货号,
@@ -229,17 +228,45 @@ export const batchProcessPurchaseData = async (req: Request, res: Response) => {
     }
 
     totalCount += Number(inventoryData.counts);
+    sns.add(inventoryData.sn);
+    skus.add(inventoryData.sku);
+  }
 
-    const sn = inventoryData.sn;
-    const sku = inventoryData.sku;
-    const result = await Inventory.findOne({
-      where: { sn: sn },
-    });
-    if (result) {
-      const resultSku = await Inventory.findOne({
-        where: { sku: sku },
-      });
-      if (resultSku) {
+  // 一次性查询所有相关的库存记录
+  const [snResults, skuResults] = await Promise.all([
+    Inventory.findAll({
+      where: {
+        sn: {
+          [Op.in]: Array.from(sns)
+        }
+      }
+    }),
+    Inventory.findAll({
+      where: {
+        sku: {
+          [Op.in]: Array.from(skus)
+        }
+      }
+    })
+  ]);
+
+  // 创建查询结果的 Map，方便快速查找
+  const snMap = new Map(
+    snResults.map(item => [(item as any).sn, item])
+  );
+  const skuMap = new Map(
+    skuResults.map(item => [(item as any).sku, item])
+  );
+
+  // 处理每条数据
+  for (const item of dataList) {
+    const sn = item.货号;
+    const sku = item.条码;
+
+    const snResult = snMap.get(sn);
+    if (snResult) {
+      const skuResult = skuMap.get(sku);
+      if (skuResult) {
         item['type'] = 'addNum';
       } else {
         item['type'] = 'addSku';
@@ -270,59 +297,129 @@ export const batchCreateInventory = async (req: Request, res: Response) => {
       error: string;
     }> = [];
 
-    // 定义一个变量来保存r入库的总数和错误的数量
+    // 定义一个变量来保存入库的总数和错误的数量
     let totalCount = 0;
     let errorCount = 0;
+
+    // 预处理数据，合并相同 SKU 的数量
+    const skuMap = new Map<string, {
+      counts: number;
+      data: any;
+    }>();
+
     for (const item of dataList) {
-      try {
-        // 将中文字段名映射到数据库字段名
-        const inventoryData = {
-          name: item.品名,
-          sn: item.货号,
-          brand: item.品牌 || '戴维贝拉',
-          sku: item.条码,
-          size: item.尺码,
-          color: item.颜色,
-          originalPrice: item.吊牌价,
-          costPrice: item.进货价 || 0,
-          counts: Number(item.数量)
-        };
-
-        totalCount += Number(inventoryData.counts);
-
-        // 检查该SKU是否已存在
-        const existingItem = await Inventory.findOne({
-          where: { sku: inventoryData.sku }
-        });
-
-        if (existingItem) {
-          // SKU存在，更新库存数量
-          const currentCounts = Number((existingItem as any).counts || 0);
-          const updatedItem = await existingItem.update({
-            counts: currentCounts + inventoryData.counts
-          });
-          results.push({
-            sku: inventoryData.sku,
-            status: 'updated',
-            data: updatedItem.toJSON()
-          });
-        } else {
-          // SKU不存在，创建新记录
-          const newItem = await Inventory.create(inventoryData);
-          results.push({
-            sku: inventoryData.sku,
-            status: 'created',
-            data: newItem.toJSON()
-          });
-        }
-      } catch (itemError) {
-        errorCount += Number(item['数量']);
-        errors.push({
-          sku: item.条码,
-          error: itemError instanceof Error ? itemError.message : String(itemError)
+      const sku = item.条码;
+      const counts = Number(item.数量);
+      
+      if (skuMap.has(sku)) {
+        const existing = skuMap.get(sku)!;
+        existing.counts += counts;
+      } else {
+        skuMap.set(sku, {
+          counts,
+          data: {
+            name: item.品名,
+            sn: item.货号,
+            brand: item.品牌 || '戴维贝拉',
+            sku: item.条码,
+            size: item.尺码,
+            color: item.颜色,
+            originalPrice: item.吊牌价,
+            costPrice: item.进货价 || 0,
+            counts
+          }
         });
       }
     }
+
+    // 获取所有需要查询的 SKU
+    const skus = Array.from(skuMap.keys());
+    
+    // 一次性查询所有相关的库存记录
+    const existingItems = await Inventory.findAll({
+      where: {
+        sku: {
+          [Op.in]: skus
+        }
+      }
+    });
+
+    // 创建查询结果的 Map，方便快速查找
+    const existingMap = new Map(
+      existingItems.map(item => [(item as any).sku, item])
+    );
+
+    // 批量处理数据
+    interface Operation {
+      sku: string;
+      promise: Promise<any>;
+    }
+    const updateOperations: Operation[] = [];
+    const createOperations: Operation[] = [];
+
+    for (const [sku, { counts, data }] of skuMap) {
+      totalCount += counts;
+      const existingItem = existingMap.get(sku);
+
+      if (existingItem) {
+        // SKU存在，更新库存数量
+        const currentCounts = Number((existingItem as any).counts || 0);
+        updateOperations.push({
+          sku,
+          promise: existingItem.update({
+            counts: currentCounts + counts
+          }).then(updatedItem => {
+            results.push({
+              sku,
+              status: 'updated',
+              data: updatedItem.toJSON()
+            });
+          }).catch(error => {
+            errorCount += counts;
+            errors.push({
+              sku,
+              error: error instanceof Error ? error.message : String(error)
+            });
+          })
+        });
+      } else {
+        // SKU不存在，创建新记录
+        createOperations.push({
+          sku,
+          promise: Inventory.create(data).then(newItem => {
+            results.push({
+              sku,
+              status: 'created',
+              data: newItem.toJSON()
+            });
+          }).catch(error => {
+            errorCount += counts;
+            errors.push({
+              sku,
+              error: error instanceof Error ? error.message : String(error)
+            });
+          })
+        });
+      }
+    }
+
+    // 控制并发数量的函数
+    const processBatch = async (operations: Operation[], batchSize: number = 10) => {
+      const batches: Operation[][] = [];
+      for (let i = 0; i < operations.length; i += batchSize) {
+        batches.push(operations.slice(i, i + batchSize));
+      }
+
+      for (const batch of batches) {
+        await Promise.all(batch.map(item => item.promise));
+      }
+    };
+
+    // 分别处理更新和创建操作，每批最多10个并发
+    await Promise.all([
+      processBatch(updateOperations),
+      processBatch(createOperations)
+    ]);
 
     res.json({
       success: true,
@@ -367,6 +464,23 @@ export const batchProcessReturnsData = async (req: Request, res: Response) => {
     newDataList.push(item);
   }
   
+  // 获取所有需要查询的 SKU
+  const skus = newDataList.map(item => item.sku);
+  
+  // 一次性查询所有相关的库存记录
+  const inventoryItems = await Inventory.findAll({
+    where: {
+      sku: {
+        [Op.in]: skus
+      }
+    }
+  });
+
+  // 创建一个 Map 来存储查询结果，方便快速查找
+  const inventoryMap = new Map(
+    inventoryItems.map(item => [(item as any).sku, item.toJSON()])
+  );
+
   // 最后将记录返回
   interface FinalReturnItem extends ReturnItem {
     id?: number;
@@ -381,19 +495,17 @@ export const batchProcessReturnsData = async (req: Request, res: Response) => {
     updatedAt?: Date;
   }
   const finalDataList: FinalReturnItem[] = [];
+
   for (const item of newDataList) {
     totalCount += Number(item.returnCounts);
-
-    const sku = item.sku;
-    const result = await Inventory.findOne({
-      where: { sku },
-    });
-    const data = result?.toJSON();
-    if (data) {
+    const inventoryData = inventoryMap.get(item.sku);
+    
+    if (inventoryData) {
       finalDataList.push({
-        ...data,
+        ...inventoryData,
+        sku: item.sku,
         returnCounts: Number(item.returnCounts),
-      });
+      } as FinalReturnItem);
     }
   }
 
@@ -409,26 +521,60 @@ export const batchReturnsInventory = async (req: Request, res: Response) => {
   const { dataList } = req.body;
   let errorCount = 0;
   let totalCount = 0;
-  // 对dataList进行遍历，将sku作为where条件，将counts的值减去returnCounts再保存
-  for (const item of dataList) {
-    totalCount += Number(item.returnCounts);
-    const result = await Inventory.findOne({
-      where: { sku: item.sku },
-    });
-    if (result) {
-      const updatedItem = await result.decrement('counts', { by: Number(item.returnCounts) });
-      if (!updatedItem) {
-        errorCount += Number(item.returnCounts);
+
+  try {
+    // 获取所有需要处理的 SKU
+    const skus = dataList.map(item => item.sku);
+    
+    // 一次性查询所有相关的库存记录
+    const inventoryItems = await Inventory.findAll({
+      where: {
+        sku: {
+          [Op.in]: skus
+        }
       }
-    } else {
-      errorCount += Number(item.returnCounts);
+    });
+
+    // 创建一个 Map 来存储查询结果，方便快速查找
+    const inventoryMap = new Map(
+      inventoryItems.map(item => [(item as any).sku, item])
+    );
+
+    // 创建一个 Map 来存储每个 SKU 的退货数量
+    const returnCountsMap = new Map<string, number>();
+    dataList.forEach(item => {
+      const currentCount = returnCountsMap.get(item.sku) || 0;
+      returnCountsMap.set(item.sku, currentCount + Number(item.returnCounts));
+    });
+
+    // 批量更新库存
+    const updatePromises: Promise<any>[] = [];
+    for (const [sku, returnCounts] of returnCountsMap) {
+      totalCount += returnCounts;
+      const inventoryItem = inventoryMap.get(sku);
+      
+      if (inventoryItem) {
+        updatePromises.push(
+          inventoryItem.decrement('counts', { by: returnCounts })
+        );
+      } else {
+        errorCount += returnCounts;
+      }
     }
+
+    // 等待所有更新操作完成
+    await Promise.all(updatePromises);
+
+    res.json({
+      success: true,
+      errorCount,
+      totalCount,
+    });
+  } catch (error) {
+    logger.error('Error in batch returns inventory:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-  res.json({
-    success: true,
-    errorCount,
-    totalCount,
-  });
 };
 
 // 下载模板
