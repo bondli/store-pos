@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
-import { userLog, getStore } from '@/common/electron';
+import { userLog, getStore, setStore } from '@/common/electron';
 import request from '@common/request';
 import PageTitle from '@/components/PageTitle';
 import language from '@/common/language';
@@ -35,6 +35,10 @@ const OrderPage: React.FC = () => {
         t.start = dayjs().format('YYYY-MM-DD');
         t.end = dayjs().format('YYYY-MM-DD');
       }
+      const showStatus = getStore('orderShowStatus');
+      if (showStatus === 'hidden') {
+        t.showStatus = 'hidden';
+      }
       const response = await request.get('/order/queryList', {
         params: t,
       });
@@ -53,6 +57,17 @@ const OrderPage: React.FC = () => {
     tableRef.current?.refresh();
   };
 
+  // 点击表格标题的时候切换到隐藏订单
+  const handleTableTitleClick = () => {
+    const showStatus = getStore('orderShowStatus') || 'all';
+    if (showStatus === 'all') {
+      setStore('orderShowStatus', 'hidden');
+    } else {
+      setStore('orderShowStatus', 'all');
+    }
+    tableRef.current?.refresh();
+  };
+
   return (
     <div className={style.container}>
       <PageTitle
@@ -68,7 +83,9 @@ const OrderPage: React.FC = () => {
         columns={columns as ProColumnsType}
         title={
           <div>
-            <span>{language[currentLang].order.tableTitle}</span>
+            <span onClick={handleTableTitleClick} style={{ color: getStore('orderShowStatus') === 'all' ? '#666' : 'inherit' }}>
+              {language[currentLang].order.tableTitle}
+            </span>
             <Summary dataList={dataList} />
           </div>
         }

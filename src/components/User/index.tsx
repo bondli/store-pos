@@ -54,17 +54,18 @@ const User: React.FC = () => {
     {
       type: 'divider',
     },
+    // {
+    //   label: '数据备份',
+    //   key: '2',
+    //   icon: <CloudDownloadOutlined style={{ fontSize: '16px' }} />,
+    // }, {
+    //   label: '恢复数据',
+    //   key: '3',
+    //   icon: <CloudUploadOutlined style={{ fontSize: '16px' }} />,
+    // }, {
+    //   type: 'divider',
+    // },
     {
-      label: '数据备份',
-      key: '2',
-      icon: <CloudDownloadOutlined style={{ fontSize: '16px' }} />,
-    }, {
-      label: '恢复数据',
-      key: '3',
-      icon: <CloudUploadOutlined style={{ fontSize: '16px' }} />,
-    }, {
-      type: 'divider',
-    }, {
       label: '退出登录',
       key: '5',
       icon: <UserSwitchOutlined style={{ fontSize: '16px' }} />,

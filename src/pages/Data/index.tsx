@@ -14,6 +14,7 @@ import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
 import style from './index.module.less';
+import { getStore } from '@/common/electron';
 
 const formatter: StatisticProps['formatter'] = (value) => (
   <CountUp end={value as number} separator="," />
@@ -45,11 +46,14 @@ const DataPage: React.FC = () => {
     return current && current > dayjs().endOf('day');
   };
 
+  const showStatus = getStore('orderShowStatus');
+
   // 获取统计数据
   const fetchStatistics = async () => {
     try {
       const response = await request.post('/data/getCoreData', {
         dateRange,
+        showStatus,
       });
       if (response.data) {
         setStatistics(response.data);
@@ -65,7 +69,11 @@ const DataPage: React.FC = () => {
 
   const fetchChartData = async () => {
     try {
-      const response = await request.get('/data/getOrderCharts');
+      const response = await request.get('/data/getOrderCharts', {
+        params: {
+          showStatus,
+        },
+      });
       if (response.data) {
         setColumnData(response.data);
       }
@@ -76,7 +84,11 @@ const DataPage: React.FC = () => {
 
   const fetchRecentSaleList = async () => {
     try {
-      const response = await request.get('/data/getRecentSaleList');
+      const response = await request.get('/data/getRecentSaleList', {
+        params: {
+          showStatus,
+        },
+      });
       if (response.data) {
         const list = response.data.map((item: any) => ({
           label: <MenuItem label={item.userPhone || '--'} count={item.orderActualAmount} formatMoney={true} />,

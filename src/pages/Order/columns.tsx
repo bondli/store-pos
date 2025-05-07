@@ -140,7 +140,7 @@ const columns = [
     },
   },
   {
-    title: language[currentLang].order.tableColumnStatus,
+    title: language[currentLang].order.tableColumnBillStatus,
     align: 'center',
     dataIndex: 'orderStatus',
     key: 'orderStatus',

@@ -9,7 +9,8 @@ const getPath = (_path) => path.resolve(__dirname, _path);
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
-  console.table({ command, mode });
+  console.table({ command, mode, NODE_ENV: process.env.NODE_ENV });
+  
   const pluginsConfig = [
     eslint({
       fix: true,

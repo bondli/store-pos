@@ -12,6 +12,8 @@ import { OrderItems } from '../model/orderItems';
 // 查询系统核心的统计数据
 export const getCoreData = async (req: Request, res: Response) => {
   const dateRange = req.body.dateRange as string[];
+  const showStatus = req.body.showStatus as string;
+
   let startTime, endTime;
 
   try {
@@ -25,15 +27,21 @@ export const getCoreData = async (req: Request, res: Response) => {
       endTime = dayjs().endOf('day').toDate();
     }
 
+    // 根据showStatus查询订单
+    const orderWhere = {
+      createdAt: {
+        [Op.between]: [startTime, endTime]
+      }
+    };
+    if (showStatus === 'hidden') {
+      orderWhere['showStatus'] = 'normal';
+    }
+
     // 并行查询所有统计数据
     const [orderStats, inventoryCount, saledItemCount, memberCount] = await Promise.all([
       // 查询订单统计
       Order.findAll({
-        where: {
-          createdAt: {
-            [Op.between]: [startTime, endTime]
-          }
-        },
+        where: orderWhere,
         attributes: [
           [sequelize.fn('COUNT', sequelize.col('id')), 'orderCount'],
           [sequelize.fn('SUM', sequelize.col('orderActualAmount')), 'totalAmount']
@@ -68,19 +76,27 @@ export const getCoreData = async (req: Request, res: Response) => {
 
 // 查询订单图表数据
 export const getOrderCharts = async (req: Request, res: Response) => {
-  try {
-    const startTime = dayjs().subtract(365, 'days').startOf('day').toDate();
-    const endTime = dayjs().endOf('day').toDate();
+  const showStatus = req.query.showStatus as string;
 
+  const startTime = dayjs().subtract(365, 'days').startOf('day').toDate();
+  const endTime = dayjs().endOf('day').toDate();
+
+  // 根据showStatus查询订单
+  const orderWhere = {
+    createdAt: {
+      [Op.between]: [startTime, endTime]
+    }
+  };
+  if (showStatus === 'hidden') {
+    orderWhere['showStatus'] = 'normal';
+  }
+
+  try {
     // 查询订单图表数据
     const orderCharts = await Order.findAll({
-      where: {
-        createdAt: {
-          [Op.between]: [startTime, endTime],
-        }
-      },
+      where: orderWhere,
       attributes: [
-        [sequelize.fn('strftime', '%Y/%m', sequelize.literal('datetime(createdAt)')), 'month'],
+        [sequelize.fn('DATE_FORMAT', sequelize.col('createdAt'), '%Y/%m'), 'month'],
         [sequelize.fn('SUM', sequelize.col('orderActualAmount')), 'amounts'],
       ],
       group: ['month'],
@@ -98,17 +114,25 @@ export const getOrderCharts = async (req: Request, res: Response) => {
 
 // 查询最近销售数据
 export const getRecentSaleList = async (req: Request, res: Response) => {
-  try {
-    const startTime = dayjs().subtract(30, 'days').startOf('day').toDate();
-    const endTime = dayjs().endOf('day').toDate();
+  const showStatus = req.query.showStatus as string;
 
+  const startTime = dayjs().subtract(30, 'days').startOf('day').toDate();
+  const endTime = dayjs().endOf('day').toDate();
+
+  // 根据showStatus查询订单
+  const orderWhere = {
+    createdAt: {
+      [Op.between]: [startTime, endTime]
+    }
+  };
+  if (showStatus === 'hidden') {
+    orderWhere['showStatus'] = 'normal';
+  }
+
+  try {
     // 查询最近销售数据
     const recentSaleList = await Order.findAll({
-      where: {
-        createdAt: {
-          [Op.between]: [startTime, endTime]
-        }
-      },
+      where: orderWhere,
       order: [['createdAt', 'DESC']],
       limit: 10
     });

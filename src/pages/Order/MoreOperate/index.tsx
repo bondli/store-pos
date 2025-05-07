@@ -1,6 +1,5 @@
 import React, { memo, useContext } from 'react';
 import { Dropdown, Space } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
 
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
@@ -38,7 +37,6 @@ const MoreOperate: React.FC<ComProps> = (props) => {
         <a onClick={(e) => e.preventDefault()}>
           <Space>
             {language[currentLang].order.moreOperate}
-            <DownOutlined />
           </Space>
         </a>
       </Dropdown>

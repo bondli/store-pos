@@ -152,6 +152,29 @@ export const queryNoStockList = async (req: Request, res: Response) => {
   }
 };
 
+// 查询热销商品列表
+export const queryHotSalesList = async (req: Request, res: Response) => {
+  const { pageSize, current } = req.query;
+  const limit = Number(pageSize);
+  const offset = (Number(current) - 1) * limit;
+
+  try {
+    const { count, rows } = await Inventory.findAndCountAll({
+      order: [['saleCounts', 'DESC']],
+      limit,
+      offset,
+    });
+    res.json({
+      count: count || 0,
+      data: rows || [],
+    });
+  } catch (error) {
+    logger.error('Error getting hot sales list:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 // 单个入库
 export const createInventory = async (req: Request, res: Response) => {
   const { sn, sku, name, brand, color, size, originalPrice, costPrice, counts } = req.body;

@@ -43,18 +43,30 @@ const OrderItems = sequelize.define('OrderItems', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
     defaultValue: 0,
+    get() {
+      const value = this.getDataValue('originalPrice');
+      return value === null ? null : Number(value);
+    }
   },
   discount: {
     comment: '折扣',
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: 100,
+    get() {
+      const value = this.getDataValue('discount');
+      return value === null ? null : Number(value);
+    }
   },
   actualPrice: {
     comment: '实收价',
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
     defaultValue: 0,
+    get() {
+      const value = this.getDataValue('actualPrice');
+      return value === null ? null : Number(value);
+    }
   },
   counts: {
     comment: '销售数量',

@@ -22,6 +22,10 @@ const MemberCoupon = sequelize.define('MemberCoupon', {
     comment: '优惠券条件',
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
+    get() {
+      const value = this.getDataValue('couponCondition');
+      return value === null ? null : Number(value);
+    }
   },
   couponDesc: {
     comment: '优惠券描述',
@@ -32,6 +36,10 @@ const MemberCoupon = sequelize.define('MemberCoupon', {
     comment: '优惠券面额',
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
+    get() {
+      const value = this.getDataValue('couponValue');
+      return value === null ? null : Number(value);
+    }
   },
   couponCount: { // 这个字段估计要废弃，系统发券的时候，相同的直接实例化发给用户
     comment: '优惠券数量',

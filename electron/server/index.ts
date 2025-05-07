@@ -29,8 +29,16 @@ app.all('*', (req, res, next) => {
     // 启动服务器
     app.listen(9527, () => {
       logger.info('Server is running on port 9527');
+      // 通知主进程服务器已启动
+      if (process.send) {
+        process.send({ type: 'server-started', port: 9527 });
+      }
     });
   } catch (error) {
     logger.error('Error starting server:', error);
+    // 如果启动失败，也通知主进程
+    if (process.send) {
+      process.send({ type: 'server-error', error: error.message });
+    }
   }
 })();

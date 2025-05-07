@@ -152,7 +152,7 @@ const Returns: React.FC<ComProps> = (props) => {
       </Button>
       <Drawer
         title={`${language[currentLang].inventory.bitchStockReturnTitle}`}
-        width={800}
+        width={1000}
         open={showPanel}
         onClose={() => setShowPanel(false)}
         destroyOnClose={true}

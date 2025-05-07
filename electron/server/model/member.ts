@@ -19,6 +19,10 @@ const Member = sequelize.define('Member', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: 0,
+    get() {
+      const value = this.getDataValue('actual');
+      return value === null ? null : Number(value);
+    }
   },
   point: {
     comment: '积分余额',
@@ -31,6 +35,10 @@ const Member = sequelize.define('Member', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: 0,
+    get() {
+      const value = this.getDataValue('balance');
+      return value === null ? null : Number(value);
+    }
   },
   coupon: {
     comment: '优惠券',

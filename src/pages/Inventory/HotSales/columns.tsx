@@ -39,12 +39,18 @@ const columns = [
     align: 'center',
     dataIndex: 'counts',
     key: 'counts',
+    render: (row, record) => {
+      return <div style={{ color: record.counts <= 1 ? 'red' : 'green' }}>{record.counts || 0}</div>;
+    }
   },
   {
     title: language[currentLang].inventory.tableColumnSaleCounts,
     align: 'center',
     dataIndex: 'saleCounts',
     key: 'saleCounts',
+    render: (row, record) => {
+      return <div style={{ color: record.saleCounts > 5 ? 'red' : 'green' }}>{record.saleCounts || 0}</div>;
+    }
   },
 ];
 

@@ -94,9 +94,14 @@ const Print: React.FC<ComProps> = (props) => {
   };
 
   // 打印小票
-  const handlePrint = () => {
+  const handlePrint = async () => {
     if (printRef.current) {
       printStr(printRef.current.innerHTML);
+      // 调用接口，让订单的打印状态更新为已打印
+      await request.post('/order/updatePrintStatus', {
+        orderSn,
+        printStatus: 'printed',
+      });
     } else {
       message.error('小票内容为空');
     }

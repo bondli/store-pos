@@ -36,6 +36,9 @@ const schema = {
       title: language[currentLang].order.searchLabelUserPhone,
       type: 'string',
       placeholder: language[currentLang].order.searchPlaceholderUserPhone,
+      props: {
+        allowClear: true,
+      },
     },
     payType: {
       title: language[currentLang].order.searchLabelPayType,
@@ -57,6 +60,9 @@ const schema = {
       title: language[currentLang].order.searchLabelOrderSn,
       type: 'string',
       placeholder: language[currentLang].order.searchPlaceholderOrderSn,
+      props: {
+        allowClear: true,
+      },
     },
     salerId: {
       title: language[currentLang].order.searchLabelSalerName,

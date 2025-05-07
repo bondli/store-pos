@@ -28,18 +28,30 @@ const Order = sequelize.define('Order', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: 0,
+    get() {
+      const value = this.getDataValue('originalAmount');
+      return value === null ? null : Number(value);
+    }
   },
   orderAmount: {
     comment: '商品折扣之后的应付金额',
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: 0,
+    get() {
+      const value = this.getDataValue('orderAmount');
+      return value === null ? null : Number(value);
+    }
   },
   orderActualAmount: {
     comment: '订单实付金额',
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: 0,
+    get() {
+      const value = this.getDataValue('orderActualAmount');
+      return value === null ? null : Number(value);
+    }
   },
   payType: {
     comment: '付款方式',
@@ -64,12 +76,20 @@ const Order = sequelize.define('Order', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: 0,
+    get() {
+      const value = this.getDataValue('useBalance');
+      return value === null ? null : Number(value);
+    }
   },
   useCoupon: {
     comment: '使用优惠券',
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: 0,
+    get() {
+      const value = this.getDataValue('useCoupon');
+      return value === null ? null : Number(value);
+    }
   },
   salerId: {
     comment: '导购员ID',
@@ -100,6 +120,18 @@ const Order = sequelize.define('Order', {
     type: DataTypes.STRING,
     allowNull: true,
     defaultValue: '{}',
+  },
+  printStatus: {
+    comment: '打印状态',
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: 'normal', // normal|printed
+  },
+  showStatus: {
+    comment: '订单展示状态',
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: 'normal', // normal|hidden
   },
 }, {
   // 这是其他模型参数

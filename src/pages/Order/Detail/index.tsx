@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState, useContext } from 'react';
-import { Button, Drawer, Descriptions, App } from 'antd';
+import { Drawer, Descriptions, App } from 'antd';
 import dayjs from 'dayjs';
 
 import TableRender from 'table-render';
@@ -111,12 +111,9 @@ const Detail: React.FC<ComProps> = (props) => {
 
   return (
     <>
-      <Button
-        type='link'
-        onClick={togglePanel}
-      >
+      <a onClick={togglePanel}>
         {language[currentLang].order.orderDetailAction}
-      </Button>
+      </a>
       <Drawer
         title={language[currentLang].order.orderDetail}
         width={800}

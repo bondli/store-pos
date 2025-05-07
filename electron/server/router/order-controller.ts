@@ -52,7 +52,7 @@ export const queryOrderItemList = async (req: Request, res: Response) => {
   
 // 查询订单列表
 export const queryOrderList = async (req: Request, res: Response) => {
-  const { orderSn, start, end, userPhone, payType, salerId, pageSize, current } = req.query;
+  const { orderSn, start, end, userPhone, payType, salerId, pageSize, current, showStatus } = req.query;
   const limit = Number(pageSize);
   const offset = (Number(current) - 1) * limit;
 
@@ -77,6 +77,12 @@ export const queryOrderList = async (req: Request, res: Response) => {
   if (salerId) {
     where['salerId'] = {
       [Op.eq]: salerId,
+    };
+  }
+  // 传入的值是hidden，则查询的结果会排除“隐藏的订单”，只展示“正常”的订单
+  if (showStatus) {
+    where['showStatus'] = {
+      [Op.eq]: 'normal',
     };
   }
 
@@ -548,5 +554,43 @@ export const queryOrderItemListByDate = async (req: Request, res: Response) => {
     console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
-
 }
+
+// 更新订单的打印状态
+export const updatePrintStatus = async (req: Request, res: Response) => {
+  const { orderSn, printStatus } = req.body;
+  try {
+    const result = await Order.findOne({
+      where: { orderSn }
+    });
+    if (!result) {
+      return res.json({ error: 'Order not found' });
+    }
+    await result.update({ printStatus });
+    res.json(result.toJSON());
+  } catch (error) {
+    logger.error('Error updating print status:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+// 切换订单的展示状态
+export const toggleShow = async (req: Request, res: Response) => {
+  const { orderSn, showStatus } = req.body;
+  try {
+    const result = await Order.findOne({
+      where: { orderSn }
+    });
+    if (!result) {
+      return res.json({ error: 'Order not found' });
+    }
+    await result.update({ showStatus });
+    res.json(result.toJSON());
+  } catch (error) {
+    logger.error('Error toggling show status:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+

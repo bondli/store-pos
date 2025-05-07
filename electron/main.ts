@@ -6,10 +6,11 @@ import Store from 'electron-store';
 import logger from 'electron-log';
 import dayjs from 'dayjs';
 
+// 强制设置环境变量
+process.env.NODE_ENV = process.env.ELECTRON_ENV || process.env.NODE_ENV || 'production';
+
 // file position on macOS: ~/Library/Logs/{app name}/main.log
 // file position on windows: C:\Users\Administrator\AppData\Roaming\store-pos\main.log
-// db file position on macOs:  ~/Library/Application Support/store-pos/sqlite3/storepos-database.db
-// db file position on windows: C:\Users\Administrator\AppData\Roaming\store-pos\sqlite3\storepos-database.db
 logger.transports.file.fileName = 'main.log';
 logger.transports.file.level = 'info';
 logger.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}]{scope} {text}';
@@ -105,12 +106,11 @@ initIpcRenderer();
 let serverStatus = '';
 const startNodeServer = () => {
   logger.info('server will be start');
-  const dbPath = path.join(app.getPath('userData'), 'sqlite3', 'storepos-database.db');
-  logger.info('server db path: ', dbPath);
+
   const child = fork(path.join(__dirname, 'server', 'index'), [], {
     env: {
       ...process.env,
-      DBPATH: dbPath,
+      NODE_ENV: process.env.NODE_ENV || 'production',
     },
   });
 
@@ -152,7 +152,6 @@ const createWindow = () => {
     minHeight: 720,
     webPreferences: {
       webSecurity: false,
-      // eslint-disable-next-line no-undef
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false, // 禁用 nodeIntegration 以配合 contextIsolation
       contextIsolation: true, // 启用上下文隔离
@@ -237,7 +236,6 @@ app.whenReady().then(() => {
 // 绑定关闭方法，当 electron 应用关闭时，退出 electron 。 macos 系统因为具有 dock 栏机制，可选择不退出。
 app.on('window-all-closed', () => {
   // macOS 中除非用户按下 `Cmd + Q` 显式退出，否则应用与菜单栏始终处于活动状态。
-  // eslint-disable-next-line no-undef
   if (process.platform !== 'darwin') {
     app.quit();
   }

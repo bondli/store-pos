@@ -16,6 +16,7 @@ import columns from './columns';
 import BitchStock from './BitchStock';
 import SingleStock from './SingleStock';
 import NoStockList from './NoStockList';
+import HotSales from './HotSales';
 
 import SkuList from './SkuList';
 
@@ -82,6 +83,7 @@ const InventroyPage: React.FC = () => {
         toolbarRender={ 
           <>
             <Button onClick={refreshData}><RedoOutlined />{language[currentLang].inventory.refresh}</Button>
+            <HotSales />
             <NoStockList />
             {
               userInfo?.id === 1 ? <SingleStock callback={refreshData} /> : null

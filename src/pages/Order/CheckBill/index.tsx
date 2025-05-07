@@ -1,11 +1,12 @@
 import React, { memo, useEffect, useState, useContext } from 'react';
-import { Button, Drawer, Space, Table, App } from 'antd';
+import { Button, Drawer, Space, Table, App, Tag } from 'antd';
 import { InfoCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 
 import { PAY_CHANNEL } from '@/common/constant';
 import request from '@/common/request';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
+import { getStore } from '@/common/electron';
 
 type OrderType = {
   orderSn: string;
@@ -13,6 +14,7 @@ type OrderType = {
   payType: string;
   userPhone: string;
   orderStatus: string;
+  showStatus: string;
 };
 type ComProps = {
   dataList: OrderType[];
@@ -22,6 +24,8 @@ type ComProps = {
 const CheckBill: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
   const { currentLang } = useContext(MainContext);
+
+  const userInfo = getStore('loginData') || {};
 
   const { callback } = props;
   const [showPanel, setShowPanel] = useState(false);
@@ -62,6 +66,31 @@ const CheckBill: React.FC<ComProps> = (props) => {
     }
   };
 
+  // 切换订单展示状态
+  const toggleShow = async (orderSn: string, currentShowStatus: string) => {
+    try {
+      const response = await request.post(`/order/toggleShow`, {
+        orderSn,
+        showStatus: currentShowStatus === 'hidden' ? 'normal' : 'hidden',
+      });
+      if (response.data.error) {
+        message.error(response.data.error);
+      } else {
+        message.success('切换订单展示状态成功');
+        // 对当前的dataList进行处理，更新showStatus
+        const newDataList = dataList.map((item) => {
+          if (item.orderSn === orderSn) {
+            item.showStatus = response.data.showStatus;
+          }
+          return item;
+        });
+        setDataList(newDataList);
+      }
+    } catch (error) {
+      console.error('toggleShow error', error);
+    }
+  };
+
   const columns = [
     {
       title: language[currentLang].order.tableColumnOrderNo,
@@ -93,7 +122,7 @@ const CheckBill: React.FC<ComProps> = (props) => {
       key: 'userPhone',
     },
     {
-      title: language[currentLang].order.tableColumnStatus,
+      title: language[currentLang].order.tableColumnBillStatus,
       align: 'center',
       dataIndex: 'orderStatus',
       key: 'orderStatus',
@@ -106,6 +135,19 @@ const CheckBill: React.FC<ComProps> = (props) => {
       }
     },
     {
+      title: language[currentLang].order.tableColumnPrintStatus,
+      align: 'center',
+      dataIndex: 'printStatus',
+      key: 'printStatus',
+      render: (row, record) => {
+        if (record.printStatus === 'printed') {
+          return <div><CheckCircleFilled style={{ color: 'green' }} />已打印</div>;
+        } else {
+          return <div><InfoCircleFilled style={{ color: '#666' }} />未打印</div>;
+        }
+      }
+    },
+    {
       title: language[currentLang].order.tableColumnOperation,
       align: 'center',
       render: (row, record) => {
@@ -113,18 +155,45 @@ const CheckBill: React.FC<ComProps> = (props) => {
           <Space>
             <Button
               type='link'
-              disabled={row.orderStatus === 'checked'}
+              disabled={record.orderStatus === 'checked'}
               onClick={() => {
                 confirmOrder(record.orderSn);
               }}
             >
-              {language[currentLang].common.confirm}
+              {language[currentLang].order.confirmBill}
             </Button>
+            {
+              userInfo?.id === 1 ? (
+                <Button
+                  type='link'
+                  onClick={() => {
+                    toggleShow(record.orderSn, record.showStatus);
+                  }}
+                >
+                  {
+                    record.showStatus === 'hidden' ? language[currentLang].order.orderShow : language[currentLang].order.orderHide
+                  }
+                </Button>
+              ) : null
+            }
           </Space>
         );
       }
     }
   ];
+
+  // 如果是管理员，需要在columns的倒数第二个位置添加一个元素，展示是否对外露出的状态
+  if (userInfo?.id === 1) {
+    columns.splice(-1, 0, {
+      title: language[currentLang].order.tableColumnShowStatus,
+      align: 'center',
+      dataIndex: 'showStatus',
+      key: 'showStatus',
+      render: (row, record) => {
+        return record.showStatus === 'hidden' ? <Tag color="red">隐藏</Tag> : <Tag color="green">显示</Tag>;
+      }
+    });
+  }
 
   return (
     <>
@@ -136,7 +205,7 @@ const CheckBill: React.FC<ComProps> = (props) => {
       </Button>
       <Drawer
         title={language[currentLang].order.checkBill}
-        width={700}
+        width={1000}
         open={showPanel}
         onClose={closePanel}
         destroyOnClose={true}
