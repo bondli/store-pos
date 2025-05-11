@@ -90,6 +90,11 @@ const SubmitBar: React.FC = () => {
       return;
     }
 
+    if (waitSales?.brief?.actualAmount === undefined || waitSales.brief.actualAmount === null) {
+      message.error('实收金额不能为空');
+      return;
+    }
+
     if (!storeSaler || !storeSaler.id) {
       message.error('请选择导购员');
       return;

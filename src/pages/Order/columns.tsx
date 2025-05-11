@@ -1,4 +1,4 @@
-import { Space, Popover, List, Tooltip } from 'antd';
+import { Space, Popover, List, Tooltip, notification } from 'antd';
 import { InfoCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 
 import language from '@/common/language';
@@ -8,6 +8,31 @@ const currentLang = getStore('currentLang') || 'en';
 import Editor from './Editor';
 import Detail from './Detail';
 import MoreOperate from './MoreOperate';
+import request from '@/common/request';
+
+const queryOrderRate = async (record: any) => {
+  // console.log(record);
+  const userInfo = getStore('loginData') || {};
+  if (userInfo?.id !== 1) { // 只有管理员可以查看订单毛利率
+    return;
+  }
+  const { orderSn, orderActualAmount } = record;
+  const response = await request.get(`/order/queryOrderRate`, {
+    params: { orderSn, orderActualAmount },
+  });
+  const result = response.data;
+  if (result.error) {
+    notification.error({
+      message: '毛利率',
+      description: result.error,
+    });
+  } else {
+    notification.success({
+      message: '毛利率',
+      description: `该订单毛利率为：${result.rate} %`,
+    });
+  }
+};
 
 const columns = [
   {
@@ -50,6 +75,15 @@ const columns = [
     key: 'orderActualAmount',
     fixed: 'left',
     render: (row, record) => {
+      const displayAmount = (
+        <span
+          style={{ color: 'red' }}
+          onClick={() => {
+            queryOrderRate(record);
+          }}
+        >￥{record.orderActualAmount}</span>
+      );
+
       // 如果存在使用优惠券，积分，余额等，需要加多一个图标，点击图标展示优惠使用的详情
       if (record.useCoupon || record.usePoint || record.useBalance) {
         const dataSource = [];
@@ -94,11 +128,11 @@ const columns = [
             >
               <InfoCircleFilled style={{ color: '#faad14' }} />
             </Popover>
-            <span style={{ color: 'red' }}>￥{record.orderActualAmount}</span>
+            {displayAmount}
           </div>
         );
       }
-      return <span style={{ color: 'red' }}>￥{record.orderActualAmount}</span>;
+      return displayAmount;
     }
   },
   {

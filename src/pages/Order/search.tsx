@@ -73,7 +73,7 @@ const schema = {
       },
       placeholder: language[currentLang].order.searchPlaceholderSalerName,
     },
-  }
+  },
 };
 
 export default {
@@ -82,4 +82,5 @@ export default {
   layoutAuto: true,
   searchText: language[currentLang].common.search,
   resetText: language[currentLang].common.reset,
+  autoSubmit: true,
 };

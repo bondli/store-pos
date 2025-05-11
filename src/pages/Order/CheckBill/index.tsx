@@ -148,6 +148,15 @@ const CheckBill: React.FC<ComProps> = (props) => {
       }
     },
     {
+      title: language[currentLang].order.tableColumnShowStatus,
+      align: 'center',
+      dataIndex: 'showStatus',
+      key: 'showStatus',
+      render: (row, record) => {
+        return record.showStatus === 'hidden' ? <Tag color="red">隐藏</Tag> : <Tag color="green">显示</Tag>;
+      }
+    },
+    {
       title: language[currentLang].order.tableColumnOperation,
       align: 'center',
       render: (row, record) => {
@@ -162,38 +171,21 @@ const CheckBill: React.FC<ComProps> = (props) => {
             >
               {language[currentLang].order.confirmBill}
             </Button>
-            {
-              userInfo?.id === 1 ? (
-                <Button
-                  type='link'
-                  onClick={() => {
-                    toggleShow(record.orderSn, record.showStatus);
-                  }}
-                >
-                  {
-                    record.showStatus === 'hidden' ? language[currentLang].order.orderShow : language[currentLang].order.orderHide
-                  }
-                </Button>
-              ) : null
-            }
+            <Button
+              type='link'
+              onClick={() => {
+                toggleShow(record.orderSn, record.showStatus);
+              }}
+            >
+              {
+                record.showStatus === 'hidden' ? language[currentLang].order.orderShow : language[currentLang].order.orderHide
+              }
+            </Button>
           </Space>
         );
       }
     }
   ];
-
-  // 如果是管理员，需要在columns的倒数第二个位置添加一个元素，展示是否对外露出的状态
-  if (userInfo?.id === 1) {
-    columns.splice(-1, 0, {
-      title: language[currentLang].order.tableColumnShowStatus,
-      align: 'center',
-      dataIndex: 'showStatus',
-      key: 'showStatus',
-      render: (row, record) => {
-        return record.showStatus === 'hidden' ? <Tag color="red">隐藏</Tag> : <Tag color="green">显示</Tag>;
-      }
-    });
-  }
 
   return (
     <>

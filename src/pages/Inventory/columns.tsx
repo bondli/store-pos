@@ -28,12 +28,12 @@ const columns = [
     key: 'name',
     fixed: 'left',
   },
-  {
-    title: language[currentLang].inventory.tableColumnBrand,
-    dataIndex: 'brand',
-    key: 'brand',
-    fixed: 'left',
-  },
+  // {
+  //   title: language[currentLang].inventory.tableColumnBrand,
+  //   dataIndex: 'brand',
+  //   key: 'brand',
+  //   fixed: 'left',
+  // },
   {
     title: language[currentLang].inventory.tableColumnColor,
     dataIndex: 'color',

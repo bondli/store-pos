@@ -423,6 +423,27 @@ export const modifyOrder = async (req: Request, res: Response) => {
       });
     }
 
+    // 订单实付金额有变化的话，需要更新会员表中的实付金额和积分
+    if (originalUserPhone && orderActualAmount !== orderData.orderActualAmount) {
+      const member = await Member.findOne({
+        where: { phone: orderData.userPhone },
+      });
+      if (member) {
+        const memberData = member.toJSON();
+        await member.update({
+          actual: memberData.actual + (orderActualAmount - orderData.orderActualAmount),
+          point: memberData.point + Math.floor(orderActualAmount - orderData.orderActualAmount),
+        });
+        // 添加积分记录
+        await MemberScore.create({
+          phone: orderData.userPhone,
+          point: Math.floor(orderActualAmount - orderData.orderActualAmount),
+          type: 'earn',
+          reason: `订单${orderSn}实付金额调整,积分变动`,
+        });
+      }
+    }
+
     // 更新订单基本信息（支付方式、实收金额、导购员[id, name]、会员、备注）
     let salerName = '';
     if (salerId) {
@@ -594,3 +615,49 @@ export const toggleShow = async (req: Request, res: Response) => {
   }
 }
 
+// 查询订单毛利率
+export const queryOrderRate = async (req: Request, res: Response) => {
+  const { orderSn, orderActualAmount } = req.query;
+  try {
+    const result = await OrderItems.findAll({
+      where: { orderSn }
+    });
+    if (!result) {
+      return res.json({ error: 'Order not found' });
+    }
+    // 毛利率的计算是：先从OrderItems中查询商品，然后去Inventory中查询商品的进货价，然后计算毛利率
+    const orderItems = result.map(item => item.toJSON());
+    // 根据orderItems中的sku去Inventory中查询商品的进货价
+    const inventoryList = await Inventory.findAll({
+      where: { sku: { [Op.in]: orderItems.map(item => item.sku) } }
+    });
+    
+    // Create a map of inventory items with proper type handling
+    const inventoryMap = new Map(
+      inventoryList.map(item => {
+        const data = item.toJSON();
+        return [data.sku, data];
+      })
+    );
+    
+    // 计算总的进货价
+    const totalCost = orderItems.reduce((acc, item) => {
+      const inventoryItem = inventoryMap.get(item.sku);
+      return acc + (inventoryItem?.costPrice || 0) * item.counts;
+    }, 0);
+  
+    // Convert orderActualAmount from query string to number and provide default
+    const actualAmount = orderActualAmount ? parseFloat(orderActualAmount as string) : 0;
+    
+    // Calculate rate only if actualAmount is not zero to avoid division by zero
+    const rate = actualAmount > 0 ? ((actualAmount - totalCost) / actualAmount * 100) : 0;
+    
+    res.json({
+      rate: rate.toFixed(2),
+    });
+  } catch (error) {
+    logger.error('Error querying order rate:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}

@@ -61,6 +61,18 @@ const InventroyPage: React.FC = () => {
     tableRef.current?.refresh();
   };
 
+  // 如果是管理员，在吊牌价后增加一列，显示进货价
+  if (userInfo?.id === 1) {
+    const index = columns.findIndex(col => col.dataIndex === 'originalPrice');
+    columns.splice(index + 1, 0, {
+      title: '进货价',
+      align: 'center',
+      dataIndex: 'costPrice',
+      key: 'costPrice',
+      valueType: 'money',
+    });
+  }
+
   return (
     <div className={style.container}>
       <PageTitle

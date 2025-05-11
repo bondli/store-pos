@@ -31,9 +31,15 @@ const OrderPage: React.FC = () => {
   const getOrderList = async (t) => {
     userLog('request order list params:', t);
     try {
-      if (!t.start || !t.end) {
-        t.start = dayjs().format('YYYY-MM-DD');
-        t.end = dayjs().format('YYYY-MM-DD');
+      // 只要有其他的其他的查询，时间为空的时候不设置为当天，其他情况下时间为空的时候就默认是今天
+      if (t.userPhone || t.orderSn || t.payType || t.salerId) {
+
+      } else {
+        // 如果start和end为空，则设置为当天
+        if (!t.start || !t.end) {
+          t.start = dayjs().format('YYYY-MM-DD');
+          t.end = dayjs().format('YYYY-MM-DD');
+        }
       }
       const showStatus = getStore('orderShowStatus');
       if (showStatus === 'hidden') {

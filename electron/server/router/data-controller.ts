@@ -101,10 +101,15 @@ export const getOrderCharts = async (req: Request, res: Response) => {
       ],
       group: ['month'],
       order: [['month', 'ASC']],
-      raw: true
     });
 
-    res.json(orderCharts);
+    const data = orderCharts.map(item => {
+      const obj = item.toJSON();
+      obj.amounts = Number(obj.amounts);
+      return obj;
+    });
+
+    res.json(data);
   } catch (error) {
     logger.error('Error getting order charts:');
     console.log(error);

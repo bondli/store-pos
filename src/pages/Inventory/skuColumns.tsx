@@ -21,13 +21,6 @@ const skuColumns = [
     key: 'size',
   },
   {
-    title: language[currentLang].inventory.tableColumnOriginalPrice,
-    align: 'center',
-    key: 'originalPrice',
-    dataIndex: 'originalPrice',
-    valueType: 'money',
-  },
-  {
     title: language[currentLang].inventory.tableColumnCounts,
     align: 'center',
     dataIndex: 'counts',

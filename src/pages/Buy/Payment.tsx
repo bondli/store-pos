@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState, useContext } from 'react';
-import { Flex, Radio, Input, Select, Card, Typography } from 'antd';
+import { Flex, Radio, Input, Select, Card, Typography, App } from 'antd';
 
 import { getStore } from '@common/electron';
 import language from '@/common/language';
@@ -9,10 +9,13 @@ import { BuyContext } from './context';
 
 import style from './index.module.less';
 
-const Payment: React.FC = () => { 
+const Payment: React.FC = () => {
+  const { message } = App.useApp();
   const { currentLang } = useContext(MainContext);
   const { waitSales, setWaitSales, setStoreSaler } = useContext(BuyContext);
   const [salers, setSalers] = useState([{ value: '', label: language[currentLang].buy.pleaseSelectSaler }]);
+  const [inputValue, setInputValue] = useState('');
+  const [isComposing, setIsComposing] = useState(false);
 
   useEffect(() => {
     const salerList = getStore('salerList') || [];
@@ -23,29 +26,55 @@ const Payment: React.FC = () => {
     setSalers(newSalers);
   }, []);
 
+  useEffect(() => {
+    if (waitSales?.brief?.actualAmount === undefined || waitSales.brief.actualAmount === null || waitSales.brief.actualAmount === 0) {
+      setInputValue('');
+    } else {
+      setInputValue(waitSales.brief.actualAmount.toString());
+    }
+  }, [waitSales?.brief?.actualAmount]);
+
   if (!waitSales?.list || !waitSales?.list.length) {
     return null;
   }
 
   // 输入实收处理函数
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  // 输入法开始
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+  // 输入法结束
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
+    setIsComposing(false);
+    // composition 结束时同步一次
+    handleInputBlur(e as any);
+  };
+
+  // 失焦时校验并写入 waitSales
+  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (isComposing) return;
     const value = e.target.value;
     if (value === '') {
       setWaitSales(prev => ({ 
-        list: prev.list, brief: { ...prev.brief, actualAmount: 0 }
+        list: prev.list, brief: { ...prev.brief, actualAmount: undefined }
       }));
       return;
     }
-
     const numValue = Number(value);
     if (isNaN(numValue)) {
       return;
     }
-
     // 确保输入值不超过应付金额
     const maxAmount = waitSales?.brief?.payAmount || 0;
+    // 如果输入的大于应付金额，给个消息提示
+    if (numValue > maxAmount) {
+      message.error(`输入的实收金额不能大于应付金额`);
+    }
     const actualAmount = Math.min(numValue, maxAmount);
-    
     setWaitSales(prev => ({ 
       list: prev.list, brief: { ...prev.brief, actualAmount }
     }));
@@ -103,8 +132,11 @@ const Payment: React.FC = () => {
             size='middle' 
             placeholder={language[currentLang].buy.actual} 
             style={{ width: `200px` }}
-            onChange={handleChange}
-            value={waitSales?.brief?.actualAmount !== undefined ? waitSales.brief.actualAmount : ''}
+            value={inputValue}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
           />
         </Flex>
 

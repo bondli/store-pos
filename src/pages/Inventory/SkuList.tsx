@@ -4,7 +4,7 @@ import { Descriptions, App } from 'antd';
 import TableRender from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
-import { userLog } from '@/common/electron';
+import { userLog, getStore } from '@/common/electron';
 import request from '@common/request';
 import Box from '@/components/Box';
 import language from '@/common/language';
@@ -20,10 +20,12 @@ type ComProps = {
 const defaultItemInfo = {
   sn: '',
   name: '',
+  brand: '',
   sku: '',
   size: '',
   color: 0,
   originalPrice: 0,
+  costPrice: 0,
   counts: 0,
 };
 
@@ -34,6 +36,7 @@ const SkuList: React.FC<ComProps> = (props) => {
   const { sku, sn } = props;
 
   const [itemInfo, setItemInfo] = useState(defaultItemInfo);
+  const userInfo = getStore('loginData') || {};
 
   // 获取sku信息
   const getItemDetail = async () => {
@@ -87,37 +90,47 @@ const SkuList: React.FC<ComProps> = (props) => {
         bordered
         items={
           [{
-            key: '1',
+            key: 'name',
             label: language[currentLang].inventory.tableColumnName,
             children: itemInfo.name,
           },
           {
-            key: '2',
+            key: 'brand',
+            label: language[currentLang].inventory.tableColumnBrand,
+            children: itemInfo.brand,
+          },
+          {
+            key: 'sn',
             label: language[currentLang].inventory.tableColumnStyleNo,
             children: itemInfo.sn,
           },
           {
-            key: '3',
+            key: 'sku',
             label: language[currentLang].inventory.tableColumnSku,
             children: itemInfo.sku,
           },
           {
-            key: '4',
+            key: 'color',
             label: language[currentLang].inventory.tableColumnColor,
             children: itemInfo.color,
           },
           {
-            key: '5',
+            key: 'size',
             label: language[currentLang].inventory.tableColumnSize,
             children: itemInfo.size,
           },
           {
-            key: '5',
+            key: 'originalPrice',
             label: language[currentLang].inventory.tableColumnOriginalPrice,
             children: itemInfo.originalPrice,
           },
           {
-            key: '5',
+            key: 'costPrice',
+            label: language[currentLang].inventory.tableColumnCostPrice,
+            children: userInfo?.id === 1 ? itemInfo.costPrice : '**',
+          },
+          {
+            key: 'counts',
             label: language[currentLang].inventory.tableColumnCounts,
             children: itemInfo.counts,
           }]
