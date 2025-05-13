@@ -94,7 +94,7 @@ const Detail: React.FC<ComProps> = (props) => {
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <SkuList sku={sku} sn={sn} />
       </Drawer>

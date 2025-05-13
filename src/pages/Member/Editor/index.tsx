@@ -2,12 +2,12 @@ import React, { memo, useEffect, useState, useContext } from 'react';
 import { Button, Card, Drawer, Space, App } from 'antd';
 import FormRender, { useForm } from 'form-render';
 
-import { userLog, getStore } from '@/common/electron';
+import { userLog } from '@/common/electron';
 import request from '@common/request';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import { baseInfoSchema, pointSchema } from './schema';
+import { useBaseInfoSchema, usePointSchema } from './schema';
 
 type ComProps = {
   userPhone: string;
@@ -16,15 +16,15 @@ type ComProps = {
 
 const Editor: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
-  const { currentLang } = useContext(MainContext);
-
-  const userInfo = getStore('loginData') || {};
+  const { currentLang, userInfo } = useContext(MainContext);
 
   const { userPhone, callback } = props;
+
+  const baseInfoSchema = useBaseInfoSchema();
+  const pointSchema = usePointSchema();
   
   const formBaseInfo = useForm();
   const formPoint = useForm();
-  const formBalance = useForm();
 
   // 更新会员基本信息
   const onBaseInfoFinish = async (formData) => {
@@ -117,7 +117,7 @@ const Editor: React.FC<ComProps> = (props) => {
         width={600}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <Space direction={`vertical`} size={`middle`}>
           <Card size='small' title={`${language[currentLang].member.modifyBaseInfo}`}>
@@ -138,7 +138,7 @@ const Editor: React.FC<ComProps> = (props) => {
           </Card>
 
           {
-            userInfo?.id === 1 ? (
+            userInfo?.role === 'admin' ? (
               <Card size='small' title={`${language[currentLang].member.modifyPoint}`}>
                 <FormRender
                   form={formPoint}

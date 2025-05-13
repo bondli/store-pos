@@ -11,8 +11,8 @@ import PageTitle from '@/components/PageTitle';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import search from './search';
-import columns from './columns';
+import useSearch from './search';
+import useColumns from './columns';
 import Summary from './Summary';
 import OrderItemList from './OrderItemList';
 import CheckBill from './CheckBill';
@@ -23,10 +23,14 @@ import style from './index.module.less';
 
 const OrderPage: React.FC = () => {
   const { message } = App.useApp();
-  const { currentLang } = useContext(MainContext);
-  const userInfo = getStore('loginData') || {};
+  const { currentLang, userInfo } = useContext(MainContext);
   const tableRef = useRef<TableContext>(null);
   const [dataList, setDataList] = useState([]);
+
+  const columns = useColumns();
+  const search = useSearch();
+
+  const [queryParams, setQueryParams] = useState({});
 
   const getOrderList = async (t) => {
     userLog('request order list params:', t);
@@ -45,6 +49,7 @@ const OrderPage: React.FC = () => {
       if (showStatus === 'hidden') {
         t.showStatus = 'hidden';
       }
+      setQueryParams(t);
       const response = await request.get('/order/queryList', {
         params: t,
       });
@@ -92,7 +97,7 @@ const OrderPage: React.FC = () => {
             <span onClick={handleTableTitleClick} style={{ color: getStore('orderShowStatus') === 'all' ? '#666' : 'inherit' }}>
               {language[currentLang].order.tableTitle}
             </span>
-            <Summary dataList={dataList} />
+            <Summary queryParams={queryParams} />
           </div>
         }
         scroll={{ x: 'max-content' }}
@@ -107,7 +112,7 @@ const OrderPage: React.FC = () => {
             <OrderItemList />
             <CheckBill dataList={dataList} callback={refreshData} />
             {
-              userInfo?.id === 1 && (
+              userInfo?.role === 'admin' && (
                 <ExportAndImport dataList={dataList} callback={refreshData} />
               )
             }

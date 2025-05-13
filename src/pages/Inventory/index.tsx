@@ -5,14 +5,14 @@ import { RedoOutlined } from '@ant-design/icons';
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
-import { userLog, getStore } from '@/common/electron';
+import { userLog } from '@/common/electron';
 import request from '@common/request';
 import PageTitle from '@/components/PageTitle';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import search from './search';
-import columns from './columns';
+import useSearch from './search';
+import useColumns from './columns';
 import BitchStock from './BitchStock';
 import SingleStock from './SingleStock';
 import NoStockList from './NoStockList';
@@ -24,16 +24,17 @@ import style from './index.module.less';
 
 const InventroyPage: React.FC = () => {
   const { message } = App.useApp();
-  const { currentLang } = useContext(MainContext);
+  const { currentLang, userInfo } = useContext(MainContext);
 
   // 是否展示详情抽屉
   const [sku, setSku] = useState('');
   const [sn, setSn] = useState('');
   const [showDetail, setShowDetail] = useState(false);
 
-  const userInfo = getStore('loginData') || {};
-
   const tableRef = useRef<TableContext>(null);
+
+  const columns = useColumns();
+  const search = useSearch();
 
   const getInventroyList = async (t) => {
     userLog('request inventroy list params:', t);
@@ -61,24 +62,12 @@ const InventroyPage: React.FC = () => {
     tableRef.current?.refresh();
   };
 
-  // 如果是管理员，在吊牌价后增加一列，显示进货价
-  if (userInfo?.id === 1) {
-    const index = columns.findIndex(col => col.dataIndex === 'originalPrice');
-    columns.splice(index + 1, 0, {
-      title: '进货价',
-      align: 'center',
-      dataIndex: 'costPrice',
-      key: 'costPrice',
-      valueType: 'money',
-    });
-  }
-
   return (
     <div className={style.container}>
       <PageTitle
         text={`${language[currentLang].inventory.title}`}
         extra={
-          userInfo?.id === 1 ? <BitchStock callback={refreshData} /> : null
+          userInfo?.role === 'admin' ? <BitchStock callback={refreshData} /> : null
         }
       />
       <TableRender
@@ -98,7 +87,7 @@ const InventroyPage: React.FC = () => {
             <HotSales />
             <NoStockList />
             {
-              userInfo?.id === 1 ? <SingleStock callback={refreshData} /> : null
+              userInfo?.role === 'admin' ? <SingleStock callback={refreshData} /> : null
             }
           </>
         }
@@ -110,6 +99,7 @@ const InventroyPage: React.FC = () => {
             width={800}
             open={showDetail}
             onClose={() => setShowDetail(false)}
+            destroyOnHidden={true}
           >
             <SkuList sku={sku} sn={sn} />
           </Drawer>

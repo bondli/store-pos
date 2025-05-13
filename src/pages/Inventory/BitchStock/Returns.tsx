@@ -28,6 +28,7 @@ const Returns: React.FC<ComProps> = (props) => {
   const [dataList, setDataList] = useState([]);
   // 上传的文件中商品总数
   const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const togglePanel = () => {
     setShowPanel(!showPanel);
@@ -85,27 +86,32 @@ const Returns: React.FC<ComProps> = (props) => {
       message.error('请先上传文件');
       return;
     }
-    const response = await request.post('/inventory/batchReturns', {
-      dataList,
-    }, {
-      timeout: 30000, // 设置30秒超时，因为这是批量处理数据，需要更长的处理时间
-    });
-    const result = response.data;
-    if (!result.error) {
-      message.success('退货成功');
-      // 通过modal的方式提示用户操作成功的数量和失败的数量
-      modal.success({
-        title: '退货成功',
-        content: `成功退货 ${result.totalCount-result.errorCount} 个商品，失败 ${result.errorCount} 个商品`,
-        onOk: () => {
-          callback && callback();
-          setShowPanel(false);
-          setDataList([]);
-          setIsUploadFile(false);
-        },
+    setLoading(true);
+    try {
+      const response = await request.post('/inventory/batchReturns', {
+        dataList,
+      }, {
+        timeout: 30000, // 设置30秒超时，因为这是批量处理数据，需要更长的处理时间
       });
-    } else {
-      message.error(result.error);
+      const result = response.data;
+      if (!result.error) {
+        message.success('退货成功');
+        // 通过modal的方式提示用户操作成功的数量和失败的数量
+        modal.success({
+          title: '退货成功',
+          content: `成功退货 ${result.totalCount-result.errorCount} 个商品，失败 ${result.errorCount} 个商品`,
+          onOk: () => {
+            callback && callback();
+            setShowPanel(false);
+            setDataList([]);
+            setIsUploadFile(false);
+          },
+        });
+      } else {
+        message.error(result.error);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -159,11 +165,11 @@ const Returns: React.FC<ComProps> = (props) => {
         width={1000}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         footer={
           <Flex justify='right'>
             <Space>
-              <Button type='primary' key='submit' onClick={handleBitchStock}>
+              <Button type='primary' key='submit' onClick={handleBitchStock} loading={loading}>
                 {language[currentLang].inventory.bitchStockReturnSubmit}
               </Button>
               <Button type='default' key='clear' onClick={handleClear}>

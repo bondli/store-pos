@@ -5,6 +5,7 @@ type UserInfo = {
   id: number;
   name: string;
   avatar: string;
+  role: string;
 };
 type MainContextType = {
   userInfo: UserInfo;
@@ -21,6 +22,7 @@ export const MainProvider: React.FC<{ children: React.ReactNode }> = ({ children
     id: 0,
     name: '',
     avatar: '',
+    role: 'normal',
   });
   const [currentPage, setCurrentPage] = useState('sales');
   const [currentLang, setCurrentLang] = useState('en');

@@ -9,7 +9,7 @@ export const PAY_CHANNEL = {
 };
 
 // 默认折扣率
-export const DEFAULT_DISCOUNT = 0.59;
+export const DEFAULT_DISCOUNT = 0.6;
 
 // 支付渠道类型
 export type PaymentChannel = 'alipay' | 'weixin' | 'cash' | 'card' | 'other';
@@ -42,4 +42,17 @@ export interface OrderBase {
 // 订单列表组件属性
 export interface OrderListProps {
   dataList: OrderBase[];
-} 
+}
+
+// 订单查询参数
+export interface QueryParamsProps {
+  queryParams: {
+    start?: string;
+    end?: string;
+    showStatus?: string;
+    userPhone?: string;
+    payType?: string;
+    orderSn?: string;
+    salerId?: string;
+  };
+}

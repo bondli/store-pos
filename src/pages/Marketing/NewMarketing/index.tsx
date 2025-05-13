@@ -6,7 +6,7 @@ import request from '@common/request';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import schema from './schema';
+import useSchema from './schema';
 
 import MarketingCustom from '../CustomWidgets';
 
@@ -20,6 +20,8 @@ const NewMarketing: React.FC<ComProps> = (props) => {
 
   const { callback } = props;
   const form = useForm();
+
+  const schema = useSchema();
 
   const onFinish = async (formData) => {
     console.log('formData:', formData);
@@ -57,7 +59,7 @@ const NewMarketing: React.FC<ComProps> = (props) => {
         width={500}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <FormRender
           form={form}

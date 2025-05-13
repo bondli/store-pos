@@ -22,6 +22,7 @@ import {
   updatePrintStatus,
   toggleShow,
   queryOrderRate,
+  queryOrderSummary,
 } from './order-controller';
 
 import {
@@ -100,6 +101,7 @@ router.get('/order/queryOrderItemListByDate', queryOrderItemListByDate); // 根�
 router.post('/order/updatePrintStatus', updatePrintStatus); // 更新订单的打印状态
 router.post('/order/toggleShow', toggleShow); // 切换订单的展示状态
 router.get('/order/queryOrderRate', queryOrderRate); // 查询订单毛利率
+router.get('/order/queryOrderSummary', queryOrderSummary); // 查询订单统计信息
 
 // 商品相关接口
 router.get('/inventory/queryTotal', queryInventoryTotal); // 库存总量

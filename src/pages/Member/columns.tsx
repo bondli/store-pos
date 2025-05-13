@@ -1,14 +1,17 @@
+import { useContext } from 'react';
 import { Space, Tag } from 'antd';
 
 import language from '@/common/language';
-import { getStore } from '@common/electron';
-const currentLang = getStore('currentLang') || 'en';
+import { MainContext } from '@common/context';
 
 import Editor from './Editor';
 import Detail from './Detail';
 import IncomeBalance from './IncomeBalance';
 
-const columns = [
+const useColumns = () => {
+  const { currentLang } = useContext(MainContext);
+
+  const columns = [
   {
     title: language[currentLang].member.tableColumnPhone,
     dataIndex: 'phone',
@@ -90,7 +93,10 @@ const columns = [
         </Space>
       );
     }
-  }
-];
+    }
+  ];
 
-export default columns;
+  return columns;
+};
+
+export default useColumns;

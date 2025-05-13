@@ -32,6 +32,8 @@ const SubmitBar: React.FC = () => {
   const [orderInfo, setOrderInfo] = useState(null);
   const [orderItems, setOrderItems] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const orderCache = getStore('orderCache') || {};
     if (orderCache?.waitSales?.list?.length) {
@@ -100,6 +102,7 @@ const SubmitBar: React.FC = () => {
       return;
     }
 
+    setLoading(true);
     try {
       const response = await request.post('/buy/submit', {
         waitSales,
@@ -129,6 +132,8 @@ const SubmitBar: React.FC = () => {
       }
     } catch (error) {
       message.error('订单提交失败，请重试');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -161,7 +166,9 @@ const SubmitBar: React.FC = () => {
     <Row gutter={16}>
       <Col span={12}>
         <Flex gap={'small'} wrap>
-          <Button type={'primary'} onClick={handleSubmit}>{language[currentLang].buy.submit}</Button>
+          <Button type="primary" onClick={handleSubmit} loading={loading}>
+            {language[currentLang].buy.submit}
+          </Button>
           <Button onClick={handleReset}>{language[currentLang].buy.clear}</Button>
         </Flex>
       </Col>

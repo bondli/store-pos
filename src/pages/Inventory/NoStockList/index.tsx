@@ -9,11 +9,13 @@ import request from '@common/request';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import columns from './columns';
+import useNoStockListColumns from './columns';
 
 const NoStockList: React.FC = () => {
   const { message } = App.useApp();
   const { currentLang } = useContext(MainContext);
+
+  const columns = useNoStockListColumns();
 
   const [showPanel, setShowPanel] = useState(false);
   
@@ -51,7 +53,7 @@ const NoStockList: React.FC = () => {
         width={1000}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <TableRender
           request={getNoStockList as any}

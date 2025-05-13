@@ -1,27 +1,28 @@
-import React, { memo, useRef, useContext, useState } from 'react';
+import React, { memo, useRef, useContext } from 'react';
 import { Button, App } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 
 import TableRender, { TableContext } from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
-import { userLog, getStore } from '@/common/electron';
+import { userLog } from '@/common/electron';
 import request from '@common/request';
 import PageTitle from '@/components/PageTitle';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import search from './search';
-import columns from './columns'; 
+import useSearch from './search';
+import useColumns from './columns'; 
 import NewMarketing from './NewMarketing';
 
 import style from './index.module.less';
 
 const MarketingPage: React.FC = () => {
   const { message } = App.useApp();
-  const { currentLang } = useContext(MainContext);
+  const { currentLang, userInfo } = useContext(MainContext);
 
-  const userInfo = getStore('loginData') || {};
+  const search = useSearch();
+  const columns = useColumns();
 
   const tableRef = useRef<TableContext>(null);
 
@@ -63,7 +64,7 @@ const MarketingPage: React.FC = () => {
           <>
             <Button onClick={refreshData}><RedoOutlined />{language[currentLang].marketing.refresh}</Button>
             {
-              userInfo?.id === 1 ? <NewMarketing callback={refreshData} /> : null
+              userInfo?.role === 'admin' ? <NewMarketing callback={refreshData} /> : null
             }
           </>
         }

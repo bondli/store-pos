@@ -227,7 +227,7 @@ const MemberCoupon: React.FC = () => {
         open={isShowPointModal}
         onOk={handlePointModalOk}
         onCancel={() => setIsShowPointModal(false)}
-        destroyOnClose
+        destroyOnHidden={true}
       >
         <Flex vertical wrap>
           <Flex align="center" style={{ marginTop: `10px` }}>
@@ -253,7 +253,7 @@ const MemberCoupon: React.FC = () => {
         open={isShowBalanceModal}
         onOk={handleBalanceModalOk}
         onCancel={() => setIsShowBalanceModal(false)}
-        destroyOnClose
+        destroyOnHidden={true}
       >
         <Flex vertical wrap>
           <Flex align="center" style={{ marginTop: `10px` }}>
@@ -279,7 +279,7 @@ const MemberCoupon: React.FC = () => {
         open={isShowCouponModal}
         onOk={handleCouponModalOk}
         onCancel={() => setIsShowCouponModal(false)}
-        destroyOnClose
+        destroyOnHidden={true}
       >
         <Flex vertical wrap>
           <Flex align="center" style={{ marginTop: `10px` }}>
@@ -309,7 +309,7 @@ const MemberCoupon: React.FC = () => {
         open={isShowBigdayCouponModal}
         onOk={handleBigdayCouponModalOk}
         onCancel={() => setIsShowBigdayCouponModal(false)}
-        destroyOnClose
+        destroyOnHidden={true}
       >
         <Flex vertical wrap>
           <Flex align="center" style={{ marginTop: `10px` }}>

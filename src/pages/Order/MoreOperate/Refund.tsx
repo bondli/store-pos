@@ -9,7 +9,7 @@ import Box from '@/components/Box';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import itemColumns from './itemColumns';
+import useItemColumns from './itemColumns';
 
 type ComProps = {
   orderSn: string;
@@ -41,6 +41,8 @@ const Refund: React.FC<ComProps> = (props) => {
 
   const [refundAmount, setRefundAmount] = useState(0);
   const [refundItems, setRefundItems] = useState([]);
+
+  const itemColumns = useItemColumns();
   
   const togglePanel = () => {
     setShowPanel(!showPanel);
@@ -135,7 +137,7 @@ const Refund: React.FC<ComProps> = (props) => {
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         footer={
           <Flex justify='right'>
             <Button type='primary' key='refund' onClick={handleRefund}>
@@ -149,51 +151,51 @@ const Refund: React.FC<ComProps> = (props) => {
           bordered
           items={
             [{
-              key: '1',
+              key: 'orderSn',
               label: language[currentLang].order.tableColumnOrderNo,
               children: orderInfo.orderSn,
             }, {
-              key: '2',
+              key: 'createdAt',
               label: language[currentLang].order.tableColumnOrderTime,
               children: dayjs(orderInfo.createdAt).format('YYYY-MM-DD HH:mm:ss'),
             }, {
-              key: '3',
+              key: 'orderAmount',
               label: language[currentLang].order.tableColumnAmount,
               children: orderInfo.orderAmount,
             }, {
-              key: '4',
+              key: 'orderActualAmount',
               label: language[currentLang].order.tableColumnActual,
               children: <span style={{ color: 'red' }}>￥{orderInfo.orderActualAmount}</span>,
             }, {
-              key: '5',
+              key: 'payType',
               label: language[currentLang].order.tableColumnPayment,
               children: PAY_CHANNEL[orderInfo.payType] || 'unknown',
             }, {
-              key: '6',
+              key: 'orderItems',
               label: language[currentLang].order.tableColumnItems,
               children: orderInfo.orderItems,
             }, {
-              key: '7',
+              key: 'userPhone',
               label: language[currentLang].order.tableColumnUser,
               children: orderInfo.userPhone,
             }, {
-              key: '8',
+              key: 'salerName',
               label: language[currentLang].order.tableColumnSaler,
               children: orderInfo.salerName,
             }, {
-              key: '9',
+              key: 'useCoupon',
               label: language[currentLang].order.tableColumnUseCoupon,
               children: orderInfo.useCoupon || '--',
             }, {
-              key: '10',
+              key: 'usePoint',
               label: language[currentLang].order.tableColumnUsePoint,
               children: orderInfo.usePoint || '--',
             }, {
-              key: '11',
+              key: 'useBalance',
               label: language[currentLang].order.tableColumnUseBalance,
               children: orderInfo.useBalance || '--',
             }, {
-              key: '12',
+              key: 'remark',
               label: language[currentLang].order.tableColumnRemark,
               children: orderInfo.remark || '--',
             }]

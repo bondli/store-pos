@@ -126,7 +126,7 @@ const Print: React.FC<ComProps> = (props) => {
         title={language[currentLang].order.billInfo}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         footer={
           <Flex justify='right'>
             <Button type='primary' key='print' onClick={handlePrint}>

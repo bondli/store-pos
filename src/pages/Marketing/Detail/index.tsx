@@ -11,7 +11,7 @@ import Box from '@/components/Box';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import couponColumns from './coupon';
+import useCouponColumns from './coupon';
 
 const MARKETING_TYPE_MAP = {
   'full_send': '满送活动',
@@ -39,6 +39,8 @@ const Detail: React.FC<ComProps> = (props) => {
 
   const [showPanel, setShowPanel] = useState(false);
   const [marketingInfo, setMarketingInfo] = useState(defaultMarketingInfo);
+
+  const couponColumns = useCouponColumns();
   
   const togglePanel = () => {
     setShowPanel(!showPanel);
@@ -101,7 +103,7 @@ const Detail: React.FC<ComProps> = (props) => {
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <Descriptions
           title={`${language[currentLang].marketing.marketingInfo}`}

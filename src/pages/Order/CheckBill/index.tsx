@@ -6,7 +6,6 @@ import { PAY_CHANNEL } from '@/common/constant';
 import request from '@/common/request';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
-import { getStore } from '@/common/electron';
 
 type OrderType = {
   orderSn: string;
@@ -23,9 +22,7 @@ type ComProps = {
 
 const CheckBill: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
-  const { currentLang } = useContext(MainContext);
-
-  const userInfo = getStore('loginData') || {};
+  const { currentLang, userInfo } = useContext(MainContext);
 
   const { callback } = props;
   const [showPanel, setShowPanel] = useState(false);

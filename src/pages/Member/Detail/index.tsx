@@ -11,10 +11,10 @@ import { MainContext } from '@/common/context';
 
 import Box from '@/components/Box';
 
-import orderColumns from './order';
-import pointColumns from './point';
-import balanceColumns from './balance';
-import couponColumns from './coupon';
+import useOrderColumns from './order';
+import usePointColumns from './point';
+import useBalanceColumns from './balance';
+import useCouponColumns from './coupon';
 
 type ComProps = {
   userPhone: string;
@@ -34,6 +34,11 @@ const Detail: React.FC<ComProps> = (props) => {
   const { currentLang } = useContext(MainContext);
 
   const { userPhone } = props;
+
+  const orderColumns = useOrderColumns();
+  const pointColumns = usePointColumns();
+  const balanceColumns = useBalanceColumns();
+  const couponColumns = useCouponColumns();
 
   const [showPanel, setShowPanel] = useState(false);
   const [memberInfo, setMemberInfo] = useState(defaultMemberInfo);
@@ -161,38 +166,38 @@ const Detail: React.FC<ComProps> = (props) => {
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <Descriptions
           title={`${language[currentLang].member.detailUserInfo}`}
           bordered
           items={
             [{
-              key: '1',
+              key: 'phone',
               label: language[currentLang].member.tableColumnPhone,
               children: userPhone,
             }, {
-              key: '2',
+              key: 'name',
               label: language[currentLang].member.tableColumnName,
               children: memberInfo.name || '--',
             }, {
-              key: '3',
+              key: 'birthday',
               label: language[currentLang].member.tableColumnBirthday,
               children: memberInfo.birthday || '--',
             }, {
-              key: '4',
+              key: 'actual',
               label: language[currentLang].member.tableColumnActual,
               children: memberInfo.actual,
             }, {
-              key: '5',
+              key: 'point',
               label: language[currentLang].member.tableColumnPoints,
               children: memberInfo.point,
             }, {
-              key: '6',
+              key: 'balance',
               label: language[currentLang].member.tableColumnBalance,
               children: memberInfo.balance,
             }, {
-              key: '7',
+              key: 'coupon',
               label: language[currentLang].member.tableColumnCoupon,
               children: memberInfo.coupon,
             },]

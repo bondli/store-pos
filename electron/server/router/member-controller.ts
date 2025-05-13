@@ -3,6 +3,9 @@ import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Op } from 'sequelize';
 import logger from 'electron-log';
+
+import { DEFAULT_DISCOUNT } from './constant';
+
 import { Member } from '../model/member';
 import { Order } from '../model/order';
 import { MemberScore } from '../model/memberScore';
@@ -273,7 +276,7 @@ export const memberIncomeBalance = async (req: Request, res: Response) => {
           couponId: uuidv4(),
           couponCondition: 0, // 无门槛
           couponDesc: `充值赠送吊牌金额${sendValue}`,
-          couponValue: Number(sendValue * 0.59), // 吊牌价值，减扣的只能是59折
+          couponValue: Number(sendValue * DEFAULT_DISCOUNT), // 吊牌价值，减扣的只能是59折
           couponCount: 1,
           couponStatus: 'active',
           couponExpiredTime: dayjs().add(1, 'year').toDate(), // 1年后过期

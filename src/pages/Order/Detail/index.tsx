@@ -13,8 +13,8 @@ import { MainContext } from '@/common/context';
 
 import Box from '@/components/Box';
 
-import itemColumns from './item';
-import couponColumns from './coupon';
+import useItemColumns from './item';
+import useCouponColumns from './coupon';
 
 type ComProps = {
   orderSn: string;
@@ -43,6 +43,9 @@ const Detail: React.FC<ComProps> = (props) => {
 
   const [showPanel, setShowPanel] = useState(false);
   const [orderInfo, setOrderInfo] = useState(defaultOrderInfo);
+
+  const itemColumns = useItemColumns();
+  const couponColumns = useCouponColumns();
   
   const togglePanel = () => {
     setShowPanel(!showPanel);

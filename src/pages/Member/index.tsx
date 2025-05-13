@@ -1,4 +1,4 @@
-import React, { memo, useRef, useContext, useState } from 'react';
+import React, { memo, useRef, useContext } from 'react';
 import { Button, App } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import TableRender, { TableContext } from 'table-render';
@@ -10,8 +10,8 @@ import PageTitle from '@/components/PageTitle';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import search from './search';
-import columns from './columns';
+import useSearch from './search';
+import useColumns from './columns';
 import NewJoin from './NewJoin';
 
 import style from './index.module.less';
@@ -19,6 +19,9 @@ import style from './index.module.less';
 const MemberPage: React.FC = () => {
   const { message } = App.useApp();
   const { currentLang } = useContext(MainContext);
+
+  const search = useSearch();
+  const columns = useColumns();
 
   const tableRef = useRef<TableContext>(null);
 

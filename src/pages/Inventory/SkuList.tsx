@@ -4,13 +4,13 @@ import { Descriptions, App } from 'antd';
 import TableRender from 'table-render';
 import type { ProColumnsType } from 'table-render';
 
-import { userLog, getStore } from '@/common/electron';
+import { userLog } from '@/common/electron';
 import request from '@common/request';
 import Box from '@/components/Box';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import skuColumns from './skuColumns';
+import useSkuColumns from './skuColumns';
 
 type ComProps = {
   sku: string;
@@ -31,12 +31,13 @@ const defaultItemInfo = {
 
 const SkuList: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
-  const { currentLang } = useContext(MainContext);
+  const { userInfo, currentLang } = useContext(MainContext);
+
+  const skuColumns = useSkuColumns();
 
   const { sku, sn } = props;
 
   const [itemInfo, setItemInfo] = useState(defaultItemInfo);
-  const userInfo = getStore('loginData') || {};
 
   // 获取sku信息
   const getItemDetail = async () => {
@@ -127,7 +128,7 @@ const SkuList: React.FC<ComProps> = (props) => {
           {
             key: 'costPrice',
             label: language[currentLang].inventory.tableColumnCostPrice,
-            children: userInfo?.id === 1 ? itemInfo.costPrice : '**',
+            children: userInfo?.role === 'admin' ? itemInfo.costPrice : '**',
           },
           {
             key: 'counts',

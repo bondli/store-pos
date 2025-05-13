@@ -70,8 +70,14 @@ const UserPage: React.FC = () => {
       return;
     }
     message.success(`登录成功`);
+    result.role = result.id === 1 ? 'admin' : 'normal';
     setStore('loginData', result);
-    setUserInfo(result);
+    setUserInfo({
+      id: result.id,
+      name: result.name,
+      avatar: result.avatar,
+      role: result.role,
+    });
     getSalerList();
   };
 
@@ -93,8 +99,14 @@ const UserPage: React.FC = () => {
       return;
     }
     message.success(`注册成功，已自动为你登录`);
+    result.role = result.id === 1 ? 'admin' : 'normal';
     setStore('loginData', result);
-    setUserInfo(result);
+    setUserInfo({
+      id: result.id,
+      name: result.name,
+      avatar: result.avatar,
+      role: result.role,
+    });
     getSalerList();
   };
 

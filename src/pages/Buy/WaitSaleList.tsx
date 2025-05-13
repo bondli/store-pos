@@ -193,7 +193,7 @@ const WaitSaleList: React.FC = () => {
         open={isDiscountModalOpen}
         onOk={handleDiscountModalOk}
         onCancel={handleDiscountModalCancel}
-        destroyOnClose
+        destroyOnHidden={true}
       >
         <Flex vertical wrap>
           <Flex align="center">

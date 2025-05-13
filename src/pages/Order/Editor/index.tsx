@@ -7,7 +7,7 @@ import request from '@common/request';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import schema from './schema';
+import useSchema from './schema';
 
 type ComProps = {
   orderSn: string;
@@ -19,6 +19,8 @@ const Editor: React.FC<ComProps> = (props) => {
   const { currentLang } = useContext(MainContext);
 
   const { orderSn, callback } = props;
+
+  const schema = useSchema();
   
   const form = useForm();
 
@@ -88,7 +90,7 @@ const Editor: React.FC<ComProps> = (props) => {
         width={410}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <FormRender
           form={form}

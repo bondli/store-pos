@@ -2,12 +2,12 @@ import React, { memo, useEffect, useState, useContext } from 'react';
 import { Button, Card, Drawer, Space, App } from 'antd';
 import FormRender, { useForm } from 'form-render';
 
-import { userLog, getStore } from '@/common/electron';
+import { userLog } from '@/common/electron';
 import request from '@common/request';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import { balanceSchema } from './schema';
+import { useBalanceSchema } from './schema';
 
 type ComProps = {
   userPhone: string;
@@ -18,10 +18,10 @@ const IncomeBalance: React.FC<ComProps> = (props) => {
   const { message } = App.useApp();
   const { currentLang } = useContext(MainContext);
 
-  const userInfo = getStore('loginData') || {};
-
   const { userPhone, callback } = props;
-  
+
+  const balanceSchema = useBalanceSchema();
+
   const formBalance = useForm();
 
   // 修改会员余额
@@ -92,7 +92,7 @@ const IncomeBalance: React.FC<ComProps> = (props) => {
         width={600}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <Space direction={`vertical`} size={`middle`}>
           <Card size='small' title={`${language[currentLang].member.modifyBalance}`}>

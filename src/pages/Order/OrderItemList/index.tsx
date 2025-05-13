@@ -10,13 +10,16 @@ import language from '@/common/language';
 import { MainContext } from '@/common/context';
 import { userLog } from '@/common/electron';
 
-import search from './search';
-import columns from './columns';
+import useSearch from './search';
+import useColumns from './columns';
 
 const OrderItemList: React.FC = () => {
   const { message } = App.useApp();
   const { currentLang } = useContext(MainContext);
   const [showPanel, setShowPanel] = useState(false);
+
+  const search = useSearch();
+  const columns = useColumns();
 
   const togglePanel = () => {
     setShowPanel(!showPanel);
@@ -59,7 +62,7 @@ const OrderItemList: React.FC = () => {
         width={1000}
         open={showPanel}
         onClose={closePanel}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <TableRender
           search={search}

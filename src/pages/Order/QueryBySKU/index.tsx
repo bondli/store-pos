@@ -149,7 +149,7 @@ const QueryBySKU: React.FC = () => {
         width={700}
         open={showPanel}
         onClose={closePanel}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         {
           inputType === 'input' ? (

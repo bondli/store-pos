@@ -1,7 +1,12 @@
+
+import { useContext } from 'react';
 import language from '@/common/language';
-import { getStore } from '@common/electron';
-const currentLang = getStore('currentLang') || 'en';
-const skuColumns = [
+import { MainContext } from '@common/context';
+
+const useSkuColumns = () => {
+  const { currentLang } = useContext(MainContext);
+
+  const skuColumns = [
   {
     title: language[currentLang].inventory.tableColumnSku,
     dataIndex: 'sku',
@@ -32,6 +37,9 @@ const skuColumns = [
     dataIndex: 'saleCounts',
     key: 'saleCounts',
   },
-];
+  ];
 
-export default skuColumns;
+  return skuColumns;
+};
+
+export default useSkuColumns;

@@ -3,6 +3,9 @@ import Sequelize, { Op } from 'sequelize';
 import dayjs from 'dayjs';
 import logger from 'electron-log';
 import ExcelJS from 'exceljs';
+
+import { DEFAULT_DISCOUNT } from './constant';
+
 import { Order } from '../model/order';
 
 import { OrderItems } from '../model/orderItems';
@@ -114,6 +117,99 @@ export const queryOrderList = async (req: Request, res: Response) => {
   }
 };
 
+// 查询订单统计信息
+export const queryOrderSummary = async (req: Request, res: Response) => {
+  const { orderSn, start, end, showStatus, userPhone, payType, salerId } = req.query;
+
+  const where = {};
+
+  // 处理orderSn查询
+  if (orderSn) {
+    where['orderSn'] = {
+      [Op.eq]: orderSn,
+    };
+  }
+  if (userPhone) {
+    where['userPhone'] = {
+      [Op.eq]: userPhone,
+    };
+  }
+  if (payType) {
+    where['payType'] = {
+      [Op.eq]: payType,
+    };
+  }
+  if (salerId) {
+    where['salerId'] = {
+      [Op.eq]: salerId,
+    };
+  }
+  // 传入的值是hidden，则查询的结果会排除“隐藏的订单”，只展示“正常”的订单
+  if (showStatus) {
+    where['showStatus'] = {
+      [Op.eq]: 'normal',
+    };
+  }
+
+  if (start && end) {
+    const startTime = dayjs(start as string).startOf('day').toDate();
+    const endTime = dayjs(end as string).endOf('day').toDate();
+
+    where['createdAt'] = {
+      [Op.gte]: startTime,
+      [Op.lte]: endTime,
+    };
+  }
+  try {
+    const rows = await Order.findAll({
+      where,
+      order: [['createdAt', 'DESC']],
+    });
+
+    const orderCount = rows.length;
+    if (orderCount === 0) {
+      return res.json({
+        orderCount: 0,
+        orderActualAmount: 0,
+        itemCount: 0,
+        payChannelStats: {
+          alipay: 0,
+          weixin: 0,
+          cash: 0,
+          card: 0,
+          other: 0,
+        },
+      });
+    }
+
+    const orderActualAmount = rows.reduce((acc, curr) => acc + (curr.get('orderActualAmount') as number || 0), 0);
+    const itemCount = rows.reduce((acc, curr) => acc + (curr.get('orderItems') as number || 0), 0);
+    const payTypes = ['alipay', 'weixin', 'cash', 'card', 'other'];
+    const payChannelStats = payTypes.reduce((acc, type) => {
+      acc[type] = 0;
+      return acc;
+    }, {});
+
+    rows.forEach(curr => {
+      const payType = curr.get('payType') as string || 'other';
+      if (payTypes.includes(payType)) {
+        payChannelStats[payType] += curr.get('orderActualAmount') || 0;
+      }
+    });
+
+    res.json({
+      orderCount,
+      orderActualAmount,
+      itemCount,
+      payChannelStats,
+    });
+  } catch (error) {
+    logger.error('Error getting Order summary:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 // 查询订单详情
 export const queryOrderDetail = async (req: Request, res: Response) => {
   const { orderSn } = req.query;
@@ -168,7 +264,6 @@ export const changeOrderItem = async (req: Request, res: Response) => {
       },
     });
     const rate = new Decimal(finalAmount).div(orderData.orderAmount); // 这个地方别做toFixed，否则会丢失精度
-    const defaultDiscount = 0.59;
     await OrderItems.bulkCreate(
       exchangeItems.map(item => ({
         orderSn: orderData.orderSn,
@@ -179,10 +274,10 @@ export const changeOrderItem = async (req: Request, res: Response) => {
         color: item.color,
         size: item.size,
         originalPrice: item.originalPrice,
-        discount: defaultDiscount, // item.discount,先是默认值后续开放可以设置
+        discount: DEFAULT_DISCOUNT, // item.discount,先是默认值后续开放可以设置
         counts: item.counts,
         // todo: 这个地方需要根据传入的折扣计算
-        actualPrice: new Decimal(item.originalPrice*defaultDiscount).mul(rate).toDecimalPlaces(2),
+        actualPrice: new Decimal(item.originalPrice*DEFAULT_DISCOUNT).mul(rate).toDecimalPlaces(2),
       }))
     );
     // 3.扣减库存，退回的商品增加库存，换货的商品减少库存
@@ -261,7 +356,7 @@ export const refundOrderItem = async (req: Request, res: Response) => {
       refundItems.reduce((sum, item) => new Decimal(sum).plus(new Decimal(item.originalPrice || 0).mul(item.counts || 1)), new Decimal(0))
     );
     const decOrderAmount = new Decimal(orderData.orderAmount).minus(
-      refundItems.reduce((sum, item) => new Decimal(sum).plus(new Decimal(item.originalPrice || 0).mul(0.59).mul(item.counts || 1)), new Decimal(0))
+      refundItems.reduce((sum, item) => new Decimal(sum).plus(new Decimal(item.originalPrice || 0).mul(DEFAULT_DISCOUNT).mul(item.counts || 1)), new Decimal(0))
     );
     await order.update({
       orderStatus: 'refund', // 退货后，订单状态为退货

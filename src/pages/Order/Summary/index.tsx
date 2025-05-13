@@ -1,17 +1,20 @@
 import React, { memo, useEffect, useState, useContext } from 'react';
-import { Drawer, Col, Row, Statistic, Card } from 'antd';
+import { Drawer, Col, Row, Statistic, Card, App } from 'antd';
 import { EyeFilled } from '@ant-design/icons';
 
+import request from '@/common/request';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import { OrderListProps, OrderStatistics, PaymentChannelStats } from '@common/constant';
+import { QueryParamsProps, OrderStatistics } from '@common/constant';
 
 import style from './index.module.less';
 
-const Summary: React.FC<OrderListProps> = (props) => {
+const Summary: React.FC<QueryParamsProps> = (props) => {
+  const { message } = App.useApp();
+
   const { currentLang } = useContext(MainContext);
-  const { dataList } = props;
+  const { queryParams } = props;
   const [showPanel, setShowPanel] = useState(false);
   const [statistics, setStatistics] = useState<OrderStatistics>({
     orderActualAmount: 0,
@@ -30,22 +33,30 @@ const Summary: React.FC<OrderListProps> = (props) => {
     setShowPanel(!showPanel);
   };
 
-  useEffect(() => {
-    const orderActualAmount = dataList.reduce((acc, curr) => acc + curr.orderActualAmount, 0);
-    const orderCount = dataList.length;
-    const itemCount = dataList.reduce((acc, curr) => acc + curr.orderItems, 0);
-    const payChannelStats = dataList.reduce((acc, curr) => {
-      acc[curr.payType] = (acc[curr.payType] || 0) + curr.orderActualAmount;
-      return acc;
-    }, {} as PaymentChannelStats);
-
-    setStatistics({
-      orderActualAmount,
-      orderCount,
-      itemCount,
-      payChannelStats
+  // 获取订单统计信息
+  const getOrderSummary = async (queryParams) => {
+    const response = await request.get('/order/queryOrderSummary', {
+      params: queryParams,
     });
-  }, [dataList, showPanel]);
+    const result = response.data;
+    if (result.error) {
+      message.error(result.error);
+      return;
+    }
+    setStatistics({
+      orderActualAmount: result.orderActualAmount,
+      orderCount: result.orderCount,
+      itemCount: result.itemCount,
+      payChannelStats: result.payChannelStats,
+    });
+  };
+
+  useEffect(() => {
+    if (showPanel) {
+      // 获取订单统计信息
+      getOrderSummary(queryParams);
+    }
+  }, [queryParams, showPanel]);
 
   return (
     <>
@@ -60,6 +71,7 @@ const Summary: React.FC<OrderListProps> = (props) => {
         height={410}
         placement={`top`}
         open={showPanel}
+        destroyOnHidden={true}
         onClose={() => setShowPanel(false)}
       >
         <Row gutter={16} style={{ marginBottom: 16 }}>

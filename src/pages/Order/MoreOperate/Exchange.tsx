@@ -10,7 +10,7 @@ import Box from '@/components/Box';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import itemColumns from './itemColumns';
+import useItemColumns from './itemColumns';
 
 type ComProps = {
   orderSn: string;
@@ -50,6 +50,8 @@ const Exchange: React.FC<ComProps> = (props) => {
   const [exchangeItems, setExchangeItems] = useState([]); // 需要换货的商品 
   const [exchangeAmount, setExchangeAmount] = useState(0); // 换货价差金额
   const [amountType, setAmountType] = useState(''); // 价差类型
+
+  const itemColumns = useItemColumns();
 
   const togglePanel = () => {
     setShowPanel(!showPanel);
@@ -275,7 +277,7 @@ const Exchange: React.FC<ComProps> = (props) => {
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         footer={
           <Flex justify='right'>
             <Button type='primary' key='exchange' onClick={handleExchange}>
@@ -401,9 +403,9 @@ const Exchange: React.FC<ComProps> = (props) => {
                 buttonStyle={`solid`}
                 onChange={handleAmountTypeChange}
               >
-                <Radio.Button value="add">补差价</Radio.Button>
-                <Radio.Button value="sub">退差价</Radio.Button>
-                <Radio.Button value="none">无价差</Radio.Button>
+                <Radio.Button value="add">{language[currentLang].order.exchangeAmountTypeAdd}</Radio.Button>
+                <Radio.Button value="sub">{language[currentLang].order.exchangeAmountTypeSub}</Radio.Button>
+                <Radio.Button value="none">{language[currentLang].order.exchangeAmountTypeNone}</Radio.Button>
               </Radio.Group>
               <Input
                 type='number'

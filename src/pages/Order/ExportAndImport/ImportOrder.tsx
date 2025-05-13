@@ -115,7 +115,7 @@ const ImportOrder: React.FC<ComProps> = (props) => {
         width={800}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         footer={
           <Flex justify='right'>
             <Space>

@@ -6,7 +6,7 @@ import request from '@common/request';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import schema from './schema';
+import { useNewJoinSchema } from './schema';
 
 type ComProps = {
   callback: () => void;
@@ -17,6 +17,9 @@ const NewJoin: React.FC<ComProps> = (props) => {
   const { currentLang } = useContext(MainContext);
 
   const { callback } = props;
+
+  const schema = useNewJoinSchema();
+
   const form = useForm();
 
   const onFinish = async (formData) => {
@@ -55,7 +58,7 @@ const NewJoin: React.FC<ComProps> = (props) => {
         width={410}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <FormRender
           form={form}
