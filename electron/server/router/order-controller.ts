@@ -15,6 +15,7 @@ import { OrderCoupons } from '../model/orderCoupons';
 import { Inventory } from '../model/inventory';
 import { User } from '../model/user';
 import Decimal from 'decimal.js';
+import { InventoryRecord } from '../model/inventoryRecord';
 
 // 定义OrderItems的接口
 interface OrderItemAttributes {
@@ -292,6 +293,12 @@ export const changeOrderItem = async (req: Request, res: Response) => {
           counts: inventoryData.counts + item.counts,
           saleCounts: inventoryData.saleCounts - item.counts
         });
+        await InventoryRecord.create({
+          sku: item.sku,
+          type: 'exchangeIn',
+          info: `订单[${orderSn}]换货退回`,
+          count: item.counts || 1,
+        });
       }
     }
     for (const item of exchangeItems) {
@@ -304,6 +311,12 @@ export const changeOrderItem = async (req: Request, res: Response) => {
         await inventory.update({
           counts: inventoryData.counts - item.counts,
           saleCounts: inventoryData.saleCounts + item.counts
+        });
+        await InventoryRecord.create({
+          sku: item.sku,
+          type: 'exchangeOut',
+          info: `订单[${orderSn}]换货出库`,
+          count: item.counts || 1,
         });
       }
     }
@@ -387,6 +400,12 @@ export const refundOrderItem = async (req: Request, res: Response) => {
         where: {
           sku: item.sku,
         },
+      });
+      await InventoryRecord.create({
+        sku: item.sku,
+        type: 'return',
+        info: `订单[${orderSn}]退货回库`,
+        count: item.counts || 1,
       });
     }
     

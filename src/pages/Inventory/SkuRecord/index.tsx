@@ -1,0 +1,188 @@
+import React, { memo, useState, useRef, useContext, useCallback } from 'react';
+import { App, Button, Drawer, Input, Table } from 'antd';
+import { ScanOutlined, SignatureOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
+
+import request from '@/common/request';
+import language from '@/common/language';
+import { MainContext } from '@/common/context';
+import { INVENTORY_CHANGE_TYPE } from '@/common/constant';
+import Box from '@/components/Box';
+
+const SkuRecord: React.FC = () => {
+  const { message } = App.useApp();
+  const { currentLang } = useContext(MainContext);
+
+  const [showPanel, setShowPanel] = useState(false);
+  const [dataList, setDataList] = useState([]);
+
+  const [inputType, setInputType] = useState<'scan' | 'input'>('scan');
+  const [scanSkuCode, setScanSkuCode] = useState('');
+
+  const togglePanel = () => {
+    setShowPanel(!showPanel);
+  };
+
+  const closePanel = () => {
+    setShowPanel(false);
+  };
+
+  // 处理条码提交
+  const processBarCode = (value: string) => {
+    request.get('/inventory/skuRecord', {
+      params: {
+        sku: value,
+      },
+    }).then((response: any) => {
+      const result = response.data;
+      if (result.error) {
+        message.error(result.error);
+      } else {
+        setDataList(result.data);
+        // 如果没有返回结果给个错误提示
+        if (!result.data?.length) {
+          message.error(`该商品还没有任何库存变动`);
+        }
+        // 如果是扫码模式，需要清除输入框结果
+        if (inputType === 'scan') {
+          setScanSkuCode('');
+        }
+      }
+    }).catch((error: any) => {
+      message.error('查询失败');
+    });
+  };
+
+  const debounceTimer = useRef<number>();
+
+  // 处理扫码枪的输入
+  const handleScan = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.trim();
+
+    // 更新输入框的值
+    setScanSkuCode(value);
+
+    if (!value) {
+      return;
+    }
+
+    if (debounceTimer.current) {
+      window.clearTimeout(debounceTimer.current);
+    }
+
+    debounceTimer.current = window.setTimeout(() => {
+      processBarCode(value);
+    }, 300);
+  };
+
+  // 处理输入框的输入
+  const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.trim();
+    // 更新输入框的值
+    setScanSkuCode(value);
+  }, [scanSkuCode]);
+
+  // 处理输入框的回车
+  const handleInputSearch = useCallback(() => {
+    processBarCode(scanSkuCode);
+  }, [scanSkuCode]);
+
+  const columns = [
+    {
+      title: language[currentLang].inventory.skuRecordTableColumnSku,
+      dataIndex: 'sku',
+      key: 'sku',
+      fixed: 'left',
+    },
+    {
+      title: language[currentLang].inventory.skuRecordTableColumnType,
+      align: 'center',
+      dataIndex: 'type',
+      key: 'type',
+      render: (text: string) => {
+        return INVENTORY_CHANGE_TYPE[text as keyof typeof INVENTORY_CHANGE_TYPE] || text;
+      },
+    },
+    {
+      title: language[currentLang].inventory.skuRecordTableColumnCount,
+      align: 'center',
+      dataIndex: 'count',
+      key: 'count',
+      render: (text: number, record: any) => {
+        return record.type === 'sale' || record.type === 'exchangeOut' ? `-${text}` : `+${text}`;
+      },
+    },
+    {
+      title: language[currentLang].inventory.skuRecordTableColumnInfo,
+      align: 'center',
+      dataIndex: 'info',
+      key: 'info',
+    },
+    {
+      title: language[currentLang].inventory.skuRecordTableColumnCreateTime,
+      align: 'center',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (text: string) => {
+        return dayjs(text).format('YYYY-MM-DD HH:mm:ss');
+      },
+    },
+  ];
+
+  return (
+    <>
+      <Button
+        onClick={togglePanel}
+      >
+        {language[currentLang].inventory.skuRecordAction}
+      </Button>
+      <Drawer
+        title={language[currentLang].inventory.skuRecord}
+        width={1000}
+        open={showPanel}
+        onClose={closePanel}
+        destroyOnHidden={true}
+      >
+        {
+          inputType === 'input' ? (
+            <Input 
+              size='middle' 
+              placeholder={language[currentLang].inventory.skuRecordPlaceholder}
+              prefix={<SignatureOutlined onClick={ () => setInputType('scan') } />}  
+              onChange={handleInput}
+              onPressEnter={handleInputSearch}
+              value={scanSkuCode}
+            />
+          ) : (
+            <Input
+              prefix={<ScanOutlined onClick={ () => setInputType('input') } />} 
+              placeholder={language[currentLang].inventory.skuRecordPlaceholder}
+              onChange={handleScan}
+              autoFocus
+              value={scanSkuCode}
+            />
+          )
+        }
+
+        <div style={{ marginTop: 24 }}>
+          <Box
+            title={language[currentLang].inventory.skuRecordList}
+            content={
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '20px' }}>
+                <Table
+                  rowKey={(record) => record.orderSn}
+                  dataSource={dataList}
+                  columns={columns as any}
+                  pagination={false}
+                />
+              </div>
+            }
+          />
+        </div>
+      </Drawer>
+    </>
+  );
+
+};
+
+export default memo(SkuRecord);

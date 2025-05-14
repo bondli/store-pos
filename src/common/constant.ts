@@ -8,6 +8,16 @@ export const PAY_CHANNEL = {
   other: '其他',
 };
 
+// 库存变动类型
+export const INVENTORY_CHANGE_TYPE = {
+  in: '采购',
+  sale: '售出',
+  exchangeOut: '换货出库',
+  return: '退货',
+  exchangeIn: '换货回库',
+  adjust: '人工调整',
+};
+
 // 默认折扣率
 export const DEFAULT_DISCOUNT = 0.6;
 

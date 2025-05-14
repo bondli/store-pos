@@ -15,6 +15,7 @@ import { StoreCoupon } from '../model/storeCoupon';
 import { MemberCoupon } from '../model/memberCoupon';
 import { OrderCoupons } from '../model/orderCoupons';
 import { Marketing } from '../model/marketing';
+import { InventoryRecord } from '../model/inventoryRecord';
 
 // 创建订单
 export const submitOrder = async (req: Request, res: Response) => {
@@ -117,6 +118,14 @@ export const submitOrder = async (req: Request, res: Response) => {
       await inventory.update({
         counts: inventoryData.counts - item.counts,
         saleCounts: inventoryData.saleCounts + item.counts
+      });
+
+      // 记录流水
+      await InventoryRecord.create({
+        sku: item.sku,
+        type: 'sale',
+        info: `订单[${orderData.orderSn}]销售`,
+        count: item.counts
       });
     }
 

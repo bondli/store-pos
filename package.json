@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.6",
-    "@ant-design/plots": "^1.1.0",
+    "@ant-design/plots": "^2.0.0",
     "antd": "^5.16.4",
     "axios": "^1.6.8",
     "body-parser": "^1.20.2",

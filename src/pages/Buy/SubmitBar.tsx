@@ -1,5 +1,5 @@
 import React, { memo, useContext, useEffect, useState, useRef } from 'react';
-import { Flex, Button, Row, Col, message, Drawer, Result } from 'antd';
+import { Flex, Button, Row, Col, Drawer, Result, App } from 'antd';
 
 import { getStore, setStore, printStr } from '@common/electron';
 import request from '@common/request';
@@ -11,7 +11,7 @@ import Bill from '@/components/Bill';
 
 const SubmitBar: React.FC = () => {
   const { currentLang } = useContext(MainContext);
-  
+  const { message, modal } = App.useApp();
   const {
     waitSales,
     buyer,
@@ -137,15 +137,59 @@ const SubmitBar: React.FC = () => {
     }
   };
 
+  // 处理挂单
+  const handleHangUp = () => {
+    setStore('orderCache', {
+      waitSales,
+      buyer,
+      storeSaler,
+    });
+    setWaitSales({
+      list: [],
+      brief: {
+        skuNum: 0,
+        counts: 0,
+        totalAmount: 0,
+        payAmount: 0,
+        actualAmount: 0,
+        payType: '',
+        remark: '',
+      },
+    });
+    // 更新界面用到，控制恢复按钮的出现
+    setOrderInCache({
+      waitSales,
+      buyer,
+      storeSaler,
+    });
+  };
+
   // 从缓存中恢复订单
   const handleRestore = () => {
-    setWaitSales(orderInCache.waitSales);
-    setBuyer(orderInCache.buyer);
-    setStoreSaler(orderInCache.storeSaler);
-    // 删除缓存
-    setOrderInCache(null);
-    // 删除store中的缓存
-    setStore('orderCache', null);
+    // 如果当前有待售的商品，则提示用户是否要继续
+    if (waitSales?.list?.length) {
+      modal.confirm({
+        title: '提示',
+        content: '当前有待售的商品，是否要继续恢复挂单？',
+        onOk: () => {
+          setWaitSales(orderInCache.waitSales);
+          setBuyer(orderInCache.buyer);
+          setStoreSaler(orderInCache.storeSaler);
+          // 删除缓存
+          setOrderInCache(null);
+          // 删除store中的缓存
+          setStore('orderCache', null);
+        },
+      });
+    } else {
+      setWaitSales(orderInCache.waitSales);
+      setBuyer(orderInCache.buyer);
+      setStoreSaler(orderInCache.storeSaler);
+      // 删除缓存
+      setOrderInCache(null);
+      // 删除store中的缓存
+      setStore('orderCache', null);
+    }
   };
 
   // 打印小票
@@ -166,7 +210,7 @@ const SubmitBar: React.FC = () => {
     <Row gutter={16}>
       <Col span={12}>
         <Flex gap={'small'} wrap>
-          <Button type="primary" onClick={handleSubmit} loading={loading}>
+          <Button type='primary' onClick={handleSubmit} loading={loading}>
             {language[currentLang].buy.submit}
           </Button>
           <Button onClick={handleReset}>{language[currentLang].buy.clear}</Button>
@@ -174,8 +218,11 @@ const SubmitBar: React.FC = () => {
       </Col>
       <Col span={12} style={{ textAlign: 'right' }}>
         {
+          waitSales?.list?.length ? <Button type='link' onClick={handleHangUp}>{language[currentLang].buy.hangUp}</Button> : null
+        }
+        {
           orderInCache?.waitSales?.list?.length ? (
-            <Button onClick={handleRestore}>{language[currentLang].buy.restore}</Button>
+            <Button type='link' onClick={handleRestore}>{language[currentLang].buy.restore}</Button>
           ) : null
         }
       </Col>

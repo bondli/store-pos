@@ -39,6 +39,7 @@ import {
   downloadTemplate,
   queryNoStockList,
   queryHotSalesList,
+  querySkuRecord,
 } from './inventory-controller';
 
 import {
@@ -58,7 +59,6 @@ import {
 import {
   getCoreData,
   getOrderCharts,
-  getRecentSaleList,
 } from './data-controller';
 
 import {
@@ -117,6 +117,7 @@ router.post('/inventory/batchReturns', batchReturnsInventory); // 批量退库
 router.post('/inventory/template', downloadTemplate); // 下载模板
 router.get('/inventory/getNoStockList', queryNoStockList); // 查询断码商品列表
 router.get('/inventory/getHotSalesList', queryHotSalesList); // 查询热销商品列表
+router.get('/inventory/skuRecord', querySkuRecord); // 查询商品流水
 
 // 会员相关接口
 router.get('/member/list', getMemberList); // 会员列表
@@ -140,7 +141,6 @@ router.get('/user/list', getUserList); // 导购员列表
 // 数据相关接口
 router.post('/data/getCoreData', getCoreData); // 获取系统核心的统计数据
 router.get('/data/getOrderCharts', getOrderCharts); // 获取订单图表数据
-router.get('/data/getRecentSaleList', getRecentSaleList); // 获取最近销售数据
 
 // 营销相关接口
 router.post('/marketing/create', createMarketing); // 创建营销活动

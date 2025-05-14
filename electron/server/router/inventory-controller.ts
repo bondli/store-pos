@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import logger from 'electron-log';
 import ExcelJS from 'exceljs';
 import { Inventory } from '../model/inventory';
+import { InventoryRecord } from '../model/inventoryRecord';
 
 // 查询所有库存的总量
 export const queryInventoryTotal = async (req: Request, res: Response) => {
@@ -91,8 +92,18 @@ export const updateInventory = async (req: Request, res: Response) => {
       where: { sku },
     });
     if (result) {
+      const oldCounts = result.get('counts');
       // await result.update({ sku, sn, name, color, size, brand, costPrice, originalPrice, counts });
       await result.update({ counts });
+      const adjustCount = Number(counts) - Number(oldCounts);
+      if (adjustCount !== 0) {
+        await InventoryRecord.create({
+          sku,
+          type: 'adjust',
+          info: `人工调整:${oldCounts} -> ${counts}`,
+          count: adjustCount
+        });
+      }
       res.json(result.toJSON());
     } else {
       res.json({ error: 'Inventory not found' });
@@ -160,6 +171,11 @@ export const queryHotSalesList = async (req: Request, res: Response) => {
 
   try {
     const { count, rows } = await Inventory.findAndCountAll({
+      where: {
+        saleCounts: { // 销售数量大于0的
+          [Op.gt]: 0,
+        },
+      },
       order: [['saleCounts', 'DESC']],
       limit,
       offset,
@@ -170,6 +186,27 @@ export const queryHotSalesList = async (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error('Error getting hot sales list:');
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// 查询商品流水
+export const querySkuRecord = async (req: Request, res: Response) => {
+  const { sku } = req.query;
+  try {
+    const { count, rows } = await InventoryRecord.findAndCountAll({
+      where: {
+        sku,
+      },
+      order: [['createdAt', 'DESC']],
+    });
+    res.json({
+      count: count || 0,
+      data: rows || [],
+    });
+  } catch (error) {
+    logger.error('Error getting sku record:');
     console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -187,6 +224,8 @@ export const createInventory = async (req: Request, res: Response) => {
     });
     if (resultCheckExists === null) {
       const result = await Inventory.create({ sn, sku, name, brand, color, size, originalPrice, costPrice, counts });
+      // 写入库存变动记录
+      await InventoryRecord.create({ sku, type: 'in', info: `单品入库`, count: counts });
       res.status(200).json(result.toJSON());
     } else {
       res.json({ error: 'sku had exists' });
@@ -301,6 +340,9 @@ export const batchCreateInventory = async (req: Request, res: Response) => {
     let totalCount = 0;
     let errorCount = 0;
 
+    // 用于批量插入流水
+    const recordsToInsert: Array<{ sku: string; type: string; info: string; count: number }> = [];
+
     // 预处理数据，合并相同 SKU 的数量
     const skuMap = new Map<string, {
       counts: number;
@@ -374,6 +416,13 @@ export const batchCreateInventory = async (req: Request, res: Response) => {
               status: 'updated',
               data: updatedItem.toJSON()
             });
+            // 记录流水
+            recordsToInsert.push({
+              sku,
+              type: 'in',
+              info: '批量入库',
+              count: counts
+            });
           }).catch(error => {
             errorCount += counts;
             errors.push({
@@ -391,6 +440,13 @@ export const batchCreateInventory = async (req: Request, res: Response) => {
               sku,
               status: 'created',
               data: newItem.toJSON()
+            });
+            // 记录流水
+            recordsToInsert.push({
+              sku,
+              type: 'in',
+              info: '批量入库',
+              count: counts
             });
           }).catch(error => {
             errorCount += counts;
@@ -420,6 +476,11 @@ export const batchCreateInventory = async (req: Request, res: Response) => {
       processBatch(updateOperations),
       processBatch(createOperations)
     ]);
+
+    // 批量插入流水
+    if (recordsToInsert.length > 0) {
+      await InventoryRecord.bulkCreate(recordsToInsert);
+    }
 
     res.json({
       success: true,
@@ -547,8 +608,9 @@ export const batchReturnsInventory = async (req: Request, res: Response) => {
       returnCountsMap.set(item.sku, currentCount + Number(item.returnCounts));
     });
 
-    // 批量更新库存
+    // 批量更新库存并收集流水
     const updatePromises: Promise<any>[] = [];
+    const recordsToInsert: Array<{ sku: string; type: string; info: string; count: number }> = [];
     for (const [sku, returnCounts] of returnCountsMap) {
       totalCount += returnCounts;
       const inventoryItem = inventoryMap.get(sku);
@@ -557,6 +619,12 @@ export const batchReturnsInventory = async (req: Request, res: Response) => {
         updatePromises.push(
           inventoryItem.decrement('counts', { by: returnCounts })
         );
+        recordsToInsert.push({
+          sku,
+          type: 'return',
+          info: '批量退库',
+          count: returnCounts
+        });
       } else {
         errorCount += returnCounts;
       }
@@ -564,6 +632,10 @@ export const batchReturnsInventory = async (req: Request, res: Response) => {
 
     // 等待所有更新操作完成
     await Promise.all(updatePromises);
+    // 批量插入流水
+    if (recordsToInsert.length > 0) {
+      await InventoryRecord.bulkCreate(recordsToInsert);
+    }
 
     res.json({
       success: true,

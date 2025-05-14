@@ -17,6 +17,7 @@ import BitchStock from './BitchStock';
 import SingleStock from './SingleStock';
 import NoStockList from './NoStockList';
 import HotSales from './HotSales';
+import SkuRecord from './SkuRecord';
 
 import SkuList from './SkuList';
 
@@ -86,6 +87,7 @@ const InventroyPage: React.FC = () => {
             <Button onClick={refreshData}><RedoOutlined />{language[currentLang].inventory.refresh}</Button>
             <HotSales />
             <NoStockList />
+            <SkuRecord />
             {
               userInfo?.role === 'admin' ? <SingleStock callback={refreshData} /> : null
             }

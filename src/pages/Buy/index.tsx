@@ -7,7 +7,7 @@ import CustomCard from '@/components/CustomCard';
 import language from '@/common/language';
 import { MainContext } from '@/common/context';
 
-import { BuyProvider, BuyContext } from './context';
+import { BuyProvider } from './context';
 
 import WaitSaleList from './WaitSaleList';
 import WaitSaleSummary from './WaitSaleSummary';
@@ -24,43 +24,11 @@ import style from './index.module.less';
 const BuyPageContainer: React.FC = () => {
   const { currentLang } = useContext(MainContext);
 
-  const {
-    waitSales,
-    setWaitSales,
-    buyer,
-    storeSaler,
-  } = useContext(BuyContext);
-
-  // 处理挂单
-  const handleHangUp = () => {
-    setStore('orderCache', {
-      waitSales,
-      buyer,
-      storeSaler,
-    });
-    setWaitSales({
-      list: [],
-      brief: {
-        skuNum: 0,
-        counts: 0,
-        totalAmount: 0,
-        payAmount: 0,
-        actualAmount: 0,
-        payType: '',
-        remark: '',
-      },
-    });
-  };
-
   return (
     <div className={style.container}>
       <PageTitle
         text={`${language[currentLang].buy.title}`}
-        extra={
-          waitSales?.list?.length ? <Button type={`link`} onClick={handleHangUp}>{language[currentLang].buy.hangUp}</Button> : null
-        }
       />
-
       <Row gutter={16} style={{ height: `calc(100% - 40px)`}}>
         <Col span={12}>
           <CustomCard
