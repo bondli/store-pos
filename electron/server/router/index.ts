@@ -59,6 +59,7 @@ import {
 import {
   getCoreData,
   getOrderCharts,
+  getSalerCharts,
 } from './data-controller';
 
 import {
@@ -141,6 +142,7 @@ router.get('/user/list', getUserList); // 导购员列表
 // 数据相关接口
 router.post('/data/getCoreData', getCoreData); // 获取系统核心的统计数据
 router.get('/data/getOrderCharts', getOrderCharts); // 获取订单图表数据
+router.get('/data/getSalerCharts', getSalerCharts); // 获取导购员业绩图表数据
 
 // 营销相关接口
 router.post('/marketing/create', createMarketing); // 创建营销活动

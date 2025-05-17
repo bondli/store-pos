@@ -97,7 +97,7 @@
     "react"
   ],
   "build": {
-    "productName": "StorePos",
+    "productName": "DaveBella",
     "appId": "com.storepos.react.electron",
     "asar": true,
     "copyright": "Copyright © 2025 ${author}",

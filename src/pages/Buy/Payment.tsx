@@ -71,10 +71,11 @@ const Payment: React.FC = () => {
     // 确保输入值不超过应付金额
     const maxAmount = waitSales?.brief?.payAmount || 0;
     // 如果输入的大于应付金额，给个消息提示
-    if (numValue > maxAmount) {
-      message.error(`输入的实收金额不能大于应付金额`);
-    }
-    const actualAmount = Math.min(numValue, maxAmount);
+    // if (numValue > maxAmount) {
+    //   message.error(`输入的实收金额不能大于应付金额`);
+    // }
+    // const actualAmount = Math.min(numValue, maxAmount);
+    const actualAmount = numValue;
     setWaitSales(prev => ({ 
       list: prev.list, brief: { ...prev.brief, actualAmount }
     }));

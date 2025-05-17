@@ -70,7 +70,7 @@ export const getMemberInfo = async (req: Request, res: Response) => {
 
 // 查询所有会员
 export const getMemberList = async (req: Request, res: Response) => {
-  const { startDate, endDate, phone, pageSize, current } = req.query;
+  const { startDate, endDate, phone, level, pageSize, current } = req.query;
   const limit = Number(pageSize);
   const offset = (Number(current) - 1) * limit;
   const where = {};
@@ -90,6 +90,13 @@ export const getMemberList = async (req: Request, res: Response) => {
   if (phone) {
     where['phone'] = {
       [Op.eq]: phone,
+    };
+  }
+
+  // 处理phone查询
+  if (level) {
+    where['level'] = {
+      [Op.eq]: level,
     };
   }
 

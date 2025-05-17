@@ -142,7 +142,7 @@ let mainWindow: any = null;
 const createWindow = () => {
   logger.info('main window will be create');
   mainWindow = new BrowserWindow({
-    title: '旺店宝',
+    title: 'Dave & Bella',
     center: true,
     autoHideMenuBar: true,
     resizable: true,

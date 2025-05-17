@@ -2,7 +2,7 @@ const language = {
   en: {
     title: 'English',
     common: {
-      logo: 'Cashier',
+      logo: 'Dave & Bella',
       sologon: 'Offline entity store management tool, quick cash efficient inventory, make your store management easier',
       confirm: 'Confirm',
       reset: 'Reset',
@@ -45,7 +45,8 @@ const language = {
       soldItemCount: 'Sold Counts',
       itemCount: 'Inventory Counts',
       memberCount: 'Member Counts',
-      overview: 'Performance',
+      memberBalance: 'Member Balance',
+      overview: 'Store Performance',
       salerOrderAmount: 'My Performance(CNY)',
     },
     inventory: {
@@ -175,6 +176,8 @@ const language = {
       tableColumnBirthday: 'Birthday',
       searchLabelCreatedAt: 'create time',
       searchLabelPhone: 'user phone',
+      searchLabelLevel: 'user level',
+      searchPlaceholderLevel: 'select user level',
       searchPlaceholderPhone: 'input member phone',
       searchPlaceholderName: 'input member name',
       searchPlaceholderBirthday: 'input member birthday',
@@ -366,7 +369,7 @@ const language = {
   zh: {
     title: '中文',
     common: {
-      logo: '旺店宝',
+      logo: 'Dave & Bella',
       sologon: '线下实体店管理工具，快捷收银对账，商品出入库高效盘点，让你的店铺经营更简单',
       confirm: '确定',
       reset: '重置',
@@ -409,7 +412,8 @@ const language = {
       soldItemCount: '售出商品',
       itemCount: '商品库存',
       memberCount: '会员数量',
-      overview: '营业额',
+      memberBalance: '会员余额(CNY)',
+      overview: '店铺营业额',
       salerOrderAmount: '我的业绩(CNY)',
     },
     inventory: {
@@ -539,6 +543,8 @@ const language = {
       tableColumnBirthday: '生日',
       searchLabelCreatedAt: '创建时间',
       searchLabelPhone: '手机号',
+      searchLabelLevel: '会员等级',
+      searchPlaceholderLevel: '请选择会员等级',
       searchPlaceholderPhone: '输入会员手机号',
       searchPlaceholderName: '输入会员姓名',
       searchPlaceholderBirthday: '输入会员生日',

@@ -6,7 +6,7 @@ export const baseURL = 'http://localhost:9527/';
 // 创建axios实例
 const service: AxiosInstance = axios.create({
   baseURL, // api的base_url
-  timeout: 5000 // 请求超时时间
+  timeout: 10000 // 请求超时时间
 });
 
 // 请求拦截器

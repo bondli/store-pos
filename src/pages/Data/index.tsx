@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect, useContext } from 'react';
 import type { StatisticProps } from 'antd';
-import { Card, Col, Row, Statistic, DatePicker, Empty } from 'antd';
+import { Card, Col, Row, Statistic, DatePicker, Empty, Spin } from 'antd';
 import type { GetProps } from 'antd';
 import { Column, DualAxes } from '@ant-design/plots';
 import CountUp from 'react-countup';
@@ -30,6 +30,11 @@ const DataPage: React.FC = () => {
   ]);
 
   const [columnData, setColumnData] = useState<Array<{month: string; amounts: number; cost: number, rate: number}>> ([]);
+  const [salerColumnData, setSalerColumnData] = useState<Array<{month: string; amounts: number;}>> ([]);
+
+  // 数据请求是否发送完成
+  const [isFetchDone, setIsFetchDone] = useState(false);
+  const [isSalerFetchDone, setIsSalerFetchDone] = useState(false);
 
   const [statistics, setStatistics] = useState({
     orderAmount: 0,
@@ -37,6 +42,7 @@ const DataPage: React.FC = () => {
     inventoryCount: 0,
     saledItemCount: 0,
     memberCount: 0,
+    memberBalance: 0,
     salerOrderAmount: 0,
   });
 
@@ -71,19 +77,41 @@ const DataPage: React.FC = () => {
         params: {
           showStatus,
         },
+        timeout: 30000,
       });
       if (response.data) {
         setColumnData(response.data);
       }
     } catch (error) {
       console.error('获取图表数据失败:', error);
+    } finally {
+      setIsFetchDone(true);
+    }
+  };
+
+  const fetchSalerChartData = async () => {
+    try {
+      const response = await request.get('/data/getSalerCharts', {
+        params: {
+          showStatus,
+        },
+      });
+      if (response.data) {
+        setSalerColumnData(response.data);
+      }
+    } catch (error) {
+      console.error('获取导购员图表数据失败:', error);
+    } finally {
+      setIsSalerFetchDone(true);
     }
   };
   
   useEffect(() => {
     fetchChartData();
+    fetchSalerChartData();
   }, []);
 
+  // 渲染店铺营业额图表
   const getChartContent = () => {
     if (userInfo.role === 'admin') {
       // 将columnData转换为amountsData和rateData
@@ -119,7 +147,11 @@ const DataPage: React.FC = () => {
               yField: 'value',
               colorField: 'type',
               group: true,
-              style: { maxWidth: 80 },
+              style: {
+                radiusTopLeft: 10,
+                radiusTopRight: 10,
+                maxWidth: 80,
+              },
               interaction: { elementHighlight: { background: true } },
             },
             {
@@ -154,6 +186,23 @@ const DataPage: React.FC = () => {
         />
       );
     }
+  };
+
+  // 渲染导购员业绩图表
+  const getSalerChartContent = () => {
+    return (
+      <Column
+        height={370}
+        xField={'month'}
+        yField={'amounts'}
+        data={salerColumnData}
+        style={{
+          radiusTopLeft: 10,
+          radiusTopRight: 10,
+          maxWidth: 80,
+        }}
+      />
+    );
   };
 
   return (
@@ -200,15 +249,6 @@ const DataPage: React.FC = () => {
         <Col span={4}>
           <Card className={style.card}>
             <Statistic
-              title={`${language[currentLang].data.memberCount}`}
-              value={statistics.memberCount}
-              formatter={formatter}
-            />
-          </Card>
-        </Col>
-        <Col span={4}>
-          <Card className={style.card}>
-            <Statistic
               title={`${language[currentLang].data.itemCount}`}
               value={statistics.inventoryCount}
               formatter={formatter}
@@ -218,21 +258,42 @@ const DataPage: React.FC = () => {
         <Col span={4}>
           <Card className={style.card}>
             <Statistic
-              title={`${language[currentLang].data.salerOrderAmount}`}
-              value={statistics.salerOrderAmount}
+              title={`${language[currentLang].data.memberCount}`}
+              value={statistics.memberCount}
+              formatter={formatter}
+            />
+          </Card>
+        </Col>
+        <Col span={4}>
+          <Card className={style.card}>
+            <Statistic
+              title={`${language[currentLang].data.memberBalance}`}
+              value={statistics.memberBalance}
               precision={2}
               formatter={formatter}
             />
           </Card>
         </Col>
       </Row>
-      <Row gutter={16}>
+      <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={24}>
           <Card title={`${language[currentLang].data.overview}`} className={style.card}>
             {columnData.length > 0 ? (
               getChartContent()
             ) : (
-              <Empty description='暂无数据' />
+              isFetchDone ? <Empty description='暂无数据' /> : <div className={style.loading}><Spin /></div>
+            )}
+          </Card>
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col span={24}>
+          <Card title={`${language[currentLang].data.salerOrderAmount}`} className={style.card}>
+            {salerColumnData.length > 0 ? (
+              getSalerChartContent()
+            ) : (
+              isSalerFetchDone ? <Empty description='暂无数据' /> : <div className={style.loading}><Spin /></div>
             )}
           </Card>
         </Col>

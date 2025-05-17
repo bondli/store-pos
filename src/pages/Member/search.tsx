@@ -36,6 +36,19 @@ const useSearch = () => {
           allowClear: true,
         },
       },
+      level: {
+        title: language[currentLang].member.searchLabelLevel,
+        type: 'string',
+        widget: 'select',
+        placeholder: language[currentLang].member.searchPlaceholderLevel,
+        props: {
+          options: [
+            { label: '全部', value: '' },
+            { label: '普通会员', value: 'normal' },
+            { label: '超级会员', value: 'super' },
+          ],
+        },
+      },
     }
   };
 

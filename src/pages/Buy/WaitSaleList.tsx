@@ -202,6 +202,7 @@ const WaitSaleList: React.FC = () => {
               buttonStyle={`solid`}
               onChange={handleDiscountSelect}
             >
+              <Radio.Button value={6.9}>6.9折</Radio.Button>
               <Radio.Button value={6}>6折</Radio.Button>
               <Radio.Button value={5.9}>5.9折</Radio.Button>
               <Radio.Button value={5}>5折</Radio.Button>
