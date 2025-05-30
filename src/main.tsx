@@ -28,6 +28,21 @@ notification.config({
   rtl: false,
 });
 
+
+import { initToolbar, type ToolbarConfig } from '@stagewise/toolbar';
+
+const stagewiseConfig: ToolbarConfig = {
+  plugins: [],
+};
+
+function setupStagewise() {
+  if (import.meta.env.DEV) {
+    initToolbar(stagewiseConfig);
+  }
+}
+
+setupStagewise();
+
 const root = createRoot(document.getElementById('root'));
 root.render(
   <App>

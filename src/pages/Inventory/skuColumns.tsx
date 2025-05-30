@@ -12,6 +12,14 @@ const useSkuColumns = () => {
     dataIndex: 'sku',
     key: 'sku',
     copyable: true,
+    render: (text: string, record: any) => {
+      return (
+        <>
+          <div>{text}</div>
+          <div style={{ color: 'gray', fontSize: '12px' }}>{record.name}</div>
+        </>
+      );
+    },
   },
   {
     title: language[currentLang].inventory.tableColumnColor,

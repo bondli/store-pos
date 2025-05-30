@@ -11,6 +11,14 @@ const useColumns = () => {
       dataIndex: 'sn',
       key: 'sn',
       fixed: 'left',
+      render: (text: string, record: any) => {
+        return (
+          <>
+            <div>{text}</div>
+            <div style={{ color: 'gray', fontSize: '12px' }}>{record.name}</div>
+          </>
+        );
+      },
     },
     {
       title: language[currentLang].order.tableColumnSkuCode,

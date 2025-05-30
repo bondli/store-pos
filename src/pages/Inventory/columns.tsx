@@ -12,16 +12,24 @@ const useColumns = () => {
 
   const columns = [
     {
-      title: language[currentLang].inventory.tableColumnSku,
-      dataIndex: 'sku',
-      key: 'sku',
-      copyable: true,
-    },
-    {
       title: language[currentLang].inventory.tableColumnStyleNo,
       dataIndex: 'sn',
       key: 'sn',
       fixed: 'left',
+      copyable: true,
+      render: (text: string, record: any) => {
+        return (
+          <>
+            <div>{text}</div>
+            <div style={{ color: 'gray', fontSize: '12px' }}>{record.name}</div>
+          </>
+        );
+      },
+    },
+    {
+      title: language[currentLang].inventory.tableColumnSku,
+      dataIndex: 'sku',
+      key: 'sku',
       copyable: true,
     },
     {

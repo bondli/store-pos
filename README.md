@@ -46,34 +46,15 @@ yarn run dev
 yarn run pack:mac
 yarn run pack:win
 
-### windows下开发需要注意：
+
+### 开发环境强切线上数据库
 
 ```shell
-# 安装 windows-build-tools（需要管理员权限运行 PowerShell）
-npm install --global --production windows-build-tools
-
-# 安装 node-gyp
-npm install --global node-gyp
-
-# 设置 Python 版本
-npm config set python python3
-
-# 设置 Visual Studio 版本
-npm config set msvs_version 2019
+# 线下本地数据库
+"dev": "npm run before:pack && cross-env NODE_ENV=development ELECTRON_ENV=development vite --open=false -m electron",
 ```
 
-如果还是出错，可以执行
 ```shell
-# 1. 清理之前的安装
-rm -rf node_modules
-rm yarn.lock
-
-# 2. 清理 npm 缓存
-npm cache clean --force
-
-# 3. 安装依赖
-yarn install
-
-# 4. 如果还有问题，可以尝试单独安装 sqlite3
-yarn add sqlite3@5.1.6 --build-from-source
+# 线上云数据库
+"dev": "npm run before:pack && vite --open=false -m electron",
 ```

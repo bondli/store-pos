@@ -119,10 +119,10 @@ const Detail: React.FC<ComProps> = (props) => {
       </a>
       <Drawer
         title={language[currentLang].order.orderDetail}
-        width={800}
+        width={1000}
         open={showPanel}
         onClose={() => setShowPanel(false)}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <Descriptions
           title={language[currentLang].order.orderInfo}
